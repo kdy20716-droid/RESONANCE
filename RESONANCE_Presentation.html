@@ -10,7 +10,7 @@
     
     body {
       font-family: 'Noto Sans KR', sans-serif;
-      background: #080A10;
+      background: #06080E;
       color: #E2E8F0;
       overflow-x: hidden;
     }
@@ -31,63 +31,64 @@
     }
 
     .glow-gold {
-      text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+      text-shadow: 0 0 25px rgba(212, 175, 55, 0.45);
     }
 
     .glow-blue {
-      text-shadow: 0 0 25px rgba(66, 153, 225, 0.5);
+      text-shadow: 0 0 30px rgba(66, 153, 225, 0.55);
     }
 
     .card-glass {
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(212, 175, 55, 0.2);
+      background: rgba(13, 20, 36, 0.88);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(212, 175, 55, 0.25);
     }
 
     .card-glass:hover {
-      border-color: rgba(212, 175, 55, 0.45);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      border-color: rgba(212, 175, 55, 0.55);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7);
     }
 
     .img-frame {
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85), inset 0 0 20px rgba(212, 175, 55, 0.12);
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
 
   <!-- Top Navigation Header -->
-  <header class="w-full border-b border-amber-900/30 bg-slate-950/90 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-50">
+  <header class="w-full border-b border-amber-900/30 bg-slate-950/95 backdrop-blur-md px-8 py-4 flex items-center justify-between sticky top-0 z-50">
     <div class="flex items-center space-x-3">
-      <div class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></div>
-      <span class="font-cinzel tracking-widest text-amber-300 font-bold text-lg">RESONANCE</span>
-      <span class="text-xs px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30 text-amber-200 hidden sm:inline">Unity HDRP Project</span>
+      <div class="w-3.5 h-3.5 rounded-full bg-amber-400 animate-pulse"></div>
+      <span class="font-cinzel tracking-widest text-amber-300 font-bold text-xl">RESONANCE</span>
+      <span class="text-xs px-2.5 py-1 rounded bg-amber-950/70 border border-amber-500/30 text-amber-200 hidden sm:inline">Unity HDRP Project</span>
     </div>
     
     <!-- Slide Progress Tabs -->
-    <nav class="flex items-center space-x-1.5 text-xs overflow-x-auto py-1">
-      <button onclick="goToSlide(0)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">00. 표지</button>
-      <button onclick="goToSlide(1)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">01. 목차</button>
-      <button onclick="goToSlide(2)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">02. 제목 & 메시지</button>
-      <button onclick="goToSlide(3)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">03. 게임 소개</button>
-      <button onclick="goToSlide(4)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">04. 모티브 게임</button>
-      <button onclick="goToSlide(5)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">05. 활용된 AI</button>
-      <button onclick="goToSlide(6)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">06. 트러블슈팅</button>
-      <button onclick="goToSlide(7)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">07. 진행상황 & 영상</button>
+    <nav class="flex items-center space-x-2 text-xs md:text-sm overflow-x-auto py-1">
+      <button onclick="goToSlide(0)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">00. 표지</button>
+      <button onclick="goToSlide(1)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">01. 목차</button>
+      <button onclick="goToSlide(2)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">02. 제목 & 메시지</button>
+      <button onclick="goToSlide(3)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">03. 게임 소개</button>
+      <button onclick="goToSlide(4)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">04. 모티브 게임</button>
+      <button onclick="goToSlide(5)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">05. 활용된 AI</button>
+      <button onclick="goToSlide(6)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">06. 이상현상 기획</button>
+      <button onclick="goToSlide(7)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">07. 트러블슈팅</button>
+      <button onclick="goToSlide(8)" class="nav-tab px-3 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">08. 진행상황 & 영상</button>
     </nav>
 
     <!-- Slide Counter -->
-    <div class="text-slate-400 text-xs font-mono pl-4 shrink-0">
-      <span id="currentSlideNum" class="text-amber-400 font-bold text-sm">1</span> / <span id="totalSlideNum">8</span>
+    <div class="text-slate-400 text-sm font-mono pl-4 shrink-0">
+      <span id="currentSlideNum" class="text-amber-400 font-bold text-base">1</span> / <span id="totalSlideNum">9</span>
     </div>
   </header>
 
-  <!-- Main Presentation Slide Container -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-5 md:p-8 flex items-center justify-center">
+  <!-- Main Presentation Slide Container (Widened to max-w-7xl) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 flex items-center justify-center">
 
-    <!-- ==================== SLIDE 0: TITLE COVER ==================== -->
-    <section class="slide active flex-col items-center justify-center text-center space-y-6 py-10 w-full">
+    <!-- ==================== SLIDE 0: TITLE COVER (Original Size Preserved) ==================== -->
+    <section class="slide active flex-col items-center justify-center text-center space-y-6 py-12 w-full">
       <div class="inline-block px-4 py-1 rounded-full border border-amber-500/40 bg-amber-950/30 text-amber-300 text-sm font-medium tracking-wide uppercase">
         Design & Development Presentation
       </div>
@@ -116,100 +117,100 @@
       </div>
     </section>
 
-    <!-- ==================== SLIDE 1: TABLE OF CONTENTS ==================== -->
+    <!-- ==================== SLIDE 1: TABLE OF CONTENTS (Scaled Up) ==================== -->
     <section class="slide flex-col justify-center w-full space-y-6">
-      <div class="border-b border-slate-800 pb-3">
-        <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">01. Overview</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">Table of Contents (목차)</h2>
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">01. Overview</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">Table of Contents (목차)</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-        <div onclick="goToSlide(2)" class="card-glass p-4 rounded-xl cursor-pointer transition-all flex items-start space-x-3.5">
-          <div class="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center font-bold text-amber-300 font-mono shrink-0">01</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div onclick="goToSlide(2)" class="card-glass p-5 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
+          <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center font-bold text-amber-300 text-lg font-mono shrink-0">01</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">제목의 의미 & 바이스만 갤러리 메시지</h3>
-            <p class="text-xs text-slate-400 mt-0.5">뇌파 신경망 공명과 기술 문명에 던지는 철학적 질문</p>
+            <h3 class="text-lg font-semibold text-slate-100">제목의 의미 & 바이스만 갤러리 메시지</h3>
+            <p class="text-sm text-slate-400 mt-1">뇌파 신경망 공명과 현대 기술 문명에 던지는 철학적 질문</p>
           </div>
         </div>
 
-        <div onclick="goToSlide(3)" class="card-glass p-4 rounded-xl cursor-pointer transition-all flex items-start space-x-3.5">
-          <div class="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center font-bold text-blue-300 font-mono shrink-0">02</div>
+        <div onclick="goToSlide(3)" class="card-glass p-5 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
+          <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center font-bold text-blue-300 text-lg font-mono shrink-0">02</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">게임 소개 (Game Concept & Mechanics)</h3>
-            <p class="text-xs text-slate-400 mt-0.5">10층 타워, 8번 출구 하강 룰, 3송이 장미 라이프 시스템</p>
+            <h3 class="text-lg font-semibold text-slate-100">게임 소개 (Game Concept & Mechanics)</h3>
+            <p class="text-sm text-slate-400 mt-1">10층 타워 구조, 8번 출구 하강 룰, 3송이 장미 라이프 시스템</p>
           </div>
         </div>
 
-        <div onclick="goToSlide(4)" class="card-glass p-4 rounded-xl cursor-pointer transition-all flex items-start space-x-3.5">
-          <div class="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center font-bold text-rose-300 font-mono shrink-0">03</div>
+        <div onclick="goToSlide(4)" class="card-glass p-5 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
+          <div class="w-11 h-11 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center font-bold text-rose-300 text-lg font-mono shrink-0">03</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">모티브 및 레퍼런스 (Inspirations)</h3>
-            <p class="text-xs text-slate-400 mt-0.5">8번 출구(The Exit 8) + Ib(이브 - 게르테나 미술관)</p>
+            <h3 class="text-lg font-semibold text-slate-100">모티브 및 레퍼런스 (Inspirations)</h3>
+            <p class="text-sm text-slate-400 mt-1">8번 출구(The Exit 8) + Ib(이브 - 게르테나 미술관) 비교 분석</p>
           </div>
         </div>
 
-        <div onclick="goToSlide(5)" class="card-glass p-4 rounded-xl cursor-pointer transition-all flex items-start space-x-3.5">
-          <div class="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center font-bold text-purple-300 font-mono shrink-0">04</div>
+        <div onclick="goToSlide(5)" class="card-glass p-5 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
+          <div class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center font-bold text-purple-300 text-lg font-mono shrink-0">04</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">활용된 AI 기술 (AI Pipeline)</h3>
-            <p class="text-xs text-slate-400 mt-0.5">미드저니(액자 그림) + Meshy(3D 조각) + Gemini/Antigravity</p>
+            <h3 class="text-lg font-semibold text-slate-100">활용된 AI 기술 (AI Pipeline)</h3>
+            <p class="text-sm text-slate-400 mt-1">미드저니 / 구글 Labs(2D) + Meshy(3D) + Gemini/Antigravity</p>
           </div>
         </div>
 
-        <div onclick="goToSlide(6)" class="card-glass p-4 rounded-xl cursor-pointer transition-all flex items-start space-x-3.5">
-          <div class="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center font-bold text-red-300 font-mono shrink-0">05</div>
+        <div onclick="goToSlide(6)" class="card-glass p-5 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
+          <div class="w-11 h-11 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center font-bold text-orange-300 text-lg font-mono shrink-0">05</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">트러블슈팅 & 디자이너 개발불가 가이드</h3>
-            <p class="text-xs text-slate-400 mt-0.5">실제 발생 에러 화면 & 성능/시스템 한계 주의사항</p>
+            <h3 class="text-lg font-semibold text-slate-100">이상현상 기획 & 아트/사운드 디렉팅</h3>
+            <p class="text-sm text-slate-400 mt-1">층별 이상현상 카탈로그 & 3000 lux 조명 및 딥블루 밤 연출 가이드</p>
           </div>
         </div>
 
-        <div onclick="goToSlide(7)" class="card-glass p-4 rounded-xl cursor-pointer transition-all flex items-start space-x-3.5">
-          <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-bold text-emerald-300 font-mono shrink-0">06</div>
+        <div onclick="goToSlide(7)" class="card-glass p-5 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
+          <div class="w-11 h-11 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center font-bold text-red-300 text-lg font-mono shrink-0">06</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">개발 진행상황 & 플레이 영상 데모</h3>
-            <p class="text-xs text-slate-400 mt-0.5">100% 구현 완료 내역 및 YouTube 시연 영상</p>
+            <h3 class="text-lg font-semibold text-slate-100">트러블슈팅 & 디자이너 개발불가 가이드</h3>
+            <p class="text-sm text-slate-400 mt-1">실제 발생 에러 화면 & 성능/시스템 한계 주의사항</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== SLIDE 2: MEANING OF TITLE & MESSAGE ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-5">
-      <div class="border-b border-slate-800 pb-3">
-        <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">02. Meaning of Title & Concept</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">제목의 의미: RESONANCE & 바이스만 갤러리</h2>
+    <!-- ==================== SLIDE 2: MEANING OF TITLE & MESSAGE (Scaled Up) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">02. Meaning of Title & Concept</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">제목의 의미: RESONANCE & 바이스만 갤러리</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
         <!-- Left: Text Explanations -->
-        <div class="md:col-span-6 space-y-3.5 text-sm leading-relaxed">
-          <div class="p-3.5 rounded-xl card-glass border-amber-500/30">
-            <h3 class="text-sm font-bold text-amber-300 flex items-center space-x-2 mb-1">
+        <div class="md:col-span-6 space-y-4 text-base leading-relaxed">
+          <div class="p-5 rounded-2xl card-glass border-amber-500/30">
+            <h3 class="text-lg font-bold text-amber-300 flex items-center space-x-2 mb-1.5">
               <span>🔮</span>
               <span>1. RESONANCE (공명)</span>
             </h3>
-            <p class="text-xs text-slate-300">
-              인간의 뇌파와 예술 작품이 서로 진동하며 하나로 연결되는 초현실 현상. 10층의 거대 하모닉 링에 닿는 순간, 미술관 전체가 현실과 단절된 <b>푸른 밤의 무한 루프 공간</b>으로 왜곡됩니다.
+            <p class="text-sm text-slate-300 leading-relaxed">
+              인간의 뇌파와 예술 작품이 서로 진동하며 하나로 동조되는 초현실 현상. 10층의 거대 하모닉 링에 닿는 순간, 미술관 전체가 현실과 단절된 <b>푸른 밤의 무한 루프 공간</b>으로 왜곡됩니다.
             </p>
           </div>
 
-          <div class="p-3.5 rounded-xl card-glass border-blue-500/30">
-            <h3 class="text-sm font-bold text-blue-300 flex items-center space-x-2 mb-1">
+          <div class="p-5 rounded-2xl card-glass border-blue-500/30">
+            <h3 class="text-lg font-bold text-blue-300 flex items-center space-x-2 mb-1.5">
               <span>🏛️</span>
               <span>2. 바이스만 갤러리 (Weismann Gallery)</span>
             </h3>
-            <p class="text-xs text-slate-300">
+            <p class="text-sm text-slate-300 leading-relaxed">
               천재 예술가이자 뇌과학자 <b>칼 바이스만(Carl Weismann)</b>이 자신의 신경망과 영혼을 복제하여 담아낸 살아 숨 쉬는 거대 디지털 아트 갤러리.
             </p>
           </div>
 
-          <div class="p-3.5 rounded-xl card-glass border-rose-500/30">
-            <h3 class="text-sm font-bold text-rose-300 flex items-center space-x-2 mb-1">
+          <div class="p-5 rounded-2xl card-glass border-rose-500/30">
+            <h3 class="text-lg font-bold text-rose-300 flex items-center space-x-2 mb-1.5">
               <span>⚠️</span>
               <span>3. 시대에 던지는 메시지</span>
             </h3>
-            <p class="text-xs text-slate-300">
+            <p class="text-sm text-slate-300 leading-relaxed">
               <b>"AI와 신경과학이 인간의 영혼과 고유한 예술의 영역까지 복제하려는 현대 기술 문명에 대한 의문과 경고."</b>
             </p>
           </div>
@@ -217,57 +218,57 @@
 
         <!-- Right: Generated Image (Weismann Resonance Monument) -->
         <div class="md:col-span-6 flex flex-col items-center">
-          <div class="img-frame rounded-xl overflow-hidden w-full bg-slate-950">
-            <img src="weismann_resonance_monument.jpg" alt="Weismann Resonance Monument" class="w-full h-64 md:h-80 object-cover hover:scale-105 transition-all duration-500">
+          <div class="img-frame rounded-2xl overflow-hidden w-full bg-slate-950">
+            <img src="weismann_resonance_monument.jpg" alt="Weismann Resonance Monument" class="w-full h-80 md:h-96 object-cover hover:scale-105 transition-all duration-500">
           </div>
-          <span class="text-[11px] text-amber-300/70 mt-2 font-mono">▲ 10층 바이스만 공명 조형물 (Harmonic Resonance Rings)</span>
+          <span class="text-xs text-amber-300/80 mt-2.5 font-mono">▲ 10층 바이스만 공명 조형물 (Harmonic Resonance Rings)</span>
         </div>
       </div>
     </section>
 
-    <!-- ==================== SLIDE 3: GAME CONCEPT & MECHANICS ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-5">
-      <div class="border-b border-slate-800 pb-3">
-        <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">03. Game Overview</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">어떤 게임인가? (Core Gameplay)</h2>
+    <!-- ==================== SLIDE 3: GAME CONCEPT & MECHANICS (Scaled Up) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">03. Game Overview</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">어떤 게임인가? (Core Gameplay)</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
         <!-- Left: Generated Image (Lina Exploring Museum) -->
         <div class="md:col-span-6 flex flex-col items-center">
-          <div class="img-frame rounded-xl overflow-hidden w-full bg-slate-950">
-            <img src="lina_museum_exploration.jpg" alt="Lina exploring art museum with teddy bear" class="w-full h-64 md:h-80 object-cover hover:scale-105 transition-all duration-500">
+          <div class="img-frame rounded-2xl overflow-hidden w-full bg-slate-950">
+            <img src="lina_museum_exploration.jpg" alt="Lina exploring art museum with teddy bear" class="w-full h-80 md:h-96 object-cover hover:scale-105 transition-all duration-500">
           </div>
-          <span class="text-[11px] text-blue-300/70 mt-2 font-mono">▲ 어두운 미술관에서 곰인형을 안고 이상현상을 탐색하는 소녀 리나</span>
+          <span class="text-xs text-blue-300/80 mt-2.5 font-mono">▲ 어두운 미술관에서 곰인형을 안고 이상현상을 탐색하는 소녀 리나</span>
         </div>
 
         <!-- Right: Mechanics Explanation -->
-        <div class="md:col-span-6 space-y-3.5 text-sm">
-          <div class="card-glass p-4 rounded-xl space-y-2">
-            <h3 class="text-sm font-bold text-amber-300 flex items-center space-x-2">
+        <div class="md:col-span-6 space-y-4 text-base">
+          <div class="card-glass p-5 rounded-2xl space-y-2">
+            <h3 class="text-base font-bold text-amber-300 flex items-center space-x-2">
               <span>🗼</span>
               <span>10층 수직 미술관 타워 루프 탈출</span>
             </h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              부모님과 방문한 평화로운 낮 ➔ 10층 공명 컷씬 후 푸른 밤으로 전환 ➔ 10층에서 1층 정문까지 계단을 내려가며 탈출하는 1인칭 심리 공포.
+            <p class="text-sm text-slate-300 leading-relaxed">
+              부모님과 방문한 평화로운 낮 ➔ 10층 공명 컷씬 후 푸른 밤으로 전환 ➔ 10층에서 1층 정문까지 계단을 내려가며 탈출하는 1인칭 심리 공포 어드벤처.
             </p>
           </div>
 
-          <div class="card-glass p-4 rounded-xl space-y-2 border-emerald-500/30">
-            <h3 class="text-sm font-bold text-emerald-300 flex items-center space-x-2">
+          <div class="card-glass p-5 rounded-2xl space-y-2.5 border-emerald-500/30">
+            <h3 class="text-base font-bold text-emerald-300 flex items-center space-x-2">
               <span>🚪</span>
               <span>정밀 8번 출구 탐색 룰</span>
             </h3>
-            <ul class="text-xs text-slate-300 space-y-1.5">
+            <ul class="text-sm text-slate-300 space-y-2">
               <li><b>✅ 이상현상 없음 (정상):</b> 텔레포트 없이 계단을 걸어서 아래층으로 자연스럽게 하강!</li>
               <li><b>⚠️ 이상현상 발견:</b> 왔던 계단 쪽으로 유턴하여 복도를 나가면 다음 층으로 전진!</li>
               <li><b>❌ 오답 선택 시:</b> 장미 1송이 차감 후 해당 층 시작 체크포인트로 루프!</li>
             </ul>
           </div>
 
-          <div class="card-glass p-4 rounded-xl border-rose-500/30 flex items-center space-x-3">
-            <div class="text-2xl">🌹</div>
-            <div class="text-xs text-slate-300">
+          <div class="card-glass p-4 rounded-2xl border-rose-500/30 flex items-center space-x-3.5">
+            <div class="text-3xl">🌹</div>
+            <div class="text-sm text-slate-300 leading-relaxed">
               <b class="text-rose-400">장미 3송이 라이프 HUD:</b> 3번의 오판 시 영혼이 소진되어 1층 부모님 앞으로 완전 리셋.
             </div>
           </div>
@@ -275,47 +276,47 @@
       </div>
     </section>
 
-    <!-- ==================== SLIDE 4: INSPIRATIONS ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-5">
-      <div class="border-b border-slate-800 pb-3">
-        <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">04. Inspirations & References</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">참고 및 모티브가 된 명작 게임</h2>
+    <!-- ==================== SLIDE 4: INSPIRATIONS (Scaled Up) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">04. Inspirations & References</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">참고 및 모티브가 된 명작 게임</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- 8번 출구 -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-amber-500/30 flex flex-col justify-between">
-          <div class="space-y-3">
+        <div class="card-glass p-6 rounded-2xl space-y-4 border-amber-500/30 flex flex-col justify-between">
+          <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg font-bold text-amber-300 font-cinzel">The Exit 8 (8번 출구)</h3>
-              <span class="text-xs px-2 py-0.5 rounded bg-amber-950 border border-amber-500/40 text-amber-200">심리 추리 메커니즘</span>
+              <h3 class="text-xl font-bold text-amber-300 font-cinzel">The Exit 8 (8번 출구)</h3>
+              <span class="text-xs px-3 py-1 rounded-full bg-amber-950 border border-amber-500/40 text-amber-200">심리 추리 메커니즘</span>
             </div>
             
             <!-- Steam Official Key Art -->
-            <div class="img-frame rounded-lg overflow-hidden h-40 bg-slate-950">
+            <div class="img-frame rounded-xl overflow-hidden h-48 bg-slate-950">
               <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2653790/header.jpg" alt="The Exit 8 Official Header" class="w-full h-full object-cover hover:scale-105 transition-all duration-300">
             </div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-sm text-slate-300 leading-relaxed">
               미세한 <b>이상현상(Anomaly)</b>을 찾아내 전진/유턴을 선택하는 심리적 긴장감을 10층 미술관 환경에 이식하여 한층 더 풍부한 3D 탐색 재미를 제공합니다.
             </p>
           </div>
         </div>
 
         <!-- Ib -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-rose-500/30 flex flex-col justify-between">
-          <div class="space-y-3">
+        <div class="card-glass p-6 rounded-2xl space-y-4 border-rose-500/30 flex flex-col justify-between">
+          <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg font-bold text-rose-300 font-cinzel">Ib (이브 - 게르테나 미술관)</h3>
-              <span class="text-xs px-2 py-0.5 rounded bg-rose-950 border border-rose-500/40 text-rose-200">예술 서사 & 분위기</span>
+              <h3 class="text-xl font-bold text-rose-300 font-cinzel">Ib (이브 - 게르테나 미술관)</h3>
+              <span class="text-xs px-3 py-1 rounded-full bg-rose-950 border border-rose-500/40 text-rose-200">예술 서사 & 분위기</span>
             </div>
             
             <!-- Steam Official Key Art -->
-            <div class="img-frame rounded-lg overflow-hidden h-40 bg-slate-950">
+            <div class="img-frame rounded-xl overflow-hidden h-48 bg-slate-950">
               <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1901370/header.jpg" alt="Ib Official Header" class="w-full h-full object-cover hover:scale-105 transition-all duration-300">
             </div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-sm text-slate-300 leading-relaxed">
               살아 움직이는 액자, 피 흘리는 초상화, 말하는 조각상 및 <b>붉은 장미 라이프 시스템</b> 등 예술품과의 초현실적 교감을 3D HDRP 그래픽으로 현대화했습니다.
             </p>
           </div>
@@ -323,45 +324,45 @@
       </div>
     </section>
 
-    <!-- ==================== SLIDE 5: AI IN DEVELOPMENT ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-5">
-      <div class="border-b border-slate-800 pb-3">
-        <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">05. AI Technology & Pipeline</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">개발에 활용된 AI 기술 및 파이프라인</h2>
+    <!-- ==================== SLIDE 5: AI IN DEVELOPMENT (Scaled Up) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">05. AI Technology & Pipeline</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">개발에 활용된 AI 기술 및 파이프라인</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Midjourney & Google Labs -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-blue-500/40">
+        <div class="card-glass p-6 rounded-2xl space-y-3.5 border-blue-500/40">
           <div class="flex items-center justify-between">
-            <span class="text-2xl">🎨</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-blue-950 border border-blue-500/40 text-blue-200">2D Artwork AI</span>
+            <span class="text-3xl">🎨</span>
+            <span class="text-xs px-2.5 py-1 rounded bg-blue-950 border border-blue-500/40 text-blue-200 font-medium">2D Artwork AI</span>
           </div>
           <div>
-            <h3 class="text-base font-bold text-blue-300">미드저니 (Midjourney)</h3>
-            <h4 class="text-xs font-semibold text-blue-200/90 mt-0.5">구글 Labs (Google Labs / ImageFX)</h4>
+            <h3 class="text-lg font-bold text-blue-300">미드저니 (Midjourney)</h3>
+            <h4 class="text-xs font-semibold text-blue-200/90 mt-0.5">& 구글 Labs (Google Labs / ImageFX)</h4>
           </div>
-          <p class="text-xs text-slate-300 leading-relaxed">
+          <p class="text-xs text-slate-300 leading-relaxed font-medium">
             <b>벽면에 걸려있는 모든 명화 및 이상현상 그림 제작에 활용 예정</b>
           </p>
-          <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
-            <li>고전 유화 풍의 클래식 명화 텍스처</li>
+          <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+            <li>고전 유화 풍의 클래식 명화 텍스처 생성</li>
             <li>시선이 따라오는 눈동자, 피 흘리는 변형 아트</li>
             <li>밤 전환 시 섬뜩한 가이드 텍스트 그림</li>
           </ul>
         </div>
 
         <!-- Meshy AI -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-purple-500/40">
+        <div class="card-glass p-6 rounded-2xl space-y-3.5 border-purple-500/40">
           <div class="flex items-center justify-between">
-            <span class="text-2xl">🗿</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-purple-950 border border-purple-500/40 text-purple-200">3D Generative AI</span>
+            <span class="text-3xl">🗿</span>
+            <span class="text-xs px-2.5 py-1 rounded bg-purple-950 border border-purple-500/40 text-purple-200 font-medium">3D Generative AI</span>
           </div>
-          <h3 class="text-base font-bold text-purple-300">매쉬 AI (Meshy AI)</h3>
-          <p class="text-xs text-slate-300 leading-relaxed">
+          <h3 class="text-lg font-bold text-purple-300">매쉬 AI (Meshy AI)</h3>
+          <p class="text-xs text-slate-300 leading-relaxed font-medium">
             <b>미술관 내 예술 작품 3D 모델링 제작에 활용 예정</b>
           </p>
-          <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+          <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
             <li>회전하는 사색하는 흉상 조각상 모델링</li>
             <li>유리 화병 속 붉은 장미 & 시든 꽃잎</li>
             <li>황동 하모닉 링 및 앤틱 가구 오브젝트</li>
@@ -369,16 +370,16 @@
         </div>
 
         <!-- Google Gemini / Antigravity -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-amber-500/40">
+        <div class="card-glass p-6 rounded-2xl space-y-3.5 border-amber-500/40">
           <div class="flex items-center justify-between">
-            <span class="text-2xl">🤖</span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-amber-950 border border-amber-500/40 text-amber-200">System & Engine AI</span>
+            <span class="text-3xl">🤖</span>
+            <span class="text-xs px-2.5 py-1 rounded bg-amber-950 border border-amber-500/40 text-amber-200 font-medium">System & Engine AI</span>
           </div>
-          <h3 class="text-base font-bold text-amber-300">Gemini & Antigravity</h3>
-          <p class="text-xs text-slate-300 leading-relaxed">
+          <h3 class="text-lg font-bold text-amber-300">Gemini & Antigravity</h3>
+          <p class="text-xs text-slate-300 leading-relaxed font-medium">
             <b>Unity C# 게임플레이 아키텍처 및 에디터 툴 자동화</b>
           </p>
-          <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+          <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
             <li>10층 건축 & 게임로직 유틸리티 분리</li>
             <li>정밀 8번 출구 Y축 분리 트리거 시스템</li>
             <li>HDRP 3000 lux 픽처 조명 및 딥 블루 밤하늘</li>
@@ -387,69 +388,130 @@
       </div>
     </section>
 
-    <!-- ==================== SLIDE 6: TROUBLESHOOTING & DESIGNER NOTICE ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-5">
-      <div class="border-b border-slate-800 pb-3">
-        <span class="text-xs uppercase tracking-widest text-red-400 font-mono">06. Troubleshooting & Designer Guidelines</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">트러블슈팅 & 디자이너 개발불가 가이드</h2>
+    <!-- ==================== SLIDE 6: ANOMALY DESIGN & MOODBOARD (NEW!) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-orange-400 font-mono">06. Anomaly Catalog & Art Direction</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">이상현상 카탈로그 & 아트/사운드 디렉팅</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Left: Anomaly Catalog -->
+        <div class="card-glass p-6 rounded-2xl space-y-3.5 border-orange-500/30">
+          <h3 class="text-base font-bold text-orange-300 flex items-center space-x-2">
+            <span>👻</span>
+            <span>층별 대표 이상현상 (Anomaly Catalog)</span>
+          </h3>
+          <div class="space-y-2 text-xs text-slate-300">
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start justify-between">
+              <div>
+                <b class="text-amber-300 text-sm">1. Bleeding Painting (피 흘리는 초상화)</b>
+                <p class="text-slate-400 mt-0.5">초상화 속 여인의 눈과 입에서 붉은 피가 흘러내림</p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 text-[11px] border border-amber-500/30">Visual Anomaly</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start justify-between">
+              <div>
+                <b class="text-blue-300 text-sm">2. Rotating Statue (회전하는 흉상)</b>
+                <p class="text-slate-400 mt-0.5">석고 흉상의 고개가 플레이어의 시선 방향으로 돌아감</p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 text-[11px] border border-blue-500/30">Kinetic Anomaly</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start justify-between">
+              <div>
+                <b class="text-rose-300 text-sm">3. Withered Rose (시든 장미)</b>
+                <p class="text-slate-400 mt-0.5">유리 화병 속 장미가 검게 시들고 바닥에 꽃잎이 흩뿌려짐</p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 text-[11px] border border-rose-500/30">Environmental</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Lighting & Audio Moodboard -->
+        <div class="card-glass p-6 rounded-2xl space-y-3.5 border-blue-500/30">
+          <h3 class="text-base font-bold text-blue-300 flex items-center space-x-2">
+            <span>🎧</span>
+            <span>아트 & 오디오 디렉팅 가이드</span>
+          </h3>
+          <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 space-y-1">
+              <b class="text-amber-300 text-sm">💡 HDRP 조명 톤앤매너</b>
+              <p class="text-slate-300">• 낮: 따뜻한 갤러리 웜 화이트 (`10000 lux` 태양광, 베이지 톤 바닥)</p>
+              <p class="text-slate-300">• 밤: 딥 블루 밤하늘 (`9814.8 lux`, 각도 `-3.5°`) + 작품 핀조명 (`3000 lux` 고정 대비)</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 space-y-1">
+              <b class="text-blue-300 text-sm">🔊 심리적 몰입 사운드</b>
+              <p class="text-slate-300">• 발걸음 소리: 텅 빈 갤러리 속 고요함을 깨우는 묵직한 마룻바닥 스텝</p>
+              <p class="text-slate-300">• 이상현상 BGM: 10층 하모닉 링의 저주파 진동음 및 불규칙 심장 박동음</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 7: TROUBLESHOOTING & DESIGNER NOTICE (Scaled Up) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-red-400 font-mono">07. Troubleshooting & Designer Guidelines</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">트러블슈팅 & 디자이너 개발불가 가이드</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <!-- Left: Solved Troubleshooting with Real Screenshots -->
-        <div class="md:col-span-7 card-glass p-4 rounded-xl space-y-3 border-emerald-500/30">
-          <h3 class="text-sm font-bold text-emerald-300 flex items-center space-x-2">
+        <div class="md:col-span-7 card-glass p-5 rounded-2xl space-y-4 border-emerald-500/30">
+          <h3 class="text-base font-bold text-emerald-300 flex items-center space-x-2">
             <span>🛠️</span>
             <span>실제 발생했던 에러 화면 & 해결 사례</span>
           </h3>
 
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <!-- Screen 1: Pink Missing Material -->
-            <div class="space-y-1.5">
-              <div class="img-frame rounded-lg overflow-hidden h-28 bg-slate-950">
+            <div class="space-y-2">
+              <div class="img-frame rounded-xl overflow-hidden h-36 bg-slate-950">
                 <img src="troubleshoot_pink_missing.png" alt="Missing Shader Pink Issue" class="w-full h-full object-cover">
               </div>
-              <div class="p-2 rounded bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 leading-tight">
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 leading-tight">
                 <b class="text-rose-400">사례 1. 핑크색 셰이더 미싱</b><br>
                 런타임 머티리얼 인스턴스 소실 ➔ <b>sharedMaterial 에디터 캐싱</b>으로 해결.
               </div>
             </div>
 
             <!-- Screen 2: Day Text Exposure -->
-            <div class="space-y-1.5">
-              <div class="img-frame rounded-lg overflow-hidden h-28 bg-slate-950">
+            <div class="space-y-2">
+              <div class="img-frame rounded-xl overflow-hidden h-36 bg-slate-950">
                 <img src="troubleshoot_text_exposure.png" alt="Day Text Exposure Issue" class="w-full h-full object-cover">
               </div>
-              <div class="p-2 rounded bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 leading-tight">
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 leading-tight">
                 <b class="text-amber-400">사례 2. 낮 시간 텍스트 노출</b><br>
                 건축 빌드 시 텍스트 하드코딩 ➔ <b>낮/밤 명화 자동 스왑 시스템</b>으로 해결.
               </div>
             </div>
           </div>
 
-          <div class="p-2 rounded bg-slate-900/60 border border-slate-800 text-[11px] text-slate-300">
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 leading-relaxed">
             <b class="text-emerald-400">사례 3. 층간 Y축 간섭 및 텔레포트 꼬임:</b> 계단 착지 지점과 다음 층 입구의 Y축이 겹쳐 오작동 ➔ <b>Y축 차이 2.5m 제한 및 모퉁이 층감지 트리거</b>로 완전 차단.
           </div>
         </div>
 
         <!-- Right: Designer Forbidden Notice (이건 안 돼!) -->
-        <div class="md:col-span-5 card-glass p-4 rounded-xl space-y-3 border-red-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-red-950/20 flex flex-col justify-between">
+        <div class="md:col-span-5 card-glass p-5 rounded-2xl space-y-4 border-red-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-red-950/20 flex flex-col justify-between">
           <div>
-            <h3 class="text-sm font-bold text-red-400 flex items-center space-x-2 mb-2">
+            <h3 class="text-base font-bold text-red-400 flex items-center space-x-2 mb-3">
               <span>🚫</span>
               <span>디자이너 전달: "이런 방향은 개발 불가!"</span>
             </h3>
             
-            <div class="space-y-2 text-[11.5px] text-slate-300">
-              <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
-                <b class="text-red-300">❌ 과도한 하이폴리곤 3D 메쉬 남발 불가</b><br>
+            <div class="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+              <div class="p-3 rounded-xl bg-red-950/40 border border-red-500/30">
+                <b class="text-red-300 text-sm">❌ 과도한 하이폴리곤 3D 메쉬 남발 불가</b><br>
                 10개 층이 한 씬에 공존하므로 드로우콜 폭증으로 렉 발생 ➔ <b>Meshy 모델링은 로우~미드폴리 및 LOD 필수.</b>
               </div>
-              <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
-                <b class="text-red-300">❌ 실시간 그림자(Shadow) 조명 임의 추가 불가</b><br>
+              <div class="p-3 rounded-xl bg-red-950/40 border border-red-500/30">
+                <b class="text-red-300 text-sm">❌ 실시간 그림자(Shadow) 조명 임의 추가 불가</b><br>
                 HDRP 성능 급감 ➔ <b>그림 정면 핀조명 3000 lux 단일 규격 엄수.</b>
               </div>
-              <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
-                <b class="text-red-300">❌ 층간 계단 및 복도 좌표 규격 임의 변경 불가</b><br>
+              <div class="p-3 rounded-xl bg-red-950/40 border border-red-500/30">
+                <b class="text-red-300 text-sm">❌ 층간 계단 및 복도 좌표 규격 임의 변경 불가</b><br>
                 8번 출구 체크포인트 시스템 붕괴 ➔ <b>정해진 층고(7.0m) 유지.</b>
               </div>
             </div>
@@ -458,62 +520,62 @@
       </div>
     </section>
 
-    <!-- ==================== SLIDE 7: PROGRESS & VIDEO ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-5">
-      <div class="border-b border-slate-800 pb-3">
-        <span class="text-xs uppercase tracking-widest text-amber-400 font-mono">07. Current Progress & Showcase</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">진행 상황 & 플레이 시연 영상</h2>
+    <!-- ==================== SLIDE 8: PROGRESS & VIDEO (Scaled Up) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">08. Current Progress & Showcase</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">진행 상황 & 플레이 시연 영상</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Progress Checklist -->
-        <div class="card-glass p-5 rounded-xl space-y-3">
+        <div class="card-glass p-6 rounded-2xl space-y-3.5">
           <h3 class="text-base font-bold text-emerald-300 flex items-center space-x-2">
             <span>✅</span>
             <span>구현 완료 핵심 시스템</span>
           </h3>
-          <div class="space-y-2 text-xs text-slate-300">
-            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800">
-              <span>10개 층 완벽 분리 건축 & 통유리 볼트 천창</span>
-              <span class="text-emerald-400 font-bold">100%</span>
+          <div class="space-y-2.5 text-xs text-slate-300">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-sm">10개 층 완벽 분리 건축 & 통유리 볼트 천창</span>
+              <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800">
-              <span>낮(관람객/명화) ➔ 밤(소멸/경고문) 환경 전환</span>
-              <span class="text-emerald-400 font-bold">100%</span>
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-sm">낮(관람객/명화) ➔ 밤(소멸/경고문) 환경 전환</span>
+              <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800">
-              <span>모퉁이 감지 층입장 & 8번 출구 이상현상 판별</span>
-              <span class="text-emerald-400 font-bold">100%</span>
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-sm">모퉁이 감지 층입장 & 8번 출구 이상현상 판별</span>
+              <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800">
-              <span>장미 3송이 라이프 HUD & 1층 부모님 엔딩 시퀀스</span>
-              <span class="text-emerald-400 font-bold">100%</span>
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-sm">장미 3송이 라이프 HUD & 1층 부모님 엔딩 시퀀스</span>
+              <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
-            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800">
-              <span>HDRP 3000 lux 픽처 조명 & 딥 블루 밤하늘</span>
-              <span class="text-emerald-400 font-bold">100%</span>
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-sm">HDRP 3000 lux 픽처 조명 & 딥 블루 밤하늘</span>
+              <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
           </div>
         </div>
 
         <!-- YouTube Video Link Card -->
-        <div class="card-glass p-5 rounded-xl flex flex-col justify-between border-red-500/30 bg-gradient-to-br from-slate-950 via-slate-900 to-red-950/20">
-          <div class="space-y-3">
+        <div class="card-glass p-6 rounded-2xl flex flex-col justify-between border-red-500/30 bg-gradient-to-br from-slate-950 via-slate-900 to-red-950/20">
+          <div class="space-y-3.5">
             <div class="flex items-center space-x-2 text-red-400 font-bold text-sm">
-              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              <span>YouTube 플레이 시연 영상</span>
+              <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span class="text-base">YouTube 플레이 시연 영상</span>
             </div>
-            <h3 class="text-base font-bold text-white">RESONANCE 게임플레이 데모</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <h3 class="text-lg font-bold text-white">RESONANCE 게임플레이 데모</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
               1층 프롤로그부터 10층 동상 컷씬, 밤 전환 후 이상현상 판별 및 계단 하강 루프의 실제 구동 영상을 확인하실 수 있습니다.
             </p>
           </div>
 
           <div class="pt-4 mt-4 border-t border-slate-800">
-            <a href="https://www.youtube.com" target="_blank" class="w-full inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-all shadow-lg shadow-red-900/40">
+            <a href="https://www.youtube.com" target="_blank" class="w-full inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-base transition-all shadow-lg shadow-red-900/40">
               <span>▶ YouTube 영상 보러가기</span>
             </a>
-            <p class="text-[11px] text-slate-500 text-center mt-2">※ 링크를 누르면 해당 데모 영상 페이지로 이동합니다.</p>
+            <p class="text-xs text-slate-500 text-center mt-2.5">※ 링크를 누르면 해당 데모 영상 페이지로 이동합니다.</p>
           </div>
         </div>
       </div>
@@ -522,16 +584,16 @@
   </main>
 
   <!-- Bottom Presentation Controls Footer -->
-  <footer class="w-full border-t border-slate-900 bg-slate-950/90 px-6 py-3.5 flex items-center justify-between">
+  <footer class="w-full border-t border-slate-900 bg-slate-950/95 px-8 py-4 flex items-center justify-between">
     <div class="text-xs text-slate-500 font-mono">
-      Use <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">←</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">→</kbd> Arrow Keys or Buttons
+      Use <kbd class="px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700">←</kbd> <kbd class="px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700">→</kbd> Arrow Keys or Buttons
     </div>
 
-    <div class="flex items-center space-x-3">
-      <button onclick="prevSlide()" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm font-medium border border-slate-800 transition-all flex items-center space-x-1.5">
+    <div class="flex items-center space-x-3.5">
+      <button onclick="prevSlide()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm font-medium border border-slate-800 transition-all flex items-center space-x-2">
         <span>◀ 이전</span>
       </button>
-      <button onclick="nextSlide()" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold transition-all shadow-lg shadow-amber-500/20 flex items-center space-x-1.5">
+      <button onclick="nextSlide()" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold transition-all shadow-lg shadow-amber-500/20 flex items-center space-x-2">
         <span>다음 ▶</span>
       </button>
     </div>
@@ -559,10 +621,10 @@
 
       navTabs.forEach((tab, index) => {
         if (index === currentSlide) {
-          tab.classList.add('bg-amber-950/60', 'text-amber-300', 'border-amber-500/40', 'font-bold');
+          tab.classList.add('bg-amber-950/70', 'text-amber-300', 'border-amber-500/40', 'font-bold');
           tab.classList.remove('text-slate-400', 'border-transparent');
         } else {
-          tab.classList.remove('bg-amber-950/60', 'text-amber-300', 'border-amber-500/40', 'font-bold');
+          tab.classList.remove('bg-amber-950/70', 'text-amber-300', 'border-amber-500/40', 'font-bold');
           tab.classList.add('text-slate-400', 'border-transparent');
         }
       });
