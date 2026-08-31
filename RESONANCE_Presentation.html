@@ -39,7 +39,7 @@
     }
 
     .card-glass {
-      background: rgba(15, 23, 42, 0.82);
+      background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(212, 175, 55, 0.2);
     }
@@ -160,7 +160,7 @@
           <div class="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center font-bold text-red-300 font-mono shrink-0">05</div>
           <div>
             <h3 class="text-base font-semibold text-slate-100">트러블슈팅 & 디자이너 개발불가 가이드</h3>
-            <p class="text-xs text-slate-400 mt-0.5">해결한 버그 사례 및 성능/시스템 한계 주의사항</p>
+            <p class="text-xs text-slate-400 mt-0.5">실제 발생 에러 화면 & 성능/시스템 한계 주의사항</p>
           </div>
         </div>
 
@@ -183,9 +183,9 @@
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         <!-- Left: Text Explanations -->
-        <div class="md:col-span-6 space-y-4 text-sm leading-relaxed">
-          <div class="p-4 rounded-xl card-glass border-amber-500/30">
-            <h3 class="text-base font-bold text-amber-300 flex items-center space-x-2 mb-1">
+        <div class="md:col-span-6 space-y-3.5 text-sm leading-relaxed">
+          <div class="p-3.5 rounded-xl card-glass border-amber-500/30">
+            <h3 class="text-sm font-bold text-amber-300 flex items-center space-x-2 mb-1">
               <span>🔮</span>
               <span>1. RESONANCE (공명)</span>
             </h3>
@@ -194,8 +194,8 @@
             </p>
           </div>
 
-          <div class="p-4 rounded-xl card-glass border-blue-500/30">
-            <h3 class="text-base font-bold text-blue-300 flex items-center space-x-2 mb-1">
+          <div class="p-3.5 rounded-xl card-glass border-blue-500/30">
+            <h3 class="text-sm font-bold text-blue-300 flex items-center space-x-2 mb-1">
               <span>🏛️</span>
               <span>2. 바이스만 갤러리 (Weismann Gallery)</span>
             </h3>
@@ -204,8 +204,8 @@
             </p>
           </div>
 
-          <div class="p-4 rounded-xl card-glass border-rose-500/30">
-            <h3 class="text-base font-bold text-rose-300 flex items-center space-x-2 mb-1">
+          <div class="p-3.5 rounded-xl card-glass border-rose-500/30">
+            <h3 class="text-sm font-bold text-rose-300 flex items-center space-x-2 mb-1">
               <span>⚠️</span>
               <span>3. 시대에 던지는 메시지</span>
             </h3>
@@ -284,33 +284,41 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <!-- 8번 출구 -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-amber-500/30">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-bold text-amber-300 font-cinzel">The Exit 8 (8번 출구)</h3>
-            <span class="text-xs px-2 py-0.5 rounded bg-amber-950 border border-amber-500/40 text-amber-200">심리 추리 메커니즘</span>
+        <div class="card-glass p-5 rounded-xl space-y-3 border-amber-500/30 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-bold text-amber-300 font-cinzel">The Exit 8 (8번 출구)</h3>
+              <span class="text-xs px-2 py-0.5 rounded bg-amber-950 border border-amber-500/40 text-amber-200">심리 추리 메커니즘</span>
+            </div>
+            
+            <!-- Steam Official Key Art -->
+            <div class="img-frame rounded-lg overflow-hidden h-40 bg-slate-950">
+              <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2653790/header.jpg" alt="The Exit 8 Official Header" class="w-full h-full object-cover hover:scale-105 transition-all duration-300">
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              미세한 <b>이상현상(Anomaly)</b>을 찾아내 전진/유턴을 선택하는 심리적 긴장감을 10층 미술관 환경에 이식하여 한층 더 풍부한 3D 탐색 재미를 제공합니다.
+            </p>
           </div>
-          <div class="h-32 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 text-xs overflow-hidden relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-            <span class="z-10 text-amber-200/90 font-medium">🚇 무한 반복 지하도 & 이상현상(Anomaly) 관찰 룰</span>
-          </div>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            미세한 이상현상을 찾아내 전진/유턴을 선택하는 심리적 긴장감을 10층 미술관 환경에 이식하여 한층 더 풍부한 탐색 재미를 제공합니다.
-          </p>
         </div>
 
         <!-- Ib -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-rose-500/30">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-bold text-rose-300 font-cinzel">Ib (이브 - 게르테나 미술관)</h3>
-            <span class="text-xs px-2 py-0.5 rounded bg-rose-950 border border-rose-500/40 text-rose-200">예술 서사 & 분위기</span>
+        <div class="card-glass p-5 rounded-xl space-y-3 border-rose-500/30 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-bold text-rose-300 font-cinzel">Ib (이브 - 게르테나 미술관)</h3>
+              <span class="text-xs px-2 py-0.5 rounded bg-rose-950 border border-rose-500/40 text-rose-200">예술 서사 & 분위기</span>
+            </div>
+            
+            <!-- Steam Official Key Art -->
+            <div class="img-frame rounded-lg overflow-hidden h-40 bg-slate-950">
+              <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1901370/header.jpg" alt="Ib Official Header" class="w-full h-full object-cover hover:scale-105 transition-all duration-300">
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              살아 움직이는 액자, 피 흘리는 초상화, 말하는 조각상 및 <b>붉은 장미 라이프 시스템</b> 등 예술품과의 초현실적 교감을 3D HDRP 그래픽으로 현대화했습니다.
+            </p>
           </div>
-          <div class="h-32 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 text-xs overflow-hidden relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-            <span class="z-10 text-rose-200/90 font-medium">🌹 붉은 장미 라이프 & 살아 숨 쉬는 기괴한 예술품</span>
-          </div>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            살아 움직이는 액자, 피 흘리는 초상화, 말하는 조각상 및 장미 라이프 시스템 등 예술품과의 초현실적 교감을 3D HDRP 그래픽으로 현대화했습니다.
-          </p>
         </div>
       </div>
     </section>
@@ -331,7 +339,7 @@
           </div>
           <h3 class="text-base font-bold text-blue-300">미드저니 (Midjourney)</h3>
           <p class="text-xs text-slate-300 leading-relaxed">
-            <b>벽면에 걸려있는 모든 명화 및 이상현상 그림 제작 활용 예정</b>
+            <b>벽면에 걸려있는 모든 명화 및 이상현상 그림 제작에 활용 예정</b>
           </p>
           <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
             <li>고전 유화 풍의 클래식 명화 텍스처</li>
@@ -348,7 +356,7 @@
           </div>
           <h3 class="text-base font-bold text-purple-300">매쉬 AI (Meshy AI)</h3>
           <p class="text-xs text-slate-300 leading-relaxed">
-            <b>미술관 내 예술 작품 3D 모델링 제작 활용 예정</b>
+            <b>미술관 내 예술 작품 3D 모델링 제작에 활용 예정</b>
           </p>
           <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
             <li>회전하는 사색하는 흉상 조각상 모델링</li>
@@ -380,50 +388,67 @@
     <section class="slide flex-col justify-center w-full space-y-5">
       <div class="border-b border-slate-800 pb-3">
         <span class="text-xs uppercase tracking-widest text-red-400 font-mono">06. Troubleshooting & Designer Guidelines</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">트러블슈팅 & 개발 불가 가이드라인</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">트러블슈팅 & 디자이너 개발불가 가이드</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <!-- Left: Solved Troubleshooting -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-emerald-500/30">
-          <h3 class="text-base font-bold text-emerald-300 flex items-center space-x-2">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+        <!-- Left: Solved Troubleshooting with Real Screenshots -->
+        <div class="md:col-span-7 card-glass p-4 rounded-xl space-y-3 border-emerald-500/30">
+          <h3 class="text-sm font-bold text-emerald-300 flex items-center space-x-2">
             <span>🛠️</span>
-            <span>실제 해결한 핵심 트러블슈팅</span>
+            <span>실제 발생했던 에러 화면 & 해결 사례</span>
           </h3>
-          <div class="space-y-2 text-xs text-slate-300">
-            <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
-              <b class="text-emerald-400">1. 층간 Y축 간섭 및 텔레포트 꼬임:</b><br>
-              계단 착지 지점과 다음 층 입구의 Y축이 겹쳐 오작동 ➔ <b>Y축 차이 2.5m 제한 및 모퉁이 층감지 트리거</b>로 완전 차단.
+
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Screen 1: Pink Missing Material -->
+            <div class="space-y-1.5">
+              <div class="img-frame rounded-lg overflow-hidden h-28 bg-slate-950">
+                <img src="troubleshoot_pink_missing.png" alt="Missing Shader Pink Issue" class="w-full h-full object-cover">
+              </div>
+              <div class="p-2 rounded bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 leading-tight">
+                <b class="text-rose-400">사례 1. 핑크색 셰이더 미싱</b><br>
+                런타임 머티리얼 인스턴스 소실 ➔ <b>sharedMaterial 에디터 캐싱</b>으로 해결.
+              </div>
             </div>
-            <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
-              <b class="text-emerald-400">2. 계단 하강 시 강제 텔레포트 위화감:</b><br>
-              정상 층일 때 강제 텔레포트되어 계단으로 되돌아오는 느낌 ➔ <b>정답 시 무텔레포트 자연 보행 하강</b>으로 변경.
+
+            <!-- Screen 2: Day Text Exposure -->
+            <div class="space-y-1.5">
+              <div class="img-frame rounded-lg overflow-hidden h-28 bg-slate-950">
+                <img src="troubleshoot_text_exposure.png" alt="Day Text Exposure Issue" class="w-full h-full object-cover">
+              </div>
+              <div class="p-2 rounded bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 leading-tight">
+                <b class="text-amber-400">사례 2. 낮 시간 텍스트 노출</b><br>
+                건축 빌드 시 텍스트 하드코딩 ➔ <b>낮/밤 명화 자동 스왑 시스템</b>으로 해결.
+              </div>
             </div>
-            <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
-              <b class="text-emerald-400">3. 에디터 머티리얼 미싱 핑크색 이슈:</b><br>
-              런타임 인스턴스 미싱 ➔ <b>sharedMaterial 에디터 즉시 직렬화 및 캐싱</b>으로 해결.
-            </div>
+          </div>
+
+          <div class="p-2 rounded bg-slate-900/60 border border-slate-800 text-[11px] text-slate-300">
+            <b class="text-emerald-400">사례 3. 층간 Y축 간섭 및 텔레포트 꼬임:</b> 계단 착지 지점과 다음 층 입구의 Y축이 겹쳐 오작동 ➔ <b>Y축 차이 2.5m 제한 및 모퉁이 층감지 트리거</b>로 완전 차단.
           </div>
         </div>
 
         <!-- Right: Designer Forbidden Notice (이건 안 돼!) -->
-        <div class="card-glass p-5 rounded-xl space-y-3 border-red-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-red-950/20">
-          <h3 class="text-base font-bold text-red-400 flex items-center space-x-2">
-            <span>🚫</span>
-            <span>디자이너 전달용: "이런 방향은 개발 불가!"</span>
-          </h3>
-          <div class="space-y-2 text-xs text-slate-300">
-            <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
-              <b class="text-red-300">❌ 과도한 하이폴리곤 3D 메쉬 무제한 배치 불가</b><br>
-              10개 층이 한 씬에 공존하므로 드로우콜 폭증으로 렉 발생 ➔ <b>Meshy 모델링은 반드시 로우~미드폴리 및 LOD 최적화 필수.</b>
-            </div>
-            <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
-              <b class="text-red-300">❌ 실시간 그림자(Shadow) 스팟/포인트 조명 남발 불가</b><br>
-              HDRP 성능 급감 ➔ <b>그림 정면 핀조명 3000 lux 단일 규격 및 소프트 섀도우 제한 엄수.</b>
-            </div>
-            <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
-              <b class="text-red-300">❌ 비대칭 층간 계단 및 복도 규격 임의 변경 불가</b><br>
-              8번 출구 고유 체크포인트 좌표 시스템이 어긋남 ➔ <b>정해진 층고(7.0m) 및 복도 축 규격 유지.</b>
+        <div class="md:col-span-5 card-glass p-4 rounded-xl space-y-3 border-red-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-red-950/20 flex flex-col justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-red-400 flex items-center space-x-2 mb-2">
+              <span>🚫</span>
+              <span>디자이너 전달: "이런 방향은 개발 불가!"</span>
+            </h3>
+            
+            <div class="space-y-2 text-[11.5px] text-slate-300">
+              <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
+                <b class="text-red-300">❌ 과도한 하이폴리곤 3D 메쉬 남발 불가</b><br>
+                10개 층이 한 씬에 공존하므로 드로우콜 폭증으로 렉 발생 ➔ <b>Meshy 모델링은 로우~미드폴리 및 LOD 필수.</b>
+              </div>
+              <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
+                <b class="text-red-300">❌ 실시간 그림자(Shadow) 조명 임의 추가 불가</b><br>
+                HDRP 성능 급감 ➔ <b>그림 정면 핀조명 3000 lux 단일 규격 엄수.</b>
+              </div>
+              <div class="p-2.5 rounded bg-red-950/40 border border-red-500/30">
+                <b class="text-red-300">❌ 층간 계단 및 복도 좌표 규격 임의 변경 불가</b><br>
+                8번 출구 체크포인트 시스템 붕괴 ➔ <b>정해진 층고(7.0m) 유지.</b>
+              </div>
             </div>
           </div>
         </div>
