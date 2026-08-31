@@ -513,11 +513,11 @@ namespace IbArtMuseum
             {
                 PlayerPrefs.SetInt("Ib_Reached_10F", 1);
                 PlayerPrefs.Save();
-                SetNightEnvironment();
+                SetDayEnvironment(false);
             }
             else
             {
-                SetDayEnvironment();
+                SetDayEnvironment(true);
             }
         }
 
