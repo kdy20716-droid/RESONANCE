@@ -462,6 +462,65 @@ namespace IbArtMuseum
             uiManager?.ShowEnding(true);
         }
 
+        public void HealAllRoses()
+        {
+            roseLife = 3;
+            uiManager?.SetRoseLife(roseLife);
+        }
+
+        public void SaveGameAtVase(int floorLevel, Vector3 pos)
+        {
+            PlayerPrefs.SetInt("Ib_Save_Floor", floorLevel);
+            PlayerPrefs.SetFloat("Ib_Save_PosX", pos.x);
+            PlayerPrefs.SetFloat("Ib_Save_PosY", pos.y);
+            PlayerPrefs.SetFloat("Ib_Save_PosZ", pos.z);
+            PlayerPrefs.Save();
+        }
+
+        public void TakeRoseDamage()
+        {
+            roseLife--;
+            uiManager?.SetRoseLife(roseLife);
+            uiManager?.PlayGlitchFlash(0.2f, new Color(1f, 0f, 0f, 0.5f));
+
+            if (roseLife <= 0)
+            {
+                if (IbMainMenuManager.Instance != null)
+                {
+                    IbMainMenuManager.Instance.ShowGameOver();
+                }
+                else
+                {
+                    OnSeamlessWrongChoiceMade();
+                }
+            }
+        }
+
+        public void RespawnAtFloor(int floorLevel)
+        {
+            int floorIdx = Mathf.Clamp(10 - floorLevel, 0, 9);
+            currentFloorIndex = floorIdx;
+            roseLife = 3;
+            uiManager?.SetRoseLife(roseLife);
+
+            if (floorIdx < floorCheckpoints.Length)
+            {
+                FloorCheckpoint cp = floorCheckpoints[floorIdx];
+                if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
+            }
+
+            if (floorLevel == 10)
+            {
+                PlayerPrefs.SetInt("Ib_Reached_10F", 1);
+                PlayerPrefs.Save();
+                SetNightEnvironment();
+            }
+            else
+            {
+                SetDayEnvironment();
+            }
+        }
+
         private void OnSeamlessWrongChoiceMade()
         {
             roseLife--;
@@ -473,8 +532,15 @@ namespace IbArtMuseum
             }
             else
             {
-                uiManager?.PlayGlitchFlash(0.35f, Color.black);
-                uiManager?.ShowDialogueBox("Game Over", "<size=22><color=#E63946>All roses have withered. Returning to the beginning...</color></size>", () => FullRestartToPrologue());
+                if (IbMainMenuManager.Instance != null)
+                {
+                    IbMainMenuManager.Instance.ShowGameOver();
+                }
+                else
+                {
+                    uiManager?.PlayGlitchFlash(0.35f, Color.black);
+                    uiManager?.ShowDialogueBox("Game Over", "<size=22><color=#E63946>All roses have withered. Returning to the beginning...</color></size>", () => FullRestartToPrologue());
+                }
             }
         }
 
@@ -516,7 +582,14 @@ namespace IbArtMuseum
 
         public void TriggerEnding(bool victory)
         {
-            uiManager?.ShowEnding(victory);
+            if (IbMainMenuManager.Instance != null && victory)
+            {
+                IbMainMenuManager.Instance.ShowGameClear();
+            }
+            else
+            {
+                uiManager?.ShowEnding(victory);
+            }
         }
     }
 }

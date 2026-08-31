@@ -71,10 +71,10 @@
       <button onclick="goToSlide(1)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">01. 목차</button>
       <button onclick="goToSlide(2)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">02. 제목 & 메시지</button>
       <button onclick="goToSlide(3)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">03. 모티브 게임</button>
-      <button onclick="goToSlide(4)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">04. 게임 소개</button>
+      <button onclick="goToSlide(4)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">04. 게임 핵심 서사</button>
       <button onclick="goToSlide(5)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">05. 1F~10F 층별 컨셉</button>
-      <button onclick="goToSlide(6)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">06. 활용된 AI</button>
-      <button onclick="goToSlide(7)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">07. 이상현상 기획</button>
+      <button onclick="goToSlide(6)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">06. 씬 & UI 시스템</button>
+      <button onclick="goToSlide(7)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">07. 활용된 AI</button>
       <button onclick="goToSlide(8)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">08. 트러블슈팅</button>
       <button onclick="goToSlide(9)" class="nav-tab px-2.5 py-1.5 rounded-lg border border-transparent transition-all hover:bg-slate-800 text-slate-400">09. 진행상황 & 영상</button>
     </nav>
@@ -85,7 +85,7 @@
     </div>
   </header>
 
-  <!-- Main Presentation Slide Container (max-w-7xl) -->
+  <!-- Main Presentation Slide Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 flex items-center justify-center">
 
     <!-- ==================== SLIDE 0: TITLE COVER ==================== -->
@@ -102,8 +102,8 @@
       </p>
       
       <p class="text-slate-400 max-w-2xl text-base md:text-lg font-light leading-relaxed pt-2">
-        <span class="text-amber-300 font-semibold">8번 출구의 무한 루프 심리 추리</span>와 <span class="text-rose-400 font-semibold">Ib의 기괴하고 매혹적인 미술관 서사</span>가 결합된<br class="hidden md:inline"> 
-        차세대 1인칭 3D 심리 공포 어드벤처 프로젝트
+        <span class="text-amber-300 font-semibold">1~3F 관람 ➔ 3~9F Ib풍 공포 퍼즐 ➔ 10F 공명 ➔ 10~1F 8번 출구 & 메리 보스전!</span><br class="hidden md:inline"> 
+        차세대 1인칭 3D 심리 공포 하이브리드 어드벤처 프로젝트
       </p>
 
       <div class="flex items-center space-x-6 pt-6 text-xs text-slate-400">
@@ -113,7 +113,7 @@
         </div>
         <div class="flex items-center space-x-2">
           <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-          <span>Genre: Psychological Horror & Loop Escape</span>
+          <span>Genre: Puzzle Exploration + 8th Exit Loop + Boss Combat</span>
         </div>
       </div>
     </section>
@@ -145,8 +145,8 @@
         <div onclick="goToSlide(4)" class="card-glass p-4 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
           <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center font-bold text-blue-300 text-lg font-mono shrink-0">03</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">게임 소개 (Game Concept & Mechanics)</h3>
-            <p class="text-xs text-slate-400 mt-0.5">10층 타워 구조, 8번 출구 하강 룰, 3송이 장미 라이프 시스템</p>
+            <h3 class="text-base font-semibold text-slate-100">게임 소개: 3단계 하이브리드 서사 & 보스전</h3>
+            <p class="text-xs text-slate-400 mt-0.5">1~3F 관람 ➔ 3~9F Ib퍼즐 ➔ 10F 공명 ➔ 8번 출구 하강 & 2F 보스전</p>
           </div>
         </div>
 
@@ -154,23 +154,23 @@
           <div class="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center font-bold text-yellow-300 text-lg font-mono shrink-0">04</div>
           <div>
             <h3 class="text-base font-semibold text-slate-100">1층~10층 층별 의미 & 테마 컨셉</h3>
-            <p class="text-xs text-slate-400 mt-0.5">인간 정신과 신경망의 해체 및 각성을 상징하는 수직 서사</p>
+            <p class="text-xs text-slate-400 mt-0.5">3/5/7/9층 생명의 화병 세이브 & 신경망 해체 수직 서사</p>
           </div>
         </div>
 
         <div onclick="goToSlide(6)" class="card-glass p-4 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
-          <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center font-bold text-purple-300 text-lg font-mono shrink-0">05</div>
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center font-bold text-indigo-300 text-lg font-mono shrink-0">05</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">활용된 AI 기술 (AI Pipeline)</h3>
-            <p class="text-xs text-slate-400 mt-0.5">미드저니 / 구글 Labs(2D) + Meshy(3D) + Gemini/Antigravity</p>
+            <h3 class="text-base font-semibold text-slate-100">씬 & UI 시스템 아키텍처</h3>
+            <p class="text-xs text-slate-400 mt-0.5">메인메뉴(10층 빠른시작/설정), 다잉 메시지 사망화면, 엔딩 씬</p>
           </div>
         </div>
 
         <div onclick="goToSlide(7)" class="card-glass p-4 rounded-2xl cursor-pointer transition-all flex items-start space-x-4">
-          <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center font-bold text-orange-300 text-lg font-mono shrink-0">06</div>
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center font-bold text-purple-300 text-lg font-mono shrink-0">06</div>
           <div>
-            <h3 class="text-base font-semibold text-slate-100">이상현상 기획 & 아트/사운드 디렉팅</h3>
-            <p class="text-xs text-slate-400 mt-0.5">층별 이상현상 카탈로그 & 3000 lux 조명 및 딥블루 밤 연출 가이드</p>
+            <h3 class="text-base font-semibold text-slate-100">활용된 AI 기술 (AI Pipeline)</h3>
+            <p class="text-xs text-slate-400 mt-0.5">미드저니 / 구글 Labs(2D) + Meshy(3D) + Gemini/Antigravity</p>
           </div>
         </div>
 
@@ -243,7 +243,7 @@
       </div>
     </section>
 
-    <!-- ==================== SLIDE 3: INSPIRATIONS (Moved to 3rd) ==================== -->
+    <!-- ==================== SLIDE 3: INSPIRATIONS ==================== -->
     <section class="slide flex-col justify-center w-full space-y-6">
       <div class="border-b border-slate-800 pb-4">
         <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">03. Inspirations & References</span>
@@ -259,13 +259,12 @@
               <span class="text-xs px-3 py-1 rounded-full bg-amber-950 border border-amber-500/40 text-amber-200">심리 추리 메커니즘</span>
             </div>
             
-            <!-- Steam Official Key Art -->
             <div class="img-frame rounded-xl overflow-hidden h-48 bg-slate-950">
               <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2653790/header.jpg" alt="The Exit 8 Official Header" class="w-full h-full object-cover hover:scale-105 transition-all duration-300">
             </div>
 
             <p class="text-sm text-slate-300 leading-relaxed">
-              미세한 <b>이상현상(Anomaly)</b>을 찾아내 전진/유턴을 선택하는 심리적 긴장감을 10층 미술관 환경에 이식하여 한층 더 풍부한 3D 탐색 재미를 제공합니다.
+              미세한 <b>이상현상(Anomaly)</b>을 찾아내 전진/유턴을 선택하는 심리적 긴장감을 10층 하강 구간에 이식하여 심리적 추리 재미를 극대화했습니다.
             </p>
           </div>
         </div>
@@ -275,77 +274,70 @@
           <div class="space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="text-xl font-bold text-rose-300 font-cinzel">Ib (이브 - 게르테나 미술관)</h3>
-              <span class="text-xs px-3 py-1 rounded-full bg-rose-950 border border-rose-500/40 text-rose-200">예술 서사 & 분위기</span>
+              <span class="text-xs px-3 py-1 rounded-full bg-rose-950 border border-rose-500/40 text-rose-200">예술 서사 & 동료 & 보스전</span>
             </div>
             
-            <!-- Steam Official Key Art -->
             <div class="img-frame rounded-xl overflow-hidden h-48 bg-slate-950">
               <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1901370/header.jpg" alt="Ib Official Header" class="w-full h-full object-cover hover:scale-105 transition-all duration-300">
             </div>
 
             <p class="text-sm text-slate-300 leading-relaxed">
-              살아 움직이는 액자, 피 흘리는 초상화, 말하는 조각상 및 <b>붉은 장미 라이프 시스템</b> 등 예술품과의 초현실적 교감을 3D HDRP 그래픽으로 현대화했습니다.
+              살아 움직이는 액자, <b>화병 세이브 & 붉은 장미 체력</b>, 청년/소녀 동료 합류 및 배신자 보스전 서사를 현대적 3D HDRP로 오마주했습니다.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== SLIDE 4: GAME CONCEPT & MECHANICS (Moved to 4th) ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-6">
-      <div class="border-b border-slate-800 pb-4">
+    <!-- ==================== SLIDE 4: GAME CONCEPT & 3-STAGE HYBRID (대개편) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-5">
+      <div class="border-b border-slate-800 pb-3">
         <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">04. Game Overview</span>
-        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">어떤 게임인가? (Core Gameplay)</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">3단계 하이브리드 게임플레이 & 보스전 서사</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-        <!-- Left: Generated Image (Lina Exploring Museum) -->
-        <div class="md:col-span-6 flex flex-col items-center">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        <!-- Left: Image -->
+        <div class="md:col-span-5 flex flex-col items-center">
           <div class="img-frame rounded-2xl overflow-hidden w-full bg-slate-950">
-            <img src="lina_museum_exploration.jpg" alt="Lina exploring art museum with teddy bear" class="w-full h-80 md:h-96 object-cover hover:scale-105 transition-all duration-500">
+            <img src="lina_museum_exploration.jpg" alt="Lina exploring art museum with teddy bear" class="w-full h-72 md:h-88 object-cover hover:scale-105 transition-all duration-500">
           </div>
-          <span class="text-xs text-blue-300/80 mt-2.5 font-mono">▲ 어두운 미술관에서 곰인형을 안고 이상현상을 탐색하는 소녀 리나</span>
+          <span class="text-xs text-blue-300/80 mt-2 font-mono">▲ 곰인형을 안고 이상현상과 보스전을 헤쳐나가는 리나</span>
         </div>
 
-        <!-- Right: Mechanics Explanation -->
-        <div class="md:col-span-6 space-y-4 text-base">
-          <div class="card-glass p-5 rounded-2xl space-y-2">
-            <h3 class="text-base font-bold text-amber-300 flex items-center space-x-2">
-              <span>🗼</span>
-              <span>10층 수직 미술관 타워 루프 탈출</span>
-            </h3>
-            <p class="text-sm text-slate-300 leading-relaxed">
-              부모님과 방문한 평화로운 낮 ➔ 10층 공명 컷씬 후 푸른 밤으로 전환 ➔ 10층에서 1층 정문까지 계단을 내려가며 탈출하는 1인칭 심리 공포 어드벤처.
+        <!-- Right: 3-Stage Structure -->
+        <div class="md:col-span-7 space-y-3 text-xs md:text-sm">
+          <div class="p-3 rounded-xl card-glass border-amber-500/30">
+            <b class="text-amber-300 text-sm">Step 1. [1F ~ 3F] 평화로운 관람 시뮬레이터 (Baseline)</b>
+            <p class="text-slate-300 mt-0.5">부모님과 갤러리 감상 ➔ 3층 도달 시 내려가는 계단이 봉쇄되고 보이지 않는 벽이 생기며 공포 시작!</p>
+          </div>
+
+          <div class="p-3 rounded-xl card-glass border-purple-500/30">
+            <b class="text-purple-300 text-sm">Step 2. [3F ~ 9F] Ib 스타일 공포 퍼즐 상승</b>
+            <p class="text-slate-300 mt-0.5">미술관 액자/조각상 퍼즐을 풀며 위층으로 전진! <b>(3, 5, 7, 9층 유리 화병에서 세이브 & 체력 회복)</b></p>
+          </div>
+
+          <div class="p-3 rounded-xl card-glass border-blue-500/30">
+            <b class="text-blue-300 text-sm">Step 3. [10F] RESONANCE 공명 & "나랑 놀자 리나"</b>
+            <p class="text-slate-300 mt-0.5">10층 하모닉 링 폭주로 푸른 밤 전환! 벽면에 <i>"WELCOME TO MY MUSEUM, LINA"</i> 문구와 함께 8번 출구 룰 가동!</p>
+          </div>
+
+          <div class="p-3 rounded-xl card-glass border-rose-500/40 bg-rose-950/20">
+            <b class="text-rose-300 text-sm">Step 4. [10F ~ 1F] 8번 출구 하강 + 동료 서사 + 2F 메리 보스전!</b>
+            <p class="text-slate-300 mt-0.5">
+              • 8층: 청년(게리) 합류 / 4층: 소녀(메리) 합류<br>
+              • <b>2층 반전:</b> 소녀가 모든 장난의 주동자! 거대 그림으로 계단을 막고 <b>메리 보스전</b> 발발 ➔ 격파 후 1층 탈출!
             </p>
-          </div>
-
-          <div class="card-glass p-5 rounded-2xl space-y-2.5 border-emerald-500/30">
-            <h3 class="text-base font-bold text-emerald-300 flex items-center space-x-2">
-              <span>🚪</span>
-              <span>정밀 8번 출구 탐색 룰</span>
-            </h3>
-            <ul class="text-sm text-slate-300 space-y-2">
-              <li><b>✅ 이상현상 없음 (정상):</b> 텔레포트 없이 계단을 걸어서 아래층으로 자연스럽게 하강!</li>
-              <li><b>⚠️ 이상현상 발견:</b> 왔던 계단 쪽으로 유턴하여 복도를 나가면 다음 층으로 전진!</li>
-              <li><b>❌ 오답 선택 시:</b> 장미 1송이 차감 후 해당 층 시작 체크포인트로 루프!</li>
-            </ul>
-          </div>
-
-          <div class="card-glass p-4 rounded-2xl border-rose-500/30 flex items-center space-x-3.5">
-            <div class="text-3xl">🌹</div>
-            <div class="text-sm text-slate-300 leading-relaxed">
-              <b class="text-rose-400">장미 3송이 라이프 HUD:</b> 3번의 오판 시 영혼이 소진되어 1층 부모님 앞으로 완전 리셋.
-            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== SLIDE 5: 1F~10F THEMATIC FLOOR CONCEPTS (NEW!) ==================== -->
+    <!-- ==================== SLIDE 5: 1F~10F THEMATIC FLOOR CONCEPTS ==================== -->
     <section class="slide flex-col justify-center w-full space-y-5">
       <div class="border-b border-slate-800 pb-3">
         <span class="text-sm uppercase tracking-widest text-yellow-400 font-mono">05. 10-Floor Thematic Narrative</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">1층~10층 층별 의미 & 철학적 테마 컨셉</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">1층~10층 층별 의미 & 생명의 화병 세이브 시스템</h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
@@ -353,56 +345,116 @@
         <div class="space-y-2">
           <div class="p-3 rounded-xl card-glass border-amber-500/40">
             <b class="text-amber-300 text-sm">10F: Resonance (공명 / 특이점)</b>
-            <p class="text-slate-300 mt-0.5">신경망의 정점, 3중 하모닉 링과 영혼의 코어. 시공간이 왜곡되며 푸른 밤 루프가 시작되는 발원지.</p>
+            <p class="text-slate-300 mt-0.5">신경망의 정점, 3중 하모닉 링과 영혼의 코어. 푸른 밤 루프가 시작되는 발원지.</p>
+          </div>
+          <div class="p-3 rounded-xl card-glass border-blue-500/40 bg-blue-950/20">
+            <b class="text-blue-300 text-sm">9F: Threshold of Warning (경계와 경고) 🏺 [생명의 화병 세이브/회복]</b>
+            <p class="text-slate-300 mt-0.5">생존 수칙 텍스트 액자. 1회 한정 물병 세이브 & 장미 체력 완충 회복 지점.</p>
           </div>
           <div class="p-3 rounded-xl card-glass border-slate-700">
-            <b class="text-blue-300 text-sm">9F: Threshold of Warning (경계와 경고)</b>
-            <p class="text-slate-300 mt-0.5">생존 수칙 텍스트 액자. 현실과 이계의 첫 번째 경계선이며 이상현상 탐색의 시작.</p>
+            <b class="text-purple-300 text-sm">8F: Gazing Persona (응시와 페르소나) 🤝 [청년 동료 합류]</b>
+            <p class="text-slate-300 mt-0.5">시선이 따라오는 초상화들. 갇혀있던 청년(게리 모티브)과 만나 함께 동행 시작.</p>
           </div>
-          <div class="p-3 rounded-xl card-glass border-slate-700">
-            <b class="text-purple-300 text-sm">8F: Gazing Persona (응시와 페르소나)</b>
-            <p class="text-slate-300 mt-0.5">시선이 따라오는 초상화들. 타인의 시선과 자아의 분열을 상징.</p>
-          </div>
-          <div class="p-3 rounded-xl card-glass border-slate-700">
-            <b class="text-cyan-300 text-sm">7F: Flipped Perception (전도된 인식)</b>
-            <p class="text-slate-300 mt-0.5">거꾸로 뒤집힌 액자와 왜곡된 캔버스. 지각의 오류와 상식의 붕괴.</p>
+          <div class="p-3 rounded-xl card-glass border-blue-500/40 bg-blue-950/20">
+            <b class="text-cyan-300 text-sm">7F: Flipped Perception (전도된 인식) 🏺 [생명의 화병 세이브/회복]</b>
+            <p class="text-slate-300 mt-0.5">거꾸로 뒤집힌 액자와 왜곡된 캔버스. 1회 한정 물병 세이브 & 체력 회복.</p>
           </div>
           <div class="p-3 rounded-xl card-glass border-slate-700">
             <b class="text-rose-300 text-sm">6F: Sanguine Memory (혈흔과 기억의 침식)</b>
-            <p class="text-slate-300 mt-0.5">피 흘리는 초상화. 창작자 바이스만의 억압된 트라우마와 광기.</p>
+            <p class="text-slate-300 mt-0.5">피 흘리는 초상화. 창작자 바이스만의 억압된 트라우마와 무의식의 상처.</p>
           </div>
         </div>
 
         <!-- 5F ~ 1F -->
         <div class="space-y-2">
-          <div class="p-3 rounded-xl card-glass border-slate-700">
-            <b class="text-indigo-300 text-sm">5F: Whispering Busts (침묵과 고변)</b>
-            <p class="text-slate-300 mt-0.5">고개를 돌리는 석고 흉상들. 침묵 속에 숨겨진 진실을 응시하는 조각상.</p>
+          <div class="p-3 rounded-xl card-glass border-blue-500/40 bg-blue-950/20">
+            <b class="text-indigo-300 text-sm">5F: Whispering Busts (침묵과 고변) 🏺 [생명의 화병 세이브/회복]</b>
+            <p class="text-slate-300 mt-0.5">고개를 돌리는 석고 흉상들. 1회 한정 물병 세이브 & 체력 회복 지점.</p>
           </div>
           <div class="p-3 rounded-xl card-glass border-slate-700">
-            <b class="text-pink-300 text-sm">4F: Withered Vitality (시들어가는 생명력)</b>
-            <p class="text-slate-300 mt-0.5">유리 화병의 붉은 장미와 검은 꽃잎. 플레이어 영혼(장미 라이프)의 소모와 위기.</p>
+            <b class="text-pink-300 text-sm">4F: Withered Vitality (시든 생명력) 🤝 [소녀 동료 합류]</b>
+            <p class="text-slate-300 mt-0.5">유리 화병 속 장미. 혼자 방황하던 신비로운 노란 머리 소녀(메리 모티브) 합류.</p>
           </div>
-          <div class="p-3 rounded-xl card-glass border-slate-700">
-            <b class="text-red-400 text-sm">3F: Red Resonance (붉은 경보와 붕괴)</b>
-            <p class="text-slate-300 mt-0.5">붉게 물드는 조명과 벽면 신경망 낙서. 시스템 과열과 미술관의 붕괴 조짐.</p>
+          <div class="p-3 rounded-xl card-glass border-blue-500/40 bg-blue-950/20">
+            <b class="text-red-400 text-sm">3F: Red Resonance (붉은 경보) 🏺 [생명의 화병 세이브/회복]</b>
+            <p class="text-slate-300 mt-0.5">붉은 조명과 벽면 낙서. 1회 한정 물병 세이브 & 장미 체력 완충 회복 지점.</p>
           </div>
-          <div class="p-3 rounded-xl card-glass border-slate-700">
-            <b class="text-slate-300 text-sm">2F: Dissolution (의식의 해체)</b>
-            <p class="text-slate-300 mt-0.5">텅 빈 액자와 윤곽만 남은 조각상. 현실로 탈출하기 직전 자아 상실의 마지막 관문.</p>
+          <div class="p-3 rounded-xl card-glass border-rose-500/50 bg-red-950/30">
+            <b class="text-rose-400 text-sm">2F: The Betrayal & Boss Battle (배신과 결전) ⚔️ [메리 보스전]</b>
+            <p class="text-slate-300 mt-0.5">4층 소녀의 정체 폭로! 1층 계단을 막은 거대 캔버스와 촉수/괴물 피격 공방 보스전.</p>
           </div>
           <div class="p-3 rounded-xl card-glass border-emerald-500/40">
-            <b class="text-emerald-300 text-sm">1F: The Awakening (각성과 귀환)</b>
-            <p class="text-slate-300 mt-0.5">안내데스크와 정문. 기다리고 있던 부모님의 따뜻한 목소리와 함께 현실 아침으로의 탈출 성공.</p>
+            <b class="text-emerald-300 text-sm">1F: The Awakening (각성과 귀환) 🎉 [탈출 엔딩]</b>
+            <p class="text-slate-300 mt-0.5">안내데스크와 정문. 기다리던 부모님과 재회하며 따뜻한 현실 아침으로 탈출 성공.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== SLIDE 6: AI IN DEVELOPMENT ==================== -->
+    <!-- ==================== SLIDE 6: UI & SCENE ARCHITECTURE (신설) ==================== -->
+    <section class="slide flex-col justify-center w-full space-y-5">
+      <div class="border-b border-slate-800 pb-3">
+        <span class="text-sm uppercase tracking-widest text-indigo-400 font-mono">06. UI & Scene System</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">메인 메뉴 / 사망 다잉메시지 / 클리어 UI 시스템</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+        <!-- Main Menu -->
+        <div class="card-glass p-5 rounded-2xl space-y-3 border-amber-500/40">
+          <div class="flex items-center space-x-2 text-amber-300 font-bold text-base">
+            <span>🎮</span>
+            <span>메인 메뉴 (Main Menu)</span>
+          </div>
+          <ul class="text-slate-300 space-y-2 leading-relaxed">
+            <li><b>• 게임 스타트 (New Game):</b> 1층 프롤로그부터 시작</li>
+            <li><b>• 이어하기 (Continue):</b> 최근 화병 세이브 지점에서 로드</li>
+            <li><b class="text-amber-400">• 10층부터 (Quick Start):</b> 10층 도달 이력 유저만 해금</li>
+            <li><b>• 설정 (Settings):</b> 마스터/BGM/SFX 음향 & 마우스 감도</li>
+            <li><b>• 나가기 (Exit):</b> 게임 종료</li>
+          </ul>
+        </div>
+
+        <!-- Game Over (Dying Messages) -->
+        <div class="card-glass p-5 rounded-2xl space-y-3 border-red-500/50 bg-red-950/20">
+          <div class="flex items-center space-x-2 text-red-400 font-bold text-base">
+            <span>💀</span>
+            <span>사망 화면 (Game Over)</span>
+          </div>
+          <div class="p-3 rounded-xl bg-black/60 border border-red-500/30 text-rose-300 font-serif italic text-center">
+            "왜... 뒤를 돌아보지 않았어...?"<br>
+            "리나, 영원히 미술관에서 함께 놀자..."
+          </div>
+          <p class="text-slate-400 leading-relaxed">
+            괴물/촉수 피격으로 장미 3송이 소진 시 붉은 다잉 메시지 출력.
+          </p>
+          <div class="flex space-x-2 pt-2">
+            <span class="flex-1 py-1.5 text-center rounded bg-slate-800 text-slate-300 border border-slate-700">[세이브부터 재도전]</span>
+            <span class="flex-1 py-1.5 text-center rounded bg-slate-800 text-slate-300 border border-slate-700">[메인 메뉴로]</span>
+          </div>
+        </div>
+
+        <!-- Game Clear -->
+        <div class="card-glass p-5 rounded-2xl space-y-3 border-emerald-500/40">
+          <div class="flex items-center space-x-2 text-emerald-300 font-bold text-base">
+            <span>🏆</span>
+            <span>클리어 엔딩 (Game Clear)</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            2층 메리 보스전을 격파하고 1층 정문에서 부모님과 재회하며 따뜻한 아침 햇살과 함께 엔딩 롤 재생.
+          </p>
+          <div class="pt-6">
+            <div class="w-full py-2.5 text-center rounded-xl bg-emerald-600/80 text-white font-bold shadow-lg shadow-emerald-950">
+              [ 메인 화면으로 ]
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 7: AI IN DEVELOPMENT ==================== -->
     <section class="slide flex-col justify-center w-full space-y-6">
       <div class="border-b border-slate-800 pb-4">
-        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">06. AI Technology & Pipeline</span>
+        <span class="text-sm uppercase tracking-widest text-amber-400 font-mono">07. AI Technology & Pipeline</span>
         <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">개발에 활용된 AI 기술 및 파이프라인</h2>
       </div>
 
@@ -455,71 +507,10 @@
             <b>Unity C# 게임플레이 아키텍처 및 에디터 툴 자동화</b>
           </p>
           <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
-            <li>10층 건축 & 게임로직 유틸리티 분리</li>
+            <li>10층 건축 & 화병 세이브 시스템 구축</li>
             <li>정밀 8번 출구 Y축 분리 트리거 시스템</li>
             <li>HDRP 3000 lux 픽처 조명 및 딥 블루 밤하늘</li>
           </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== SLIDE 7: ANOMALY DESIGN & MOODBOARD ==================== -->
-    <section class="slide flex-col justify-center w-full space-y-6">
-      <div class="border-b border-slate-800 pb-4">
-        <span class="text-sm uppercase tracking-widest text-orange-400 font-mono">07. Anomaly Catalog & Art Direction</span>
-        <h2 class="text-3xl md:text-4xl font-bold text-white font-cinzel">이상현상 카탈로그 & 아트/사운드 디렉팅</h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Left: Anomaly Catalog -->
-        <div class="card-glass p-6 rounded-2xl space-y-3.5 border-orange-500/30">
-          <h3 class="text-base font-bold text-orange-300 flex items-center space-x-2">
-            <span>👻</span>
-            <span>층별 대표 이상현상 (Anomaly Catalog)</span>
-          </h3>
-          <div class="space-y-2 text-xs text-slate-300">
-            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start justify-between">
-              <div>
-                <b class="text-amber-300 text-sm">1. Bleeding Painting (피 흘리는 초상화)</b>
-                <p class="text-slate-400 mt-0.5">초상화 속 여인의 눈과 입에서 붉은 피가 흘러내림</p>
-              </div>
-              <span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 text-[11px] border border-amber-500/30">Visual Anomaly</span>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start justify-between">
-              <div>
-                <b class="text-blue-300 text-sm">2. Rotating Statue (회전하는 흉상)</b>
-                <p class="text-slate-400 mt-0.5">석고 흉상의 고개가 플레이어의 시선 방향으로 돌아감</p>
-              </div>
-              <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 text-[11px] border border-blue-500/30">Kinetic Anomaly</span>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start justify-between">
-              <div>
-                <b class="text-rose-300 text-sm">3. Withered Rose (시든 장미)</b>
-                <p class="text-slate-400 mt-0.5">유리 화병 속 장미가 검게 시들고 바닥에 꽃잎이 흩뿌려짐</p>
-              </div>
-              <span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 text-[11px] border border-rose-500/30">Environmental</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Lighting & Audio Moodboard -->
-        <div class="card-glass p-6 rounded-2xl space-y-3.5 border-blue-500/30">
-          <h3 class="text-base font-bold text-blue-300 flex items-center space-x-2">
-            <span>🎧</span>
-            <span>아트 & 오디오 디렉팅 가이드</span>
-          </h3>
-          <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 space-y-1">
-              <b class="text-amber-300 text-sm">💡 HDRP 조명 톤앤매너</b>
-              <p class="text-slate-300">• 낮: 따뜻한 갤러리 웜 화이트 (`10000 lux` 태양광, 베이지 톤 바닥)</p>
-              <p class="text-slate-300">• 밤: 딥 블루 밤하늘 (`9814.8 lux`, 각도 `-3.5°`) + 작품 핀조명 (`3000 lux` 고정 대비)</p>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800 space-y-1">
-              <b class="text-blue-300 text-sm">🔊 심리적 몰입 사운드</b>
-              <p class="text-slate-300">• 발걸음 소리: 텅 빈 갤러리 속 고요함을 깨우는 묵직한 마룻바닥 스텝</p>
-              <p class="text-slate-300">• 이상현상 BGM: 10층 하모닉 링의 저주파 진동음 및 불규칙 심장 박동음</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -615,7 +606,7 @@
               <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-              <span class="text-sm">낮(관람객/명화) ➔ 밤(소멸/경고문) 환경 전환</span>
+              <span class="text-sm">3/5/7/9층 생명의 화병 세이브 & 힐링</span>
               <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
@@ -623,7 +614,7 @@
               <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-              <span class="text-sm">장미 3송이 라이프 HUD & 1층 부모님 엔딩 시퀀스</span>
+              <span class="text-sm">괴물/촉수 피격 데미지 & 다잉메시지 사망/엔딩 UI</span>
               <span class="text-emerald-400 font-bold text-sm">100%</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
