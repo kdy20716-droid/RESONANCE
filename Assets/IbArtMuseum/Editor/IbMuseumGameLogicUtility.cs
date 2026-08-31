@@ -68,20 +68,89 @@ namespace IbArtMuseum
             // 7. 각 층마다 4~5명의 대화 가능한 관람객 NPC 스폰
             SetupDaytimeVisitorNPCs();
 
+            // 8. 3/5/7/9층 생명의 화병 & 3~9층 수수께끼 투명 벽 장벽 설치!
+            SetupRiddleBarriersAndSaveVases();
+
             gm.InitializeStrictFloorCheckpoints();
             gm.SetDayEnvironment(true); // 낮으로 시작
 
             EditorUtility.SetDirty(gm);
             AssetDatabase.SaveAssets();
 
-            EditorUtility.DisplayDialog(
-                "🎮 층별 정밀 체크포인트 & 복도 액자 세팅 완료!",
-                "✨ 적용 완료 내역:\n" +
-                "1. [복도 액자 낮/밤 전환]: 낮에는 일반 아름다운 명화로 보이고, 밤이 되면 섬뜩한 텍스트로 변하며 [E] 키로 대화창을 볼 수 있습니다!\n" +
-                "2. [10F~1F 층별 고유 체크포인트 & Y축 제한]: 각 층마다 엄격한 Y축 범위(1.8m)와 고유 좌표가 세팅되어 층간 간섭 및 꼬임이 100% 차단되었습니다.\n" +
-                "3. [그림 정면 픽처 조명]: 모든 액자 앞면 위에서 아래로 조명이 정확히 쏟아집니다!",
-                "확인"
-            );
+            Debug.Log("<color=#33FF33><b>[Ib GameLogic Setup] 3~9F 수수께끼 액자 투명 벽, 화병 세이브, 조명 및 게임플레이 시스템 세팅 완료!</b></color>");
+        }
+
+        private static void SetupRiddleBarriersAndSaveVases()
+        {
+            Transform existingGroup = GameObject.Find("Riddle_And_Save_Systems")?.transform;
+            if (existingGroup != null) Object.DestroyImmediate(existingGroup.gameObject);
+
+            GameObject rootGroup = new GameObject("Riddle_And_Save_Systems");
+
+            for (int f = 3; f <= 9; f++)
+            {
+                float floorY = (f - 1) * 7.0f;
+                bool isEvenFloor = (f % 2 == 0);
+
+                // 1. 3, 5, 7, 9층 생명의 화병(Save Vase) 배치
+                if (f == 3 || f == 5 || f == 7 || f == 9)
+                {
+                    GameObject vaseObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    vaseObj.name = $"SaveVase_{f}F";
+                    vaseObj.transform.SetParent(rootGroup.transform);
+                    vaseObj.transform.position = new Vector3(isEvenFloor ? 4.5f : -4.5f, floorY + 0.6f, 0f);
+                    vaseObj.transform.localScale = new Vector3(0.4f, 0.6f, 0.4f);
+
+                    var col = vaseObj.GetComponent<Collider>();
+                    if (col != null) col.isTrigger = true;
+
+                    var saveComp = vaseObj.AddComponent<IbSaveVase>();
+                    saveComp.floorLevel = f;
+
+                    Material glassMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+                    glassMat.color = new Color(0.3f, 0.8f, 1.0f, 0.7f);
+                    vaseObj.GetComponent<MeshRenderer>().material = glassMat;
+                }
+
+                // 2. 3F ~ 9F 다음 층으로 가는 계단 입구 투명 벽 및 수수께끼 액자 배치
+                Vector3 barrierPos = isEvenFloor 
+                    ? new Vector3(0f, floorY + 1.8f, -18.0f) 
+                    : new Vector3(0f, floorY + 1.8f, 18.0f);
+
+                GameObject riddleObj = new GameObject($"RiddleBarrier_{f}F_to_{f+1}F");
+                riddleObj.transform.SetParent(rootGroup.transform);
+                riddleObj.transform.position = barrierPos;
+
+                // 투명 벽 콜라이더
+                GameObject invisibleWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                invisibleWall.name = "Invisible_Barrier_Collider";
+                invisibleWall.transform.SetParent(riddleObj.transform);
+                invisibleWall.transform.localPosition = Vector3.zero;
+                invisibleWall.transform.localScale = new Vector3(10.0f, 4.0f, 0.6f);
+                invisibleWall.GetComponent<MeshRenderer>().enabled = false;
+
+                // 수수께끼 액자 오브젝트
+                GameObject riddleFrame = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                riddleFrame.name = "Riddle_Painting_Frame";
+                riddleFrame.transform.SetParent(riddleObj.transform);
+                riddleFrame.transform.localPosition = new Vector3(isEvenFloor ? 2.5f : -2.5f, 0f, isEvenFloor ? 0.5f : -0.5f);
+                riddleFrame.transform.localRotation = Quaternion.Euler(0, isEvenFloor ? 180f : 0f, 0);
+                riddleFrame.transform.localScale = new Vector3(1.6f, 2.2f, 1f);
+
+                BoxCollider frameCol = riddleFrame.AddComponent<BoxCollider>();
+                frameCol.isTrigger = true;
+                frameCol.size = new Vector3(2.5f, 2.5f, 2.5f);
+
+                Material frameMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+                frameMat.color = new Color(0.85f, 0.75f, 0.4f);
+                riddleFrame.GetComponent<MeshRenderer>().material = frameMat;
+
+                var barrierComp = riddleObj.AddComponent<IbRiddleBarrier>();
+                barrierComp.floorLevel = f;
+                barrierComp.invisibleBarrierCollider = invisibleWall;
+                barrierComp.riddlePaintingFrame = riddleFrame;
+                barrierComp.SetupDefaultRiddleForFloor();
+            }
         }
 
         private static void SetupHallwayPaintingsDayNight()
