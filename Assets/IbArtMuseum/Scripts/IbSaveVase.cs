@@ -50,7 +50,7 @@ namespace IbArtMuseum
             {
                 if (IbMuseumUI.Instance != null)
                 {
-                    IbMuseumUI.Instance.ShowArtworkInfo("물병의 물이 모두 말라있다. 더 이상 회복할 수 없다.", "유리 화병");
+                    IbMuseumUI.Instance.ShowDialogueBox("유리 화병", "<size=22>물병의 물이 모두 말라있다. 더 이상 회복할 수 없다.</size>");
                 }
                 return;
             }
@@ -76,9 +76,9 @@ namespace IbArtMuseum
             // 4. UI 알림 출력
             if (IbMuseumUI.Instance != null)
             {
-                IbMuseumUI.Instance.ShowArtworkInfo(
-                    $"화병에 담긴 신비로운 물에 장미를 담갔다.\n<color=#FF5577><b>장미가 싱싱하게 되살아났습니다! (체력 완전 회복 & {floorLevel}층 세이브 완료)</b></color>", 
-                    $"생명의 화병 ({floorLevel}F)"
+                IbMuseumUI.Instance.ShowDialogueBox(
+                    $"생명의 화병 ({floorLevel}F)", 
+                    $"<size=22>화병에 담긴 신비로운 물에 장미를 담갔다.\n<color=#FF5577><b>장미가 싱싱하게 되살아났습니다! (체력 완전 회복 & {floorLevel}층 세이브 완료)</b></color></size>"
                 );
             }
 
@@ -92,8 +92,8 @@ namespace IbArtMuseum
                 isPlayerNearby = true;
                 if (IbMuseumUI.Instance != null)
                 {
-                    string statusMsg = isUsed ? "물병의 물이 말라있다." : "화병의 물에 장미를 담근다 (체력 회복 & 세이브)";
-                    IbMuseumUI.Instance.ShowInteractionPrompt($"[E] {statusMsg}");
+                    string statusMsg = isUsed ? "[ E ] 물이 말라있는 화병" : "[ E ] 화병의 물에 장미 담그기 (체력 회복 & 세이브)";
+                    IbMuseumUI.Instance.SetInteractPromptVisible(true, statusMsg);
                 }
             }
         }
@@ -105,7 +105,7 @@ namespace IbArtMuseum
                 isPlayerNearby = false;
                 if (IbMuseumUI.Instance != null)
                 {
-                    IbMuseumUI.Instance.HideInteractionPrompt();
+                    IbMuseumUI.Instance.SetInteractPromptVisible(false);
                 }
             }
         }
