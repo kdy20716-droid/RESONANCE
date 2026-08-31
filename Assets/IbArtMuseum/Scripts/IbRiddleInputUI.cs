@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,7 +63,7 @@ namespace IbArtMuseum
         {
             if (riddleModalPanel != null) return;
 
-            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+            Canvas canvas = UnityEngine.Object.FindFirstObjectByType<Canvas>();
             if (canvas == null) return;
 
             // 모달 루트 패널
