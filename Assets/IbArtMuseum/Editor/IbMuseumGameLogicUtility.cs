@@ -452,7 +452,7 @@ namespace IbArtMuseum
             foreach (var go in allObjects)
             {
                 if (go == null) continue;
-                if (go.name == "FloorLights" || go.name.StartsWith("SpotLight_") || go.name == "Museum_Custom_Lighting" || go.name.StartsWith("PictureLight_") || go.name.StartsWith("Fixture_"))
+                if (go.name == "FloorLights" || go.name.StartsWith("SpotLight_") || go.name == "Museum_Custom_Lighting" || go.name.StartsWith("PictureLight_") || go.name.StartsWith("Fixture_") || go.name.Contains("RESONANCE_Inside_Sign_Light"))
                 {
                     Object.DestroyImmediate(go);
                 }
@@ -616,28 +616,28 @@ namespace IbArtMuseum
                 }
                 else if (artName.Contains("Monument") || artName.Contains("RESONANCE"))
                 {
-                    // 10층 거대 조형물 전용: 바닥 업라이트 조명 2개 (좌측 앞, 우측 뒤)
-                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Left",
-                        art.transform.position + new Vector3(-4.5f, 0.02f, -3.2f),
-                        art.transform.position + new Vector3(0, 4.0f, 0),
-                        3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
+                    // 10층 거대 조형물 전용: 좌대 바깥으로 멀리 떨어진 4방향 대칭 바닥 업라이트 (앞/뒤 반대편에서 균형 있게 투사)
+                    Vector3 coreTarget = art.transform.position + new Vector3(0, 4.2f, 0);
 
-                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Right",
-                        art.transform.position + new Vector3(4.5f, 0.02f, -3.2f),
-                        art.transform.position + new Vector3(0, 4.0f, 0),
-                        3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
+                    // 1) 앞쪽-왼쪽 (남서)
+                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_FrontLeft",
+                        art.transform.position + new Vector3(-5.2f, 0.02f, -4.8f),
+                        coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
 
-                    // RESONANCE 명판 안쪽/아래에서 바닥을 비추는 조명
-                    GameObject signUnderLight = new GameObject("RESONANCE_Inside_Sign_Light");
-                    signUnderLight.transform.SetParent(lightingRoot.transform);
-                    signUnderLight.transform.position = art.transform.position + new Vector3(0, 0.45f, -3.8f);
-                    Light sul = signUnderLight.AddComponent<Light>();
-                    sul.type = LightType.Point;
-                    sul.range = 5.0f;
-                    sul.color = new Color(1.0f, 0.95f, 0.85f);
-                    var hdSul = signUnderLight.AddComponent<HDAdditionalLightData>();
-                    hdSul.intensity = 3000f;
-                    hdSul.volumetricDimmer = 4.0f;
+                    // 2) 앞쪽-오른쪽 (남동)
+                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_FrontRight",
+                        art.transform.position + new Vector3(5.2f, 0.02f, -4.8f),
+                        coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
+
+                    // 3) 반대편 뒤쪽-왼쪽 (북서)
+                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_BackLeft",
+                        art.transform.position + new Vector3(-5.2f, 0.02f, 4.8f),
+                        coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
+
+                    // 4) 반대편 뒤쪽-오른쪽 (북동)
+                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_BackRight",
+                        art.transform.position + new Vector3(5.2f, 0.02f, 4.8f),
+                        coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
                 }
             }
         }
