@@ -1012,7 +1012,37 @@ namespace IbArtMuseum
             Debug.Log("<color=#33FF33><b>[Volumetric Lighting & Colliders] 태양광 눈부심 차단, 실내 빛줄기 4배 선명화, 전 액자 정면 [E] 감지 콜라이더 최적화 완료!</b></color>");
         }
 
-        [MenuItem("Tools/Ib Museum/🌙 Toggle Blue Night Mode (푸른 밤 모드 즉시 테스트)", false, 3)]
+        [MenuItem("Tools/Ib Museum/☀️ Switch to Bright Day Mode (대낮 모드로 전환)", false, 3)]
+        public static void SwitchToDayMode()
+        {
+            IbGameManager gm = Object.FindFirstObjectByType<IbGameManager>();
+            if (gm == null)
+            {
+                EditorUtility.DisplayDialog("알림", "씬에 IbGameManager가 없습니다.", "확인");
+                return;
+            }
+
+            gm.currentPhase = GamePhase.Prologue_Day;
+            gm.SetDayEnvironment(true);
+            Debug.Log("<color=#FFFF55><b>[Ib Museum] ☀️ 대낮(Day) 모드로 전환되었습니다! (천장 조명 점등 & light.mat 발광)</b></color>");
+        }
+
+        [MenuItem("Tools/Ib Museum/🌙 Switch to Dark Night Mode (심야 모드로 전환)", false, 4)]
+        public static void SwitchToNightMode()
+        {
+            IbGameManager gm = Object.FindFirstObjectByType<IbGameManager>();
+            if (gm == null)
+            {
+                EditorUtility.DisplayDialog("알림", "씬에 IbGameManager가 없습니다.", "확인");
+                return;
+            }
+
+            gm.currentPhase = GamePhase.Night_Loop;
+            gm.SetDayEnvironment(false);
+            Debug.Log("<color=#55FFFF><b>[Ib Museum] 🌙 심야(Night) 모드로 전환되었습니다! (천장 조명 소등 & black.mat 패널 전환)</b></color>");
+        }
+
+        [MenuItem("Tools/Ib Museum/🔄 Toggle Day ⇄ Night Mode (낮/밤 상호 토글)", false, 5)]
         public static void ToggleNightModeTest()
         {
             IbGameManager gm = Object.FindFirstObjectByType<IbGameManager>();
@@ -1023,10 +1053,8 @@ namespace IbArtMuseum
             }
 
             bool toNight = (gm.currentPhase == GamePhase.Prologue_Day);
-            gm.currentPhase = toNight ? GamePhase.Night_Loop : GamePhase.Prologue_Day;
-            gm.SetDayEnvironment(!toNight);
-
-            Debug.Log($"[GameLogic Utility] 조명 모드가 {(toNight ? "푸른 밤(Night)" : "대낮(Day)")}으로 전환되었습니다!");
+            if (toNight) SwitchToNightMode();
+            else SwitchToDayMode();
         }
     }
 }
