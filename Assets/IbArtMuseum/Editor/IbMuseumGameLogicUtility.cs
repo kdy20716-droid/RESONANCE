@@ -112,12 +112,14 @@ namespace IbArtMuseum
                     vaseObj.GetComponent<MeshRenderer>().material = glassMat;
                 }
 
-                // 2. 3F ~ 9F 다음 층으로 가는 계단 앞 복도를 완전히 가로막는 수수께끼 관리인 NPC & 차단 콜라이더
+                // 2. 3F ~ 9F 다음 층으로 올라가는 계단 앞 출입구(문) 정중앙에 수수께끼 관리인 NPC & 출입구 차단 콜라이더 배치
+                // 짝수층 계단 입구: X = 3.0m, Z = 19.2m (남쪽 전시장 바라봄)
+                // 홀수층 계단 입구: X = -3.0m, Z = -19.2m (북쪽 전시장 바라봄)
                 Vector3 guardPos = isEvenFloor 
-                    ? new Vector3(0f, floorY, -18.0f) 
-                    : new Vector3(0f, floorY, 18.0f);
+                    ? new Vector3(3.0f, floorY, 19.2f) 
+                    : new Vector3(-3.0f, floorY, -19.2f);
 
-                Quaternion guardRot = Quaternion.Euler(0, isEvenFloor ? 0f : 180f, 0);
+                Quaternion guardRot = Quaternion.Euler(0, isEvenFloor ? 180f : 0f, 0);
 
                 GameObject guardObj = new GameObject($"RiddleCuratorGuard_{f}F_to_{f+1}F");
                 guardObj.transform.SetParent(rootGroup.transform);
@@ -142,21 +144,21 @@ namespace IbArtMuseum
                 head.transform.localScale = new Vector3(0.35f, 0.4f, 0.35f);
                 head.GetComponent<MeshRenderer>().material = suitMat;
 
-                // 2) 플레이어 비비기 완전 차단용 박스 콜라이더 (복도 폭 전체 차단: 8m x 4m x 1m)
+                // 2) 출입구 통로 폭(3.0m)에 딱 맞춘 비비기 방지 박스 콜라이더
                 GameObject blockWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 blockWall.name = "Blocking_Corridor_BoxCollider";
                 blockWall.transform.SetParent(guardObj.transform, false);
-                blockWall.transform.localPosition = new Vector3(0, 1.8f, 0);
-                blockWall.transform.localScale = new Vector3(9.0f, 4.0f, 0.8f);
+                blockWall.transform.localPosition = new Vector3(0, 1.75f, 0);
+                blockWall.transform.localScale = new Vector3(3.2f, 3.5f, 0.6f);
                 blockWall.GetComponent<MeshRenderer>().enabled = false; // 투명화
 
                 BoxCollider blockCol = blockWall.GetComponent<BoxCollider>();
 
-                // 3) 상호작용 트리거 콜라이더
+                // 3) 상호작용 트리거 콜라이더 (출입구 앞)
                 BoxCollider interactTrigger = guardObj.AddComponent<BoxCollider>();
                 interactTrigger.isTrigger = true;
-                interactTrigger.center = new Vector3(0, 1.0f, 0);
-                interactTrigger.size = new Vector3(3.5f, 2.5f, 3.5f);
+                interactTrigger.center = new Vector3(0, 1.0f, 0.5f);
+                interactTrigger.size = new Vector3(3.0f, 2.5f, 2.5f);
 
                 // 4) 수수께끼 관리인 컴포넌트 연결
                 var guardComp = guardObj.AddComponent<IbRiddleGuardNPC>();

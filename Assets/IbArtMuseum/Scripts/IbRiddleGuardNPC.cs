@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -42,8 +42,8 @@ namespace IbArtMuseum
             }
 
             initialPosition = transform.position;
-            // 짝수층/홀수층에 따라 오른쪽 벽면으로 비켜섬
-            stepAsideTargetPosition = initialPosition + transform.right * 2.2f;
+            // 문 옆 벽면 쪽으로 부드럽게 비켜서서 계단 출입구를 완전히 개방
+            stepAsideTargetPosition = initialPosition + (floorLevel % 2 == 0 ? Vector3.right * 2.0f : Vector3.left * 2.0f);
 
             SetupDefaultRiddleForFloor();
         }
