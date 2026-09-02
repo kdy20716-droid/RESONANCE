@@ -390,9 +390,9 @@ namespace IbArtMuseum
                 arrCT.floorLevel = f;
                 arrCT.maxYDifference = 2.5f;
 
-                // [시각화 링 1: 층 착지 & 스폰 지점 - 하늘빛 시안 링]
-                CreateFloorGlowRingIndicator(trigRoot.transform, $"GlowRing_Arrival_{f}F",
-                    new Vector3(arrivalPos.x, floorY + 0.02f, arrivalPos.z), 3.5f, new Color(0.2f, 0.75f, 1.0f));
+                // [트리거 자식으로 빛 링 장착: 클릭 & 이동 시 함께 이동!]
+                CreateFloorGlowRingIndicator(arrivalTrig.transform, "GlowRing_Indicator",
+                    new Vector3(0, -1.18f, 0), 3.5f, new Color(0.2f, 0.75f, 1.0f));
 
                 // 2) ★ 복도 모퉁이를 돌 때 층 입장 트리거 (10층 제외)
                 // 계단을 내려와 복도 끝 모퉁이를 도는 순간 100% 감지되어 입장 콘솔 및 이상현상 콘솔 출력!
@@ -413,9 +413,9 @@ namespace IbArtMuseum
                     ct.floorLevel = f;
                     ct.maxYDifference = 2.5f;
 
-                    // [시각화 링 2: 복도 모퉁이 전시장 입장 (콘솔 출력 지점) - 황금빛 골드 링]
-                    CreateFloorGlowRingIndicator(trigRoot.transform, $"GlowRing_CornerEnter_{f}F",
-                        new Vector3(cornerPos.x, floorY + 0.02f, cornerPos.z), 3.6f, new Color(1.0f, 0.85f, 0.2f));
+                    // [트리거 자식으로 황금빛 링 장착: 콘솔창 출력 지점]
+                    CreateFloorGlowRingIndicator(enterHallTrig.transform, "GlowRing_Indicator",
+                        new Vector3(0, -1.48f, 0), 3.6f, new Color(1.0f, 0.85f, 0.2f));
                 }
 
                 // 3) 다음 층으로 내려가는 계단 입구 체크포인트 (f > 1)
@@ -438,9 +438,9 @@ namespace IbArtMuseum
                     ct.floorLevel = f;
                     ct.maxYDifference = 2.5f;
 
-                    // [시각화 링 3: 다음 층 하강 계단 입구 (정상 전진 판정 지점) - 에메랄드 그린 링]
-                    CreateFloorGlowRingIndicator(trigRoot.transform, $"GlowRing_StairsDown_{f}F",
-                        new Vector3(downPos.x, floorY + 0.02f, downPos.z), 3.0f, new Color(0.2f, 1.0f, 0.4f));
+                    // [트리거 자식으로 에메랄드 그린 링 장착: 하강 계단 전진 판정 지점]
+                    CreateFloorGlowRingIndicator(downTrig.transform, "GlowRing_Indicator",
+                        new Vector3(0, -1.18f, 0), 3.0f, new Color(0.2f, 1.0f, 0.4f));
                 }
 
                 // 4) 되돌아가기 판정 트리거 (스폰 복도로 되돌아왔을 때, 1 < f < 10)
@@ -464,11 +464,11 @@ namespace IbArtMuseum
             }
         }
 
-        private static void CreateFloorGlowRingIndicator(Transform parent, string name, Vector3 pos, float diameter, Color ringColor)
+        private static void CreateFloorGlowRingIndicator(Transform parent, string name, Vector3 localPos, float diameter, Color ringColor)
         {
             GameObject ringGo = new GameObject(name);
             ringGo.transform.SetParent(parent);
-            ringGo.transform.position = pos;
+            ringGo.transform.localPosition = localPos;
 
             Material ringMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
             ringMat.name = $"Mat_{name}";
@@ -484,17 +484,17 @@ namespace IbArtMuseum
             GameObject outerCyl = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             outerCyl.name = "OuterRing";
             outerCyl.transform.SetParent(ringGo.transform);
-            outerCyl.transform.position = pos;
+            outerCyl.transform.localPosition = Vector3.zero;
             outerCyl.transform.localScale = new Vector3(diameter, 0.012f, diameter);
             outerCyl.GetComponent<MeshRenderer>().material = ringMat;
             Object.DestroyImmediate(outerCyl.GetComponent<Collider>()); // 콜라이더 완전 제거 (충돌 없음!)
 
             // 2. 중심 빛 코어 닷
-            GameObject centerDot = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            centerDot.name = "CenterDot";
+            GameObject centerDot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            centerDot.name = "CenterGlowDot";
             centerDot.transform.SetParent(ringGo.transform);
-            centerDot.transform.position = pos + Vector3.up * 0.002f;
-            centerDot.transform.localScale = new Vector3(diameter * 0.25f, 0.014f, diameter * 0.25f);
+            centerDot.transform.localPosition = new Vector3(0, 0.02f, 0);
+            centerDot.transform.localScale = new Vector3(0.35f, 0.04f, 0.35f);
             centerDot.GetComponent<MeshRenderer>().material = ringMat;
             Object.DestroyImmediate(centerDot.GetComponent<Collider>());
         }
