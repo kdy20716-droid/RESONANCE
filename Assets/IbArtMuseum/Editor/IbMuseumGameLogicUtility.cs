@@ -137,10 +137,11 @@ namespace IbArtMuseum
                     vaseObj.GetComponent<MeshRenderer>().material = glassMat;
                 }
 
-                // 2. 3F ~ 9F 전시장 구석 계단실 진입 통로(길목)를 완전히 가로막는 수수께끼 관리인 NPC & 길목 차단 콜라이더 배치!
-                // 2번째 사진 일치: X = -16.5f (구석 통로 입구), Z = 짝수층 18.2f (남쪽 바라봄) / 홀수층 -18.2f (북쪽 바라봄)
-                Vector3 guardPos = new Vector3(-16.5f, floorY, isEvenFloor ? 18.2f : -18.2f);
-                Quaternion guardRot = Quaternion.Euler(0, isEvenFloor ? 180f : 0f, 0);
+                // 2. 3F ~ 9F 전시장 저 건너편 위층 계단실 진입 통로(길목)를 완전히 가로막는 수수께끼 관리인 NPC & 길목 차단 콜라이더 배치!
+                // 홀수층(3,5,7,9F) 다음 계단문: 북쪽 Z = +18.2f, X = -16.5f (남쪽 전시장 중앙 바라봄 180도)
+                // 짝수층(4,6,8F) 다음 계단문: 남쪽 Z = -18.2f, X = -16.5f (북쪽 전시장 중앙 바라봄 0도)
+                Vector3 guardPos = new Vector3(-16.5f, floorY, isEvenFloor ? -18.2f : 18.2f);
+                Quaternion guardRot = Quaternion.Euler(0, isEvenFloor ? 0f : 180f, 0);
 
                 GameObject guardObj = new GameObject($"RiddleCuratorGuard_{f}F_to_{f+1}F");
                 guardObj.transform.SetParent(rootGroup.transform);
