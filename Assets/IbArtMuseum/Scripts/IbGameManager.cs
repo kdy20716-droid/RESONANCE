@@ -341,6 +341,13 @@ namespace IbArtMuseum
                 }
             }
 
+            // 8. 1~9층 천장 3x3 직사각형 조명 (낮에 켜지고 밤에 자동 소등!)
+            GameObject ceilingLightsRoot = GameObject.Find("Museum_Ceiling_Lights");
+            if (ceilingLightsRoot != null)
+            {
+                ceilingLightsRoot.SetActive(isDay);
+            }
+
             // 사방이 막힌 실내 갤러리이므로 앰비언트 광을 차분하게 낮추어, 오직 실내 핀조명/스팟라이트에 의해서만 밝기가 결정되도록 설정!
             RenderSettings.ambientLight = isDay ? new Color(0.08f, 0.09f, 0.12f) : new Color(0.02f, 0.03f, 0.05f);
         }

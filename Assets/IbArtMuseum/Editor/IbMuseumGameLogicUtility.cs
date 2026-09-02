@@ -129,6 +129,9 @@ namespace IbArtMuseum
             // 4. ★ 액자 그림 위에서 아래로 정확하게 내리쬐는 픽처 조명 기구 및 스팟라이트 설치!
             SetupPrecisePictureLightsAboveCanvases();
 
+            // 4-1. ★ 1~9층 천장 3x3 (9개) Area 직사각형 조명 설치 (silver 테두리 + light 형광등)
+            Setup3x3CeilingLights();
+
             // 5. ★ 10층->9층 복도 액자 낮에는 일반 그림, 밤에 상호작용 글씨 표시로 설정!
             SetupHallwayPaintingsDayNight();
 
@@ -701,6 +704,107 @@ namespace IbArtMuseum
             hdLight.volumetricDimmer = 4.0f; // 빛줄기 400% 선명화!
             hdLight.volumetricShadowDimmer = 1.0f;
             hdLight.useScreenSpaceShadows = true;
+        }
+
+        private static void Setup3x3CeilingLights()
+        {
+            // 1. 기존 천장 조명 루트 정리
+            GameObject existingCeilingRoot = GameObject.Find("Museum_Ceiling_Lights");
+            if (existingCeilingRoot != null)
+            {
+                Object.DestroyImmediate(existingCeilingRoot);
+            }
+
+            GameObject ceilingRoot = new GameObject("Museum_Ceiling_Lights");
+
+            // 유저가 직접 만드신 texture 폴더의 silver 및 light 머티리얼 로드!
+            Material silverFrameMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/silver.mat") ??
+                                      AssetDatabase.LoadAssetAtPath<Material>("Assets/SampleSceneAssets/Materials/General/Aluminium_Mat.mat");
+            Material lightEmissiveMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/light.mat");
+
+            if (silverFrameMat == null)
+            {
+                silverFrameMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard")) { name = "silver", color = new Color(0.85f, 0.86f, 0.88f) };
+                if (silverFrameMat.HasProperty("_Metallic")) silverFrameMat.SetFloat("_Metallic", 0.85f);
+                if (silverFrameMat.HasProperty("_Smoothness")) silverFrameMat.SetFloat("_Smoothness", 0.75f);
+            }
+
+            if (lightEmissiveMat == null)
+            {
+                lightEmissiveMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard")) { name = "light", color = Color.white };
+                if (lightEmissiveMat.HasProperty("_EmissiveColor"))
+                {
+                    lightEmissiveMat.SetColor("_EmissiveColor", Color.white * 11.3f);
+                    lightEmissiveMat.EnableKeyword("_EMISSION");
+                }
+            }
+
+            // ★ 3×3 정사각 그리드 (층마다 9개 균일 배치)
+            Vector2[] lightPoints = new Vector2[]
+            {
+                new Vector2(-8.5f, -8.5f), new Vector2(0f, -8.5f), new Vector2(8.5f, -8.5f),
+                new Vector2(-8.5f,  0.0f), new Vector2(0f,  0.0f), new Vector2(8.5f,  0.0f),
+                new Vector2(-8.5f,  8.5f), new Vector2(0f,  8.5f), new Vector2(8.5f,  8.5f)
+            };
+
+            for (int floor = 1; floor <= 9; floor++)
+            {
+                float floorY = (floor - 1) * 7.0f;
+                float ceilingY = floorY + 6.18f; // 천장 슬래브 하단에 완벽 밀착!
+
+                GameObject floorGroup = new GameObject($"Floor_{floor}F_Ceiling_Lights");
+                floorGroup.transform.SetParent(ceilingRoot.transform);
+
+                for (int i = 0; i < lightPoints.Length; i++)
+                {
+                    Vector3 panelPos = new Vector3(lightPoints[i].x, ceilingY, lightPoints[i].y);
+
+                    GameObject panelGo = new GameObject($"Rect_White_Panel_{floor}F_{i + 1}");
+                    panelGo.transform.SetParent(floorGroup.transform);
+                    panelGo.transform.position = panelPos;
+
+                    // 1) 테두리: silver 머티리얼 적용 + 90도 회전된 직사각형 프레임
+                    GameObject frame = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    frame.name = "White_Frame";
+                    frame.transform.SetParent(panelGo.transform);
+                    frame.transform.position = panelPos;
+                    frame.transform.localScale = new Vector3(0.45f, 0.035f, 2.2f); // ★ Z축 방향 회전
+                    frame.GetComponent<MeshRenderer>().material = silverFrameMat;
+                    Object.DestroyImmediate(frame.GetComponent<Collider>());
+
+                    // 2) 형광등 디퓨저: light 머티리얼 적용
+                    GameObject diffuser = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    diffuser.name = "Emissive_Diffuser_Panel";
+                    diffuser.transform.SetParent(panelGo.transform);
+                    diffuser.transform.position = panelPos + Vector3.down * 0.012f;
+                    diffuser.transform.localScale = new Vector3(0.35f, 0.015f, 2.05f); // ★ Z축 방향 회전
+                    diffuser.GetComponent<MeshRenderer>().material = lightEmissiveMat;
+                    Object.DestroyImmediate(diffuser.GetComponent<Collider>());
+
+                    // 3) Area (Rectangle) 조명 컴포넌트 장착
+                    GameObject areaLightGo = new GameObject("PanelAreaLight");
+                    areaLightGo.transform.SetParent(panelGo.transform);
+                    areaLightGo.transform.position = panelPos + Vector3.down * 0.025f;
+                    areaLightGo.transform.rotation = Quaternion.Euler(90f, 0, 0); // 수직 하향 투사
+
+                    Light sl = areaLightGo.AddComponent<Light>();
+                    sl.type = LightType.Rectangle; // Area Light!
+                    sl.color = new Color(0.98f, 0.98f, 1.0f);
+                    sl.shadows = LightShadows.Soft;
+
+                    var hdLightData = areaLightGo.AddComponent<HDAdditionalLightData>();
+                    hdLightData.lightTypeExtent = LightTypeExtent.Rectangle;
+                    hdLightData.shapeWidth = 0.45f;
+                    hdLightData.shapeHeight = 2.2f;
+                    hdLightData.range = 8.5f;
+                    hdLightData.intensity = 5500f; // 에어리어 라이트 자연스러운 조도
+                    hdLightData.volumetricDimmer = 2.0f;
+                    hdLightData.volumetricShadowDimmer = 0.8f;
+                    hdLightData.useScreenSpaceShadows = true;
+                }
+            }
+
+            Debug.Log("<color=#FFFFFF><b>[Ceiling Lights 3x3 Area] 1~9층 전 층에 3x3(9개) Area 직사각형 조명(silver 테두리 + light 형광등) 생성 완료!</b></color>");
         }
 
         private static void SetupDaytimeVisitorNPCs()
