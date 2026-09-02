@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 namespace IbArtMuseum
@@ -40,6 +40,8 @@ namespace IbArtMuseum
                 InteractWithVase();
             }
         }
+
+        public void Interact() => InteractWithVase();
 
         public void InteractWithVase()
         {
