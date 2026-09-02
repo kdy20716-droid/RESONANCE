@@ -8,9 +8,34 @@ namespace IbArtMuseum
 {
     public static class IbMuseumGameLogicUtility
     {
+        [MenuItem("Tools/Ib Museum/🧹 Clean Duplicate Triggers (중복 트리거 완전 정리)", false, 1)]
+        public static void CleanDuplicateTriggersMenu()
+        {
+            GameObject[] allSceneObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            int count = 0;
+            foreach (var go in allSceneObjects)
+            {
+                if (go != null && (go.name == "Museum_Strict_Triggers" || go.name.StartsWith("Museum_Strict_Triggers")))
+                {
+                    Object.DestroyImmediate(go);
+                    count++;
+                }
+            }
+
+            IbCircularTrigger[] oldTrigs = Object.FindObjectsByType<IbCircularTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var t in oldTrigs)
+            {
+                if (t != null) Object.DestroyImmediate(t.gameObject);
+            }
+
+            Debug.Log($"<color=#33FF33><b>[Clean Triggers] {count}개의 중복 Museum_Strict_Triggers 및 레거시 트리거를 깔끔하게 모두 삭제했습니다!</b></color>");
+        }
+
         [MenuItem("Tools/Ib Museum/🎮 Setup Gameplay & GameLogic (게임 시스템 & 맞춤 조명 & 관람객 세팅)", false, 2)]
         public static void SetupGameLogicOnly()
         {
+            CleanDuplicateTriggersMenu();
+
             IbGameManager gm = Object.FindFirstObjectByType<IbGameManager>();
             if (gm == null)
             {
@@ -112,12 +137,12 @@ namespace IbArtMuseum
                     vaseObj.GetComponent<MeshRenderer>().material = glassMat;
                 }
 
-                // 2. 3F ~ 9F 다음 층으로 올라가는 계단 앞 출입구(문) 정중앙에 수수께끼 관리인 NPC & 출입구 차단 콜라이더 배치
-                // 짝수층 계단 입구: X = 3.0m, Z = 19.2m (남쪽 전시장 바라봄)
-                // 홀수층 계단 입구: X = -3.0m, Z = -19.2m (북쪽 전시장 바라봄)
+                // 2. 3F ~ 9F 전시장 분리벽 앞, 플레이어가 바라보는 방향 기준 왼쪽 벽에서 살짝 떨어진 위치에 수수께끼 관리인 NPC 배치
+                // 홀수층: 남쪽(-Z)을 바라보고 올 때 왼쪽 벽(동쪽) 혹은 분리벽 앞 -> X = -4.5f, Z = -17.5f (바라보는 방향: 북쪽 0도)
+                // 짝수층: 북쪽(+Z)을 바라보고 올 때 왼쪽 벽(서쪽) 혹은 분리벽 앞 -> X = 4.5f, Z = 17.5f (바라보는 방향: 남쪽 180도)
                 Vector3 guardPos = isEvenFloor 
-                    ? new Vector3(3.0f, floorY, 19.2f) 
-                    : new Vector3(-3.0f, floorY, -19.2f);
+                    ? new Vector3(4.5f, floorY, 17.5f) 
+                    : new Vector3(-4.5f, floorY, -17.5f);
 
                 Quaternion guardRot = Quaternion.Euler(0, isEvenFloor ? 180f : 0f, 0);
 
@@ -144,21 +169,21 @@ namespace IbArtMuseum
                 head.transform.localScale = new Vector3(0.35f, 0.4f, 0.35f);
                 head.GetComponent<MeshRenderer>().material = suitMat;
 
-                // 2) 출입구 통로 폭(3.0m)에 딱 맞춘 비비기 방지 박스 콜라이더
+                // 2) 가드 몸체에 꼭 맞는 슬림한 박스 콜라이더
                 GameObject blockWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 blockWall.name = "Blocking_Corridor_BoxCollider";
                 blockWall.transform.SetParent(guardObj.transform, false);
-                blockWall.transform.localPosition = new Vector3(0, 1.75f, 0);
-                blockWall.transform.localScale = new Vector3(3.2f, 3.5f, 0.6f);
+                blockWall.transform.localPosition = new Vector3(0, 1.0f, 0);
+                blockWall.transform.localScale = new Vector3(1.4f, 2.0f, 1.4f);
                 blockWall.GetComponent<MeshRenderer>().enabled = false; // 투명화
 
                 BoxCollider blockCol = blockWall.GetComponent<BoxCollider>();
 
-                // 3) 상호작용 트리거 콜라이더 (출입구 앞)
+                // 3) 상호작용 트리거 콜라이더
                 BoxCollider interactTrigger = guardObj.AddComponent<BoxCollider>();
                 interactTrigger.isTrigger = true;
                 interactTrigger.center = new Vector3(0, 1.0f, 0.5f);
-                interactTrigger.size = new Vector3(3.0f, 2.5f, 2.5f);
+                interactTrigger.size = new Vector3(2.5f, 2.2f, 2.5f);
 
                 // 4) 수수께끼 관리인 컴포넌트 연결
                 var guardComp = guardObj.AddComponent<IbRiddleGuardNPC>();
@@ -271,7 +296,16 @@ namespace IbArtMuseum
 
         private static void SetupStrictFloorTriggers()
         {
-            // 기존 트리거 전부 정리 후 층별 고유 Y축 좌표로 정밀 재배치
+            // 씬에 남아있는 모든 Museum_Strict_Triggers 그룹과 기존 트리거 완벽 정리!
+            GameObject[] allSceneObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var go in allSceneObjects)
+            {
+                if (go != null && (go.name == "Museum_Strict_Triggers" || go.name.StartsWith("Museum_Strict_Triggers")))
+                {
+                    Object.DestroyImmediate(go);
+                }
+            }
+
             IbCircularTrigger[] oldTrigs = Object.FindObjectsByType<IbCircularTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var t in oldTrigs)
             {
