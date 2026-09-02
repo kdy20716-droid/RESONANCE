@@ -452,7 +452,9 @@ namespace IbArtMuseum
             foreach (var go in allObjects)
             {
                 if (go == null) continue;
-                if (go.name == "FloorLights" || go.name.StartsWith("SpotLight_") || go.name == "Museum_Custom_Lighting" || go.name.StartsWith("PictureLight_") || go.name.StartsWith("Fixture_") || go.name.Contains("RESONANCE_Inside_Sign_Light"))
+                if (go.name == "FloorLights" || go.name.StartsWith("SpotLight_") || go.name == "Museum_Custom_Lighting" ||
+                    go.name.StartsWith("PictureLight_") || go.name.StartsWith("Fixture_") || go.name.Contains("RESONANCE_Inside_Sign_Light") ||
+                    go.name == "Museum_Ceiling_Downlights" || go.name == "Museum_White_Ceilings")
                 {
                     Object.DestroyImmediate(go);
                 }
