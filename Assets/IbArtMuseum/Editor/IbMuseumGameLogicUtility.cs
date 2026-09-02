@@ -460,14 +460,36 @@ namespace IbArtMuseum
 
             GameObject lightingRoot = new GameObject("Museum_Custom_Lighting");
 
-            // 조명 기구용 황동/골드 머티리얼
-            Material fixtureMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
-            fixtureMat.name = "Mat_Brass_LightFixture";
-            fixtureMat.color = new Color(0.88f, 0.75f, 0.42f);
-            if (fixtureMat.HasProperty("_Metallic")) fixtureMat.SetFloat("_Metallic", 0.85f);
-            if (fixtureMat.HasProperty("_Smoothness")) fixtureMat.SetFloat("_Smoothness", 0.75f);
+            // 조명 기구용 럭셔리 황동/골드 머티리얼
+            Material brassMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+            brassMat.name = "Mat_Brass_LuxuryGold";
+            brassMat.color = new Color(0.92f, 0.78f, 0.40f);
+            if (brassMat.HasProperty("_Metallic")) brassMat.SetFloat("_Metallic", 0.92f);
+            if (brassMat.HasProperty("_Smoothness")) brassMat.SetFloat("_Smoothness", 0.85f);
 
-            // 2. 모든 액자의 캔버스 그림 정면 상단 핀조명 (3000 lux 고정)
+            // 어두운 메탈릭 브론즈 머티리얼 (베젤 및 마운트 디테일용)
+            Material darkBronzeMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+            darkBronzeMat.name = "Mat_DarkBronze_Accent";
+            darkBronzeMat.color = new Color(0.22f, 0.18f, 0.14f);
+            if (darkBronzeMat.HasProperty("_Metallic")) darkBronzeMat.SetFloat("_Metallic", 0.85f);
+            if (darkBronzeMat.HasProperty("_Smoothness")) darkBronzeMat.SetFloat("_Smoothness", 0.75f);
+
+            // 실제 빛이 뿜어져 나오는 발광 전구/렌즈 머티리얼 (HDRP Emission)
+            Material bulbEmissiveMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+            bulbEmissiveMat.name = "Mat_LightBulb_Emissive";
+            bulbEmissiveMat.color = new Color(1f, 0.98f, 0.92f);
+            if (bulbEmissiveMat.HasProperty("_EmissiveColor"))
+            {
+                bulbEmissiveMat.SetColor("_EmissiveColor", new Color(1f, 0.96f, 0.88f) * 15.0f);
+                bulbEmissiveMat.EnableKeyword("_EMISSION");
+            }
+            if (bulbEmissiveMat.HasProperty("_EmissionColor"))
+            {
+                bulbEmissiveMat.SetColor("_EmissionColor", new Color(1f, 0.96f, 0.88f) * 15.0f);
+                bulbEmissiveMat.EnableKeyword("_EMISSION");
+            }
+
+            // 2. 모든 액자의 캔버스 그림 정면 상단 클래식 갤러리 픽처 라이트 (더블 암, 원통형 후드 갓, 발광 렌즈 스트립)
             IbInteractableArtwork[] artworks = Object.FindObjectsByType<IbInteractableArtwork>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var art in artworks)
             {
@@ -480,43 +502,77 @@ namespace IbArtMuseum
                 Transform canvasT = art.transform.Find("Canvas");
                 Vector3 canvasFacingDir = (canvasT != null) ? -canvasT.forward : -art.transform.forward;
                 Vector3 canvasPos = (canvasT != null) ? canvasT.position : art.transform.position;
+                Vector3 canvasRight = Vector3.Cross(Vector3.up, canvasFacingDir).normalized;
 
-                Vector3 mountPos = canvasPos + (-canvasFacingDir * 0.12f) + Vector3.up * 1.35f;
-                Vector3 lampHeadPos = mountPos + (canvasFacingDir * 0.65f) + Vector3.up * 0.15f;
+                Vector3 mountPos = canvasPos + (-canvasFacingDir * 0.10f) + Vector3.up * 1.30f;
+                Vector3 lampHeadPos = mountPos + (canvasFacingDir * 0.58f) + Vector3.up * 0.18f;
 
                 GameObject fixtureGo = new GameObject($"Fixture_{artName}");
                 fixtureGo.transform.SetParent(lightingRoot.transform);
 
+                // 1) 벽면 고급 마운트 플레이트 (Mount Base Plate)
                 GameObject basePlate = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                basePlate.name = "MountBase";
+                basePlate.name = "MountBase_Plate";
                 basePlate.transform.SetParent(fixtureGo.transform);
                 basePlate.transform.position = mountPos;
                 basePlate.transform.rotation = Quaternion.LookRotation(canvasFacingDir, Vector3.up);
-                basePlate.transform.localScale = new Vector3(0.32f, 0.10f, 0.05f);
-                basePlate.GetComponent<MeshRenderer>().material = fixtureMat;
+                basePlate.transform.localScale = new Vector3(0.24f, 0.08f, 0.03f);
+                basePlate.GetComponent<MeshRenderer>().material = darkBronzeMat;
                 Object.DestroyImmediate(basePlate.GetComponent<Collider>());
 
-                GameObject arm = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                arm.name = "SupportArm";
-                arm.transform.SetParent(fixtureGo.transform);
-                arm.transform.position = (mountPos + lampHeadPos) / 2f;
-                arm.transform.rotation = Quaternion.FromToRotation(Vector3.up, (lampHeadPos - mountPos).normalized);
-                arm.transform.localScale = new Vector3(0.035f, (lampHeadPos - mountPos).magnitude / 2f, 0.035f);
-                arm.GetComponent<MeshRenderer>().material = fixtureMat;
-                Object.DestroyImmediate(arm.GetComponent<Collider>());
+                // 2) 더블 슬림 황동 지지대 암 (Double Curved Brass Arms - 좌/우 2개)
+                float armOffset = 0.09f;
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    Vector3 armStart = mountPos + canvasRight * (armOffset * side);
+                    Vector3 armEnd = lampHeadPos + canvasRight * (armOffset * side);
 
-                GameObject shade = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                shade.name = "LampShade";
-                shade.transform.SetParent(fixtureGo.transform);
-                shade.transform.position = lampHeadPos;
-                shade.transform.rotation = Quaternion.LookRotation(art.transform.right, Vector3.up) * Quaternion.Euler(0, 0, 90f);
-                shade.transform.localScale = new Vector3(0.12f, 0.55f, 0.12f);
-                shade.GetComponent<MeshRenderer>().material = fixtureMat;
-                Object.DestroyImmediate(shade.GetComponent<Collider>());
+                    GameObject arm = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    arm.name = $"SupportArm_{(side > 0 ? "Right" : "Left")}";
+                    arm.transform.SetParent(fixtureGo.transform);
+                    arm.transform.position = (armStart + armEnd) / 2f;
+                    arm.transform.rotation = Quaternion.FromToRotation(Vector3.up, (armEnd - armStart).normalized);
+                    arm.transform.localScale = new Vector3(0.016f, (armEnd - armStart).magnitude / 2f, 0.016f);
+                    arm.GetComponent<MeshRenderer>().material = brassMat;
+                    Object.DestroyImmediate(arm.GetComponent<Collider>());
+                }
 
+                // 3) 원통형 럭셔리 황동 램프 후드 갓 (Lamp Hood Shade)
+                GameObject hood = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                hood.name = "Lamp_Hood_Shade";
+                hood.transform.SetParent(fixtureGo.transform);
+                hood.transform.position = lampHeadPos;
+                hood.transform.rotation = Quaternion.LookRotation(canvasRight, Vector3.up) * Quaternion.Euler(0, 0, 90f);
+                hood.transform.localScale = new Vector3(0.09f, 0.60f, 0.09f); // 가로 0.6m 슬림 후드
+                hood.GetComponent<MeshRenderer>().material = brassMat;
+                Object.DestroyImmediate(hood.GetComponent<Collider>());
+
+                // 4) 후드 갓 양쪽 끝 장식 캡 (End Caps)
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    GameObject cap = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    cap.name = $"HoodCap_{(side > 0 ? "Right" : "Left")}";
+                    cap.transform.SetParent(fixtureGo.transform);
+                    cap.transform.position = lampHeadPos + canvasRight * (0.30f * side);
+                    cap.transform.localScale = new Vector3(0.095f, 0.04f, 0.095f);
+                    cap.GetComponent<MeshRenderer>().material = darkBronzeMat;
+                    Object.DestroyImmediate(cap.GetComponent<Collider>());
+                }
+
+                // 5) ★ 실제로 빛을 뿜어내는 발광 렌즈 스트립 (Emissive Bulb Strip)
+                GameObject bulbLens = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                bulbLens.name = "Emissive_Bulb_Lens";
+                bulbLens.transform.SetParent(fixtureGo.transform);
+                bulbLens.transform.position = lampHeadPos + Vector3.down * 0.038f;
+                bulbLens.transform.rotation = Quaternion.LookRotation(canvasFacingDir, Vector3.up);
+                bulbLens.transform.localScale = new Vector3(0.52f, 0.018f, 0.06f);
+                bulbLens.GetComponent<MeshRenderer>().material = bulbEmissiveMat;
+                Object.DestroyImmediate(bulbLens.GetComponent<Collider>());
+
+                // 6) ★ 바로 이 발광 렌즈 위치에서 정확히 그림을 향해 쏘아지는 정밀 스팟라이트 광원!
                 GameObject spotLightGo = new GameObject($"PictureLight_{artName}");
                 spotLightGo.transform.SetParent(fixtureGo.transform);
-                spotLightGo.transform.position = lampHeadPos;
+                spotLightGo.transform.position = lampHeadPos + Vector3.down * 0.045f;
                 Vector3 targetAimPos = canvasPos + Vector3.up * 0.1f;
                 spotLightGo.transform.LookAt(targetAimPos);
 
@@ -530,10 +586,12 @@ namespace IbArtMuseum
 
                 var hdLight = spotLightGo.AddComponent<HDAdditionalLightData>();
                 hdLight.intensity = 300000f; // 낮 기본 조명 강도 300000 lux!
+                hdLight.volumetricDimmer = 4.0f; // 선명한 빛줄기 4배 증폭!
+                hdLight.volumetricShadowDimmer = 1.0f;
                 hdLight.useScreenSpaceShadows = true;
             }
 
-            // 3. 조각상 / 장미 / 10층 거대 동상 바닥 업라이트 & 동상 안쪽 조명 (3000 lux)
+            // 3. 조각상 / 장미 / 10층 거대 동상 바닥 매립형 각도조절 업라이트 (발광 투광 렌즈 포함)
             foreach (var art in artworks)
             {
                 if (art == null) continue;
@@ -542,27 +600,27 @@ namespace IbArtMuseum
                 if (artName.Contains("Statue") || artName.Contains("Rose"))
                 {
                     CreateFloorCanUplight(lightingRoot.transform, $"{artName}_Uplight_1",
-                        art.transform.position + new Vector3(-1.8f, 0.08f, -1.1f),
+                        art.transform.position + new Vector3(-1.8f, 0.02f, -1.1f),
                         art.transform.position + new Vector3(0, 1.6f, 0),
-                        3000f, fixtureMat);
+                        3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
 
                     CreateFloorCanUplight(lightingRoot.transform, $"{artName}_Uplight_2",
-                        art.transform.position + new Vector3(1.8f, 0.08f, 1.1f),
+                        art.transform.position + new Vector3(1.8f, 0.02f, 1.1f),
                         art.transform.position + new Vector3(0, 1.6f, 0),
-                        3000f, fixtureMat);
+                        3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
                 }
                 else if (artName.Contains("Monument") || artName.Contains("RESONANCE"))
                 {
                     // 10층 거대 조형물 전용: 바닥 업라이트 조명 2개 (좌측 앞, 우측 뒤)
                     CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Left",
-                        art.transform.position + new Vector3(-4.5f, 0.08f, -3.2f),
+                        art.transform.position + new Vector3(-4.5f, 0.02f, -3.2f),
                         art.transform.position + new Vector3(0, 4.0f, 0),
-                        3000f, fixtureMat);
+                        3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
 
                     CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Right",
-                        art.transform.position + new Vector3(4.5f, 0.08f, -3.2f),
+                        art.transform.position + new Vector3(4.5f, 0.02f, -3.2f),
                         art.transform.position + new Vector3(0, 4.0f, 0),
-                        3000f, fixtureMat);
+                        3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
 
                     // RESONANCE 명판 안쪽/아래에서 바닥을 비추는 조명
                     GameObject signUnderLight = new GameObject("RESONANCE_Inside_Sign_Light");
@@ -574,29 +632,63 @@ namespace IbArtMuseum
                     sul.color = new Color(1.0f, 0.95f, 0.85f);
                     var hdSul = signUnderLight.AddComponent<HDAdditionalLightData>();
                     hdSul.intensity = 3000f;
+                    hdSul.volumetricDimmer = 4.0f;
                 }
             }
         }
 
-        private static void CreateFloorCanUplight(Transform parent, string name, Vector3 pos, Vector3 targetPos, float intensity, Material fixtureMat)
+        private static void CreateFloorCanUplight(Transform parent, string name, Vector3 pos, Vector3 targetPos, float intensity, Material brassMat, Material darkBronzeMat, Material bulbEmissiveMat)
         {
             GameObject uplightGo = new GameObject(name);
             uplightGo.transform.SetParent(parent);
             uplightGo.transform.position = pos;
 
-            // 1) 바닥 원통형 캔 기구 (Floor Can Fixture)
-            GameObject can = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            can.name = "Fixture_Can";
-            can.transform.SetParent(uplightGo.transform);
-            can.transform.localPosition = new Vector3(0, 0.06f, 0);
-            can.transform.localScale = new Vector3(0.40f, 0.06f, 0.40f);
-            can.GetComponent<MeshRenderer>().material = fixtureMat;
-            Object.DestroyImmediate(can.GetComponent<Collider>());
+            Vector3 aimDir = (targetPos - pos).normalized;
 
-            // 2) 위를 향해 빛을 쏘는 상향 스팟 라이트
+            // 1) 바닥 고정 외장 브론즈 베젤 림 (Floor Heavy Trim Bezel)
+            GameObject floorBezel = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            floorBezel.name = "Floor_Bezel_Rim";
+            floorBezel.transform.SetParent(uplightGo.transform);
+            floorBezel.transform.localPosition = new Vector3(0, 0.02f, 0);
+            floorBezel.transform.localScale = new Vector3(0.44f, 0.02f, 0.44f);
+            floorBezel.GetComponent<MeshRenderer>().material = darkBronzeMat;
+            Object.DestroyImmediate(floorBezel.GetComponent<Collider>());
+
+            // 2) 내부 황동 회전 링 (Inner Brass Gimbal Ring)
+            GameObject gimbalRing = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            gimbalRing.name = "Inner_Gimbal_Ring";
+            gimbalRing.transform.SetParent(uplightGo.transform);
+            gimbalRing.transform.localPosition = new Vector3(0, 0.035f, 0);
+            gimbalRing.transform.localScale = new Vector3(0.36f, 0.02f, 0.36f);
+            gimbalRing.GetComponent<MeshRenderer>().material = brassMat;
+            Object.DestroyImmediate(gimbalRing.GetComponent<Collider>());
+
+            // 3) 조각상을 향해 실제로 기울어진 투광 프로젝터 캔 (Angled Projector Can Head)
+            GameObject projectorCan = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            projectorCan.name = "Angled_Projector_Can";
+            projectorCan.transform.SetParent(uplightGo.transform);
+            Vector3 canCenter = new Vector3(0, 0.08f, 0) + (aimDir * 0.04f);
+            projectorCan.transform.localPosition = canCenter;
+            projectorCan.transform.rotation = Quaternion.FromToRotation(Vector3.up, aimDir);
+            projectorCan.transform.localScale = new Vector3(0.24f, 0.12f, 0.24f);
+            projectorCan.GetComponent<MeshRenderer>().material = brassMat;
+            Object.DestroyImmediate(projectorCan.GetComponent<Collider>());
+
+            // 4) ★ 캔 입구에서 실제로 빛을 뿜는 발광 투광 렌즈 유리 (Emissive Lens Glass)
+            GameObject lens = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            lens.name = "Emissive_Spot_Lens";
+            lens.transform.SetParent(uplightGo.transform);
+            Vector3 lensPos = canCenter + (aimDir * 0.065f);
+            lens.transform.localPosition = lensPos;
+            lens.transform.rotation = Quaternion.FromToRotation(Vector3.up, aimDir);
+            lens.transform.localScale = new Vector3(0.20f, 0.012f, 0.20f);
+            lens.GetComponent<MeshRenderer>().material = bulbEmissiveMat;
+            Object.DestroyImmediate(lens.GetComponent<Collider>());
+
+            // 5) ★ 바로 이 발광 렌즈 표면에서 정확히 타겟을 향해 위로 뻗어나가는 상향 스팟 라이트!
             GameObject spotGo = new GameObject("UpSpotLight");
             spotGo.transform.SetParent(uplightGo.transform);
-            spotGo.transform.position = pos + Vector3.up * 0.12f;
+            spotGo.transform.position = uplightGo.transform.TransformPoint(lensPos) + aimDir * 0.03f;
             spotGo.transform.LookAt(targetPos);
 
             Light l = spotGo.AddComponent<Light>();
@@ -609,6 +701,8 @@ namespace IbArtMuseum
 
             var hdLight = spotGo.AddComponent<HDAdditionalLightData>();
             hdLight.intensity = intensity;
+            hdLight.volumetricDimmer = 4.0f; // 빛줄기 400% 선명화!
+            hdLight.volumetricShadowDimmer = 1.0f;
             hdLight.useScreenSpaceShadows = true;
         }
 
