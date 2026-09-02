@@ -443,25 +443,6 @@ namespace IbArtMuseum
                     CreateFloorGlowRingIndicator(downTrig.transform, "GlowRing_Indicator",
                         new Vector3(0, -1.18f, 0), 3.0f, new Color(0.2f, 1.0f, 0.4f));
                 }
-
-                // 4) 되돌아가기 판정 트리거 (스폰 복도로 되돌아왔을 때, 1 < f < 10)
-                if (f > 1 && f != 10)
-                {
-                    Vector3 turnPos = isEvenFloor ? new Vector3(1.0f, floorY + 1.2f, -21.75f) : new Vector3(1.0f, floorY + 1.2f, 21.75f);
-
-                    GameObject turnTrig = new GameObject($"TurnBackTrigger_{f}F");
-                    turnTrig.transform.SetParent(trigRoot.transform);
-                    turnTrig.transform.position = turnPos;
-
-                    BoxCollider box = turnTrig.AddComponent<BoxCollider>();
-                    box.isTrigger = true;
-                    box.size = new Vector3(6.0f, 3.5f, 5.0f);
-
-                    IbCircularTrigger ct = turnTrig.AddComponent<IbCircularTrigger>();
-                    ct.triggerType = FloorTriggerType.TurnBack;
-                    ct.floorLevel = f;
-                    ct.maxYDifference = 2.5f;
-                }
             }
         }
 

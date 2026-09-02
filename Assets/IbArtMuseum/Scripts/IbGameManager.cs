@@ -55,6 +55,12 @@ namespace IbArtMuseum
         public FloorCheckpoint[] floorCheckpoints = new FloorCheckpoint[10];
         public Transform[] floorSpawnPoints = new Transform[10];
 
+        [Header("8th Exit State Machine (Yellow / Green / Blue)")]
+        public bool hasPassedYellow = false;            // 노란색 원(복도 4번째 액자) 밟았는지 여부
+        public bool hasPassedGreen = false;             // 초록색 원(계단 하단) 밟았는지 여부
+        public bool isCurrentFloorAnomalyActive = false; // 이번 층에 이상현상이 발동되었는지 여부
+        public int currentTrackingFloor = 10;           // 현재 진행 중인 층수
+
         private bool hasTriggeredCutscene = false;
         private bool isTransitioning = false;
         private Coroutine prologueRoutine;
@@ -379,109 +385,138 @@ namespace IbArtMuseum
 
         // ==================== 3. 정밀 8번 출구 체크포인트 루프 로직 ====================
 
-        // 1) 계단을 다 내려와 해당 층 착지 체크포인트에 도달했을 때
+        // 1) 🔵 파란색 원: 계단 착지 및 텔레포트 담당
+        // - 초록색 원을 밟고 내려왔다면 ➔ 하강 판정 (정상 통과 vs 이상현상 무시 오답)
+        // - 노란색 원을 밟고 되돌아왔다면 ➔ 유턴 판정 (이상현상 회피 성공 vs 정상 층 오답)
         public void OnFloorArrival(int floorLevel)
         {
             if (isTransitioning) return;
             if (currentPhase != GamePhase.Night_Loop) return;
 
-            currentFloorIndex = 10 - floorLevel;
-            hasExploredCurrentFloor = false; // 전시장 탐색 상태 리셋
-
-            // 1층 출구 도달 시 탈출 성공 엔딩 시퀀스 발동!
-            if (currentFloorIndex >= 9)
+            // 1층 출구 파란색 원 도달 시 엔딩 발동!
+            if (floorLevel <= 1)
             {
                 StartCoroutine(EndingEscapeSequenceRoutine());
                 return;
             }
 
-            // 이번 층의 이상현상 결정 및 적용
-            anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
+            // Case A: 노란색 원을 밟았고 초록색 원은 밟지 않은 채 현재 층 파란색 원으로 되돌아온 경우 (유턴 감지!)
+            if (hasPassedYellow && !hasPassedGreen && floorLevel == currentTrackingFloor)
+            {
+                OnTurnedBackOnAnomaly(floorLevel);
+                return;
+            }
+
+            // Case B: 초록색 원을 찍고 아랫층 파란색 원을 찍은 경우 (하강 감지!)
+            if (hasPassedGreen)
+            {
+                if (isCurrentFloorAnomalyActive)
+                {
+                    // [오답 - 이상현상이 있었는데 무시하고 계단으로 내려옴 -> 9->8층 파란색 원으로 루프 리셋!]
+                    Debug.LogWarning($"<color=#FF3333><b>[8번 출구] ❌ 이상현상 간파 실패!</b> ({currentTrackingFloor}층에 이상현상이 있었는데 계단으로 내려왔습니다. 9->8층 파란색 원으로 루프 리셋됩니다!)</color>");
+                    StartCoroutine(LoopResetTo8FStairRoutine());
+                    return;
+                }
+                else
+                {
+                    // [정답 - 정상 층이어서 자연스럽게 계단을 걸어내려와 착지 완료!]
+                    Debug.Log($"<color=#33FF33><b>[8번 출구] 🟢 정상 층 통과!</b> ({currentTrackingFloor}층은 정상이었습니다. 아무 일도 일어나지 않고 자연스럽게 {floorLevel}층에 진입합니다.)</color>");
+                }
+            }
+
+            // 새로운 층 착지 완료 ➔ 상태 리셋 (노란색 원을 밟기 전까지는 대기)
+            currentTrackingFloor = floorLevel;
+            currentFloorIndex = 10 - floorLevel;
+            hasPassedYellow = false;
+            hasPassedGreen = false;
+            isCurrentFloorAnomalyActive = false;
+            anomalyManager?.DeactivateAllAnomalies();
+
+            Debug.Log($"<color=#55FFFF><b>[8번 출구] 🔵 {floorLevel}층 도착 (파란색 원)!</b> 복도 4번째 액자 앞 노란색 원으로 가시면 이상현상 테스트가 시작됩니다.</color>");
         }
 
-        // 2) ★ 플레이어가 계단을 내려와 복도 모퉁이를 돌 때 (층 입장 & 이상현상 콘솔 출력!)
-        public void OnPlayerEnteredMainHall() => OnPlayerEnteredMainHall(10 - currentFloorIndex);
+        // 2) 🟡 노란색 원: 복도 4번째 액자 앞 (이상현상 테스트 시작!)
+        // - 파란색 원을 밟고 온 뒤 이 원을 밟으면 이 층의 이상현상이 나타나거나 안 나타나게 결정!
+        public void OnPlayerEnteredMainHall() => OnPlayerEnteredMainHall(currentTrackingFloor);
         public void OnPlayerEnteredMainHall(int floorLevel)
         {
             if (isTransitioning) return;
             if (currentPhase != GamePhase.Night_Loop) return;
+            if (hasPassedYellow) return; // 이미 이번 층 테스트가 시작되었다면 중복 실행 방지
 
-            int expectedFloor = 10 - currentFloorIndex;
-            // 만약 계단 착지 트리거를 건너뛰었더라도 현재 층을 정확히 갱신!
-            if (floorLevel != expectedFloor)
+            hasPassedYellow = true;
+            currentTrackingFloor = floorLevel;
+            currentFloorIndex = 10 - floorLevel;
+
+            // ★ 9층은 분위기용 시작 층이므로 무조건 이상현상 0% (정상 갤러리 보장!)
+            if (floorLevel >= 9)
             {
-                currentFloorIndex = 10 - floorLevel;
-                anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
+                isCurrentFloorAnomalyActive = false;
+                anomalyManager?.DeactivateAllAnomalies();
+                Debug.Log($"<color=#66FF66><b>[8번 출구] 🟡 {floorLevel}층 시작 분위기 층 (이상현상 없음)</b> ➔ 초록색 계단을 통해 8층으로 내려가세요!</color>");
+                return;
             }
 
-            if (!hasExploredCurrentFloor)
+            // 8층 ~ 2층: 이상현상 주사위 롤링 (테스트 개시)
+            anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
+            isCurrentFloorAnomalyActive = (anomalyManager != null && anomalyManager.HasActiveAnomaly());
+
+            if (isCurrentFloorAnomalyActive)
             {
-                hasExploredCurrentFloor = true;
-
-                bool hadAnomaly = (anomalyManager != null && anomalyManager.HasActiveAnomaly());
-                string aName = (hadAnomaly && anomalyManager.CurrentActiveAnomaly != null) ? anomalyManager.CurrentActiveAnomaly.anomalyName : "이상현상";
-
-                if (hadAnomaly)
-                {
-                    Debug.Log($"<color=#FF5555><b>[8번 출구] 🏛️ {floorLevel}층 입장!</b> (⚠️ <b>이상현상 발생: [{aName}]</b> ➔ 발견 후 되돌아가야 탈출 가능!)</color>");
-                }
-                else
-                {
-                    Debug.Log($"<color=#66FF66><b>[8번 출구] 🏛️ {floorLevel}층 입장!</b> (✅ <b>문제없음 (정상 갤러리)</b> ➔ 다음 계단으로 내려가세요!)</color>");
-                }
+                string aName = (anomalyManager.CurrentActiveAnomaly != null) ? anomalyManager.CurrentActiveAnomaly.anomalyName : "알 수 없는 이상현상";
+                Debug.Log($"<color=#FF5555><b>[8번 출구] 🟡 {floorLevel}층 이상현상 발생: [{aName}]!</b> (⚠️ 이상현상을 발견했으니 뒤돌아서 파란색 원으로 유턴해야 탈출 가능!)</color>");
+            }
+            else
+            {
+                Debug.Log($"<color=#66FF66><b>[8번 출구] 🟡 {floorLevel}층 정상 갤러리!</b> (✅ 이상현상이 없으니 초록색 계단을 통해 다음 층으로 내려가세요!)</color>");
             }
         }
 
-        // 3) 다음 층으로 내려가는 계단 쪽 체크포인트를 밟았을 때
-        public void OnDescendedStairs() => OnDescendedStairs(10 - currentFloorIndex);
+        // 3) 🟢 초록색 원: 계단 하단 (하강 감지 센서)
+        // - 이상현상이 없으면 아무 일도 안 일어남
+        // - 이상현상이 있는데 밟으면 "이상현상 간파 실패!" 콘솔 출력
+        public void OnDescendedStairs() => OnDescendedStairs(currentTrackingFloor);
         public void OnDescendedStairs(int floorLevel)
         {
             if (isTransitioning) return;
             if (currentPhase != GamePhase.Night_Loop) return;
 
-            int expectedFloor = 10 - currentFloorIndex;
-            if (floorLevel != expectedFloor) return;
+            hasPassedGreen = true;
 
-            bool hadAnomaly = (anomalyManager != null && anomalyManager.HasActiveAnomaly());
-
-            if (!hadAnomaly)
+            if (isCurrentFloorAnomalyActive)
             {
-                // [정답 - 정상 갤러리이므로 계단을 내려가 다음 층으로 전진!]
-                Debug.Log($"<color=#33FF33><b>[8번 출구] 정상 층 통과!</b> ({floorLevel}층은 정상입니다. 계단을 걸어 {floorLevel - 1}층으로 내려갑니다.)</color>");
+                // 이상현상이 있는데 초록색 원을 밟음 -> 콘솔로 경고!
+                Debug.LogWarning($"<color=#FF4444><b>[8번 출구] ❌ 이상현상 간파 실패! ({floorLevel}층에 이상현상이 있었는데 계단을 내려갔습니다. 아랫층 파란색 원을 밟으면 9->8층으로 루프 리셋됩니다!)</b></color>");
             }
             else
             {
-                // [오답 - 이상현상이 있었는데 무시하고 그냥 내려감 -> 9층으로 루프 리셋! (체력 미차감)]
-                Debug.LogWarning($"<color=#FF5555><b>[8번 출구] 이상현상 무시 오답!</b> ({floorLevel}층에 이상현상이 있었는데 내려갔습니다. 체력 감소 없이 9층 계단으로 루프 리셋됩니다.)</color>");
-                StartCoroutine(LoopResetTo9FRoutine());
+                // 이상현상이 없으므로 아무 일도 일어나지 않음 (정상 통과)
+                Debug.Log($"<color=#44FF44><b>[8번 출구] 🟢 정상 층 확인 중... (이상현상 없음. 계단을 마저 내려가세요.)</b></color>");
             }
         }
 
-        // 4) 이상현상을 확인하고 왔던 스폰 복도로 되돌아갈 때
-        public void OnTurnedBackOnAnomaly() => OnTurnedBackOnAnomaly(10 - currentFloorIndex);
+        // 4) 🔵 파란색 원 유턴 판정 (노란색 원을 밟고 난 뒤 초록색 원을 안 밟고 다시 파란색 원으로 되돌아옴)
+        // - 이상현상이 있었을 때 유턴하면 정답 (다음 층으로 심리스 이동!)
+        // - 이상현상이 없었는데 유턴하면 오답 (9->8층 파란색 원으로 루프 리셋!)
+        public void OnTurnedBackOnAnomaly() => OnTurnedBackOnAnomaly(currentTrackingFloor);
         public void OnTurnedBackOnAnomaly(int floorLevel)
         {
             if (isTransitioning) return;
             if (currentPhase != GamePhase.Night_Loop) return;
+            if (!hasPassedYellow) return; // 노란색 원을 밟기 전에는 유턴 판정 안 함
 
-            int expectedFloor = 10 - currentFloorIndex;
-            if (floorLevel != expectedFloor) return;
-
-            if (!hasExploredCurrentFloor) return; // 전시장 입장 전에 복도에서 서성일 때는 작동 안 함!
-
-            bool hadAnomaly = (anomalyManager != null && anomalyManager.HasActiveAnomaly());
-
-            if (hadAnomaly)
+            if (isCurrentFloorAnomalyActive)
             {
-                // [정답 - 이상현상 파훼 성공! 다음 하강 층(예: 7층에서 유턴 시 6층)으로 즉시 심리스 텔레포트!]
-                Debug.Log($"<color=#33FF33><b>[8번 출구] 이상현상 파훼 성공!</b> ({floorLevel}층 이상현상을 발견하고 유턴했습니다. {floorLevel - 1}층 계단으로 즉시 심리스 이동합니다.)</color>");
-                StartCoroutine(SeamlessAdvanceToNextFloorRoutine());
+                // [정답 - 이상현상을 올바르게 간파하고 유턴함! -> 다음 하강 층으로 심리스 텔레포트 전진!]
+                int nextFloor = floorLevel - 1;
+                Debug.Log($"<color=#33FF33><b>[8번 출구] 🌟 이상현상 간파 성공!</b> ({floorLevel}층 이상현상을 확인하고 유턴했습니다. {nextFloor}층 파란색 원으로 심리스 전진합니다!)</color>");
+                StartCoroutine(SeamlessAdvanceToNextFloorRoutine(nextFloor));
             }
             else
             {
-                // [오답 - 정상 층인데 되돌아감 -> 9층으로 루프 리셋! (체력 미차감)]
-                Debug.LogWarning($"<color=#FF5555><b>[8번 출구] 정상 층 오답!</b> ({floorLevel}층에는 이상현상이 없었는데 되돌아갔습니다. 체력 감소 없이 9층 계단으로 루프 리셋됩니다.)</color>");
-                StartCoroutine(LoopResetTo9FRoutine());
+                // [오답 - 정상 층인데 되돌아감 -> 9->8층 파란색 원으로 루프 리셋!]
+                Debug.LogWarning($"<color=#FF3333><b>[8번 출구] 🔄 정상 층 오답!</b> ({floorLevel}층에는 이상현상이 없었는데 유턴했습니다. 9->8층 파란색 원으로 루프 리셋됩니다!)</color>");
+                StartCoroutine(LoopResetTo8FStairRoutine());
             }
         }
 
@@ -602,14 +637,18 @@ namespace IbArtMuseum
         }
 
         /// <summary>
-        /// 이상현상 발생 시 유턴하면 다음 층으로 즉시 심리스 텔레포트
+        /// 이상현상 발생 시 유턴하면 다음 목표 층으로 심리스 텔레포트 전진!
         /// </summary>
-        private IEnumerator SeamlessAdvanceToNextFloorRoutine()
+        private IEnumerator SeamlessAdvanceToNextFloorRoutine(int targetFloorLevel)
         {
             isTransitioning = true;
-            hasExploredCurrentFloor = false;
+            hasPassedYellow = false;
+            hasPassedGreen = false;
+            isCurrentFloorAnomalyActive = false;
+            anomalyManager?.DeactivateAllAnomalies();
 
-            currentFloorIndex++;
+            currentTrackingFloor = targetFloorLevel;
+            currentFloorIndex = 10 - targetFloorLevel;
 
             if (currentFloorIndex < floorCheckpoints.Length)
             {
@@ -617,30 +656,30 @@ namespace IbArtMuseum
                 if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
             }
 
-            anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
-
             yield return new WaitForSeconds(0.12f);
             isTransitioning = false;
         }
 
         /// <summary>
-        /// 어떤 층이든 오답을 냈을 때 9층에서 8층으로 내려가는 계단으로 루프 리셋 (장미 미차감)
+        /// 8번 출구 오답 시: 9층에서 8층으로 내려가는 계단 착지 지점(8층 파란색 원)으로 즉시 루프 리셋!
         /// </summary>
-        private IEnumerator LoopResetTo9FRoutine()
+        private IEnumerator LoopResetTo8FStairRoutine()
         {
             isTransitioning = true;
-            hasExploredCurrentFloor = false;
+            hasPassedYellow = false;
+            hasPassedGreen = false;
+            isCurrentFloorAnomalyActive = false;
+            anomalyManager?.DeactivateAllAnomalies();
 
-            // 9층 (floorIndex = 1)으로 리셋
-            currentFloorIndex = 1;
+            // 8층 (floorIndex = 2, 즉 9층에서 내려온 8층 파란색 원)
+            currentTrackingFloor = 8;
+            currentFloorIndex = 2;
 
-            if (floorCheckpoints != null && floorCheckpoints.Length > 1)
+            if (floorCheckpoints != null && floorCheckpoints.Length > 2)
             {
-                FloorCheckpoint cp = floorCheckpoints[1];
+                FloorCheckpoint cp = floorCheckpoints[2];
                 if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
             }
-
-            anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
 
             yield return new WaitForSeconds(0.15f);
             isTransitioning = false;

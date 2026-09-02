@@ -41,11 +41,11 @@ namespace IbArtMuseum
 
             int floorLevel = 10 - floorIndex; // 10, 9, 8, ..., 1
 
-            // 10층(시작)과 1층(엔딩)은 항상 정상 갤러리 (이상현상 없음)
-            if (floorIndex == 0 || floorIndex >= 9)
+            // 10층(시작), 9층(프롤로그 분위기 층), 1층(엔딩)은 항상 정상 갤러리 (이상현상 0% 보장!)
+            if (floorIndex == 0 || floorIndex == 1 || floorIndex >= 9)
             {
                 currentActiveAnomaly = null;
-                Debug.Log($"<color=#66FF66>[이상현상 시스템] {floorLevel}층 도착: ✅ 이상현상 없음 (정상 갤러리)</color>");
+                Debug.Log($"<color=#66FF66>[이상현상 시스템] {floorLevel}층: ✅ 이상현상 없음 (정상 갤러리)</color>");
                 return;
             }
 
