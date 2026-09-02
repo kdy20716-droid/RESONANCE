@@ -756,10 +756,15 @@ namespace IbArtMuseum
                 fog.enableVolumetricFog.value = true;
 
                 fog.albedo.overrideState = true;
-                fog.albedo.value = new Color(0.96f, 0.96f, 1.0f);
+                fog.albedo.value = new Color(0.98f, 0.98f, 1.0f);
 
+                // 전체 실내는 뿌옇지 않고 맑고 투명하게 (가시거리 65m)
                 fog.meanFreePath.overrideState = true;
-                fog.meanFreePath.value = 25.0f; // 공기 중 가시거리 25m (은은하고 자연스러운 안개)
+                fog.meanFreePath.value = 65.0f;
+
+                // 전방 산란 계수(Anisotropy)를 높여 빛줄기 경계선을 칼같이 선명하게!
+                fog.anisotropy.overrideState = true;
+                fog.anisotropy.value = 0.75f;
 
                 fog.baseHeight.overrideState = true;
                 fog.baseHeight.value = -2.0f;
@@ -770,19 +775,19 @@ namespace IbArtMuseum
                 EditorUtility.SetDirty(globalVolume.profile);
             }
 
-            // 2. 씬의 모든 조명에 Volumetric Dimmer 1.0f (체적 빛줄기 100%) 자동 부여!
+            // 2. 씬의 모든 조명에 Volumetric Dimmer를 4.0배로 대폭 증폭하여 쨍하고 선명한 빛줄기 연출!
             HDAdditionalLightData[] allHdLights = Object.FindObjectsByType<HDAdditionalLightData>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var hdL in allHdLights)
             {
                 if (hdL != null)
                 {
-                    hdL.volumetricDimmer = 1.0f;
+                    hdL.volumetricDimmer = 4.0f; // 빛줄기 선명도 400% 증폭!
                     hdL.volumetricShadowDimmer = 1.0f;
                     EditorUtility.SetDirty(hdL);
                 }
             }
 
-            Debug.Log("<color=#33FF33><b>[Volumetric Lighting] HDRP Volumetric Fog 및 모든 조명의 Volumetric Dimmer(빛줄기)가 자동으로 완벽하게 세팅되었습니다!</b></color>");
+            Debug.Log("<color=#33FF33><b>[Volumetric Lighting] 실내는 맑고 투명하며 빛줄기는 4배로 선명하게(Anisotropy 0.75, Dimmer 4.0) 튜닝 완료되었습니다!</b></color>");
         }
 
         [MenuItem("Tools/Ib Museum/🌙 Toggle Blue Night Mode (푸른 밤 모드 즉시 테스트)", false, 3)]
