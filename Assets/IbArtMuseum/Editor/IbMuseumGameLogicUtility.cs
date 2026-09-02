@@ -767,9 +767,6 @@ namespace IbArtMuseum
                 fog.maximumHeight.overrideState = true;
                 fog.maximumHeight.value = 75.0f; // 10층 타워 높이 전체 커버
 
-                fog.volumetricFogBudget.overrideState = true;
-                fog.volumetricFogBudget.value = 0.5f;
-
                 EditorUtility.SetDirty(globalVolume.profile);
             }
 
