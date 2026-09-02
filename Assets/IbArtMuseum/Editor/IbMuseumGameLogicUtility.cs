@@ -390,6 +390,10 @@ namespace IbArtMuseum
                 arrCT.floorLevel = f;
                 arrCT.maxYDifference = 2.5f;
 
+                // [시각화 링 1: 층 착지 & 스폰 지점 - 하늘빛 시안 링]
+                CreateFloorGlowRingIndicator(trigRoot.transform, $"GlowRing_Arrival_{f}F",
+                    new Vector3(arrivalPos.x, floorY + 0.02f, arrivalPos.z), 3.5f, new Color(0.2f, 0.75f, 1.0f));
+
                 // 2) ★ 복도 모퉁이를 돌 때 층 입장 트리거 (10층 제외)
                 // 계단을 내려와 복도 끝 모퉁이를 도는 순간 100% 감지되어 입장 콘솔 및 이상현상 콘솔 출력!
                 if (f != 10)
@@ -408,11 +412,15 @@ namespace IbArtMuseum
                     ct.triggerType = FloorTriggerType.EnterMainHall;
                     ct.floorLevel = f;
                     ct.maxYDifference = 2.5f;
+
+                    // [시각화 링 2: 복도 모퉁이 전시장 입장 (콘솔 출력 지점) - 황금빛 골드 링]
+                    CreateFloorGlowRingIndicator(trigRoot.transform, $"GlowRing_CornerEnter_{f}F",
+                        new Vector3(cornerPos.x, floorY + 0.02f, cornerPos.z), 3.6f, new Color(1.0f, 0.85f, 0.2f));
                 }
 
                 // 3) 다음 층으로 내려가는 계단 입구 체크포인트 (f > 1)
                 // 이상현상 없을 시 아무 일도 안 일어나고 계단을 자연스럽게 걸어 내려감!
-                // 이상현상 있을 시 장미 1개 차감 & 현재 층 착지 체크포인트(arrivalPos)로 루프!
+                // 이상현상 있을 시 9층으로 루프 리셋!
                 if (f > 1)
                 {
                     Vector3 downPos = isEvenFloor ? new Vector3(17.5f, floorY + 1.2f, 21.75f) : new Vector3(-17.5f, floorY + 1.2f, -21.75f);
@@ -429,6 +437,10 @@ namespace IbArtMuseum
                     ct.triggerType = FloorTriggerType.StairsDown;
                     ct.floorLevel = f;
                     ct.maxYDifference = 2.5f;
+
+                    // [시각화 링 3: 다음 층 하강 계단 입구 (정상 전진 판정 지점) - 에메랄드 그린 링]
+                    CreateFloorGlowRingIndicator(trigRoot.transform, $"GlowRing_StairsDown_{f}F",
+                        new Vector3(downPos.x, floorY + 0.02f, downPos.z), 3.0f, new Color(0.2f, 1.0f, 0.4f));
                 }
 
                 // 4) 되돌아가기 판정 트리거 (스폰 복도로 되돌아왔을 때, 1 < f < 10)
@@ -450,6 +462,41 @@ namespace IbArtMuseum
                     ct.maxYDifference = 2.5f;
                 }
             }
+        }
+
+        private static void CreateFloorGlowRingIndicator(Transform parent, string name, Vector3 pos, float diameter, Color ringColor)
+        {
+            GameObject ringGo = new GameObject(name);
+            ringGo.transform.SetParent(parent);
+            ringGo.transform.position = pos;
+
+            Material ringMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+            ringMat.name = $"Mat_{name}";
+            ringMat.color = ringColor;
+            if (ringMat.HasProperty("_EmissiveColor"))
+            {
+                ringMat.SetColor("_EmissiveColor", ringColor * 6.0f);
+                ringMat.EnableKeyword("_EMISSION");
+            }
+            if (ringMat.HasProperty("_Smoothness")) ringMat.SetFloat("_Smoothness", 0.9f);
+
+            // 1. 외곽 링
+            GameObject outerCyl = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            outerCyl.name = "OuterRing";
+            outerCyl.transform.SetParent(ringGo.transform);
+            outerCyl.transform.position = pos;
+            outerCyl.transform.localScale = new Vector3(diameter, 0.012f, diameter);
+            outerCyl.GetComponent<MeshRenderer>().material = ringMat;
+            Object.DestroyImmediate(outerCyl.GetComponent<Collider>()); // 콜라이더 완전 제거 (충돌 없음!)
+
+            // 2. 중심 빛 코어 닷
+            GameObject centerDot = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            centerDot.name = "CenterDot";
+            centerDot.transform.SetParent(ringGo.transform);
+            centerDot.transform.position = pos + Vector3.up * 0.002f;
+            centerDot.transform.localScale = new Vector3(diameter * 0.25f, 0.014f, diameter * 0.25f);
+            centerDot.GetComponent<MeshRenderer>().material = ringMat;
+            Object.DestroyImmediate(centerDot.GetComponent<Collider>());
         }
 
         private static void SetupPrecisePictureLightsAboveCanvases()
