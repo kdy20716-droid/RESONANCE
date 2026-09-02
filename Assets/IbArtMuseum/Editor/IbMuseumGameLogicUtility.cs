@@ -394,51 +394,52 @@ namespace IbArtMuseum
                 CreateFloorGlowRingIndicator(arrivalTrig.transform, "GlowRing_Indicator",
                     new Vector3(0, -1.18f, 0), 3.5f, new Color(0.2f, 0.75f, 1.0f));
 
-                // 2) ★ 복도 모퉁이를 돌 때 층 입장 트리거 (10층 제외)
-                // 계단을 내려와 복도 끝 모퉁이를 도는 순간 100% 감지되어 입장 콘솔 및 이상현상 콘솔 출력!
+                // 2) ★ 계단 복도 첫 번째 액자 위치 트리거 (EnterMainHallTrigger - 노란색 원)
+                // 복도를 걸어가 첫 번째 액자 앞을 지나갈 때 감지되어 콘솔창에 층수 및 이상현상 안내 출력!
                 if (f != 10)
                 {
-                    Vector3 cornerPos = isEvenFloor ? new Vector3(14.0f, floorY + 1.5f, -16.0f) : new Vector3(-14.0f, floorY + 1.5f, 16.0f);
+                    // 첫 번째 액자(Hallway_1_...F) 정면 바닥 좌표
+                    Vector3 firstPaintingPos = isEvenFloor ? new Vector3(-1.0f, floorY + 1.2f, -21.75f) : new Vector3(1.0f, floorY + 1.2f, 21.75f);
 
                     GameObject enterHallTrig = new GameObject($"EnterMainHallTrigger_{f}F");
                     enterHallTrig.transform.SetParent(trigRoot.transform);
-                    enterHallTrig.transform.position = cornerPos;
+                    enterHallTrig.transform.position = firstPaintingPos;
                     
                     BoxCollider box = enterHallTrig.AddComponent<BoxCollider>();
                     box.isTrigger = true;
-                    box.size = new Vector3(8.0f, 3.5f, 8.0f);
+                    box.size = new Vector3(4.5f, 3.5f, 4.5f);
 
                     IbCircularTrigger ct = enterHallTrig.AddComponent<IbCircularTrigger>();
                     ct.triggerType = FloorTriggerType.EnterMainHall;
                     ct.floorLevel = f;
                     ct.maxYDifference = 2.5f;
 
-                    // [트리거 자식으로 황금빛 링 장착: 콘솔창 출력 지점]
+                    // [트리거 자식으로 황금빛 노란색 링 장착: 첫 번째 액자 앞]
                     CreateFloorGlowRingIndicator(enterHallTrig.transform, "GlowRing_Indicator",
-                        new Vector3(0, -1.48f, 0), 3.6f, new Color(1.0f, 0.85f, 0.2f));
+                        new Vector3(0, -1.18f, 0), 3.2f, new Color(1.0f, 0.85f, 0.2f));
                 }
 
-                // 3) 다음 층으로 내려가는 계단 입구 체크포인트 (f > 1)
-                // 이상현상 없을 시 아무 일도 안 일어나고 계단을 자연스럽게 걸어 내려감!
-                // 이상현상 있을 시 9층으로 루프 리셋!
+                // 3) ★ 계단 중앙 체크포인트 트리거 (StairDownTrigger - 초록색 원, f > 1)
+                // 계단 경사로 중앙을 밟을 때 정답/오답 판정 발동!
                 if (f > 1)
                 {
-                    Vector3 downPos = isEvenFloor ? new Vector3(17.5f, floorY + 1.2f, 21.75f) : new Vector3(-17.5f, floorY + 1.2f, -21.75f);
+                    // 계단 상단과 하단 정중앙 좌표 (Midpoint)
+                    Vector3 stairCenterPos = isEvenFloor ? new Vector3(10.5f, floorY - 2.3f, 21.75f) : new Vector3(-10.5f, floorY - 2.3f, -21.75f);
 
                     GameObject downTrig = new GameObject($"StairDownTrigger_{f}F_to_{f - 1}F");
                     downTrig.transform.SetParent(trigRoot.transform);
-                    downTrig.transform.position = downPos;
+                    downTrig.transform.position = stairCenterPos;
 
                     BoxCollider box = downTrig.AddComponent<BoxCollider>();
                     box.isTrigger = true;
-                    box.size = new Vector3(5.0f, 3.5f, 5.0f);
+                    box.size = new Vector3(7.0f, 4.0f, 4.5f);
 
                     IbCircularTrigger ct = downTrig.AddComponent<IbCircularTrigger>();
                     ct.triggerType = FloorTriggerType.StairsDown;
                     ct.floorLevel = f;
                     ct.maxYDifference = 2.5f;
 
-                    // [트리거 자식으로 에메랄드 그린 링 장착: 하강 계단 전진 판정 지점]
+                    // [트리거 자식으로 에메랄드 초록색 링 장착: 계단 중앙 발판]
                     CreateFloorGlowRingIndicator(downTrig.transform, "GlowRing_Indicator",
                         new Vector3(0, -1.18f, 0), 3.0f, new Color(0.2f, 1.0f, 0.4f));
                 }
