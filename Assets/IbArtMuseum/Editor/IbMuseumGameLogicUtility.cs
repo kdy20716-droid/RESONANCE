@@ -134,6 +134,9 @@ namespace IbArtMuseum
             // 8. 3/5/7/9층 생명의 화병 & 3~9층 계단 앞 수수께끼 관리인 NPC 및 복도 차단 콜라이더 설치!
             SetupRiddleGuardsAndSaveVases();
 
+            // 9. ★ HDRP 물리 Volumetric Fog & SpotLight 빛줄기(Volumetric Dimmer) 자동 원클릭 세팅!
+            SetupVolumetricFogAndLightShafts();
+
             gm.InitializeStrictFloorCheckpoints();
             gm.SetDayEnvironment(true); // 낮으로 시작
 
@@ -713,6 +716,69 @@ namespace IbArtMuseum
             mat.mainTexture = tex;
             if (mat.HasProperty("_Smoothness")) mat.SetFloat("_Smoothness", 0.4f);
             return mat;
+        }
+
+        private static void SetupVolumetricFogAndLightShafts()
+        {
+            // 1. 씬의 Global Volume에 HDRP 물리 Volumetric Fog 오버라이드 완벽 설정!
+            Volume globalVolume = Object.FindFirstObjectByType<Volume>();
+            if (globalVolume == null)
+            {
+                GameObject volGo = new GameObject("Museum_Global_Volume");
+                globalVolume = volGo.AddComponent<Volume>();
+                globalVolume.isGlobal = true;
+                globalVolume.priority = 1f;
+            }
+
+            if (globalVolume.profile == null)
+            {
+                globalVolume.profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            }
+
+            if (!globalVolume.profile.TryGet<Fog>(out var fog))
+            {
+                fog = globalVolume.profile.Add<Fog>(true);
+            }
+
+            if (fog != null)
+            {
+                fog.enabled.overrideState = true;
+                fog.enabled.value = true;
+
+                fog.enableVolumetricFog.overrideState = true;
+                fog.enableVolumetricFog.value = true;
+
+                fog.albedo.overrideState = true;
+                fog.albedo.value = new Color(0.96f, 0.96f, 1.0f);
+
+                fog.meanFreePath.overrideState = true;
+                fog.meanFreePath.value = 25.0f; // 공기 중 가시거리 25m (은은하고 자연스러운 안개)
+
+                fog.baseHeight.overrideState = true;
+                fog.baseHeight.value = -2.0f;
+
+                fog.maximumHeight.overrideState = true;
+                fog.maximumHeight.value = 75.0f; // 10층 타워 높이 전체 커버
+
+                fog.volumetricFogBudget.overrideState = true;
+                fog.volumetricFogBudget.value = 0.5f;
+
+                EditorUtility.SetDirty(globalVolume.profile);
+            }
+
+            // 2. 씬의 모든 조명에 Volumetric Dimmer 1.0f (체적 빛줄기 100%) 자동 부여!
+            HDAdditionalLightData[] allHdLights = Object.FindObjectsByType<HDAdditionalLightData>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var hdL in allHdLights)
+            {
+                if (hdL != null)
+                {
+                    hdL.volumetricDimmer = 1.0f;
+                    hdL.volumetricShadowDimmer = 1.0f;
+                    EditorUtility.SetDirty(hdL);
+                }
+            }
+
+            Debug.Log("<color=#33FF33><b>[Volumetric Lighting] HDRP Volumetric Fog 및 모든 조명의 Volumetric Dimmer(빛줄기)가 자동으로 완벽하게 세팅되었습니다!</b></color>");
         }
 
         [MenuItem("Tools/Ib Museum/🌙 Toggle Blue Night Mode (푸른 밤 모드 즉시 테스트)", false, 3)]
