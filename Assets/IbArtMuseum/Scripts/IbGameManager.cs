@@ -47,6 +47,10 @@ namespace IbArtMuseum
         public GameObject monumentGlowLight;
         public Transform monumentTriggerTarget;
 
+        [Header("Ceiling Light Materials (Day / Night)")]
+        public Material dayCeilingLightMat;
+        public Material nightCeilingBlackMat;
+
         [Header("Strict Floor Checkpoints (10F -> 1F)")]
         public FloorCheckpoint[] floorCheckpoints = new FloorCheckpoint[10];
         public Transform[] floorSpawnPoints = new Transform[10];
@@ -341,11 +345,32 @@ namespace IbArtMuseum
                 }
             }
 
-            // 8. 1~9층 천장 3x3 직사각형 조명 (낮에 켜지고 밤에 자동 소등!)
+            // 8. ★ 1~9층 천장 3x3 직사각형 조명 (낮: light.mat 발광 + 광원 ON / 밤: black.mat 소등 + 광원 OFF!)
             GameObject ceilingLightsRoot = GameObject.Find("Museum_Ceiling_Lights");
             if (ceilingLightsRoot != null)
             {
-                ceilingLightsRoot.SetActive(isDay);
+                ceilingLightsRoot.SetActive(true); // 오브젝트는 유지하여 꺼진 전등 외형 표시
+
+                // 1) 모든 천장 조명 컴포넌트 ON/OFF
+                Light[] cLights = ceilingLightsRoot.GetComponentsInChildren<Light>(true);
+                foreach (var cl in cLights)
+                {
+                    if (cl != null) cl.enabled = isDay;
+                }
+
+                // 2) 모든 형광등 디퓨저 패널 머티리얼을 낮(light) / 밤(black)으로 실시간 교체!
+                Material targetPanelMat = isDay ? dayCeilingLightMat : nightCeilingBlackMat;
+                if (targetPanelMat != null)
+                {
+                    MeshRenderer[] renderers = ceilingLightsRoot.GetComponentsInChildren<MeshRenderer>(true);
+                    foreach (var mr in renderers)
+                    {
+                        if (mr != null && mr.gameObject.name.Contains("Diffuser"))
+                        {
+                            mr.material = targetPanelMat;
+                        }
+                    }
+                }
             }
 
             // 사방이 막힌 실내 갤러리이므로 앰비언트 광을 차분하게 낮추어, 오직 실내 핀조명/스팟라이트에 의해서만 밝기가 결정되도록 설정!

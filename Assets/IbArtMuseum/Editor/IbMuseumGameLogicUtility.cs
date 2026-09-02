@@ -147,6 +147,10 @@ namespace IbArtMuseum
             // 9. ★ HDRP 물리 Volumetric Fog & SpotLight 빛줄기(Volumetric Dimmer) 자동 원클릭 세팅!
             SetupVolumetricFogAndLightShafts();
 
+            // 천장 조명 낮/밤 머티리얼 바인딩 (낮: light.mat, 밤: black.mat)
+            gm.dayCeilingLightMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/light.mat");
+            gm.nightCeilingBlackMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/black.mat");
+
             gm.InitializeStrictFloorCheckpoints();
             gm.SetDayEnvironment(true); // 낮으로 시작
 
