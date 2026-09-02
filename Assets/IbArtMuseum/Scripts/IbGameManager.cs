@@ -512,11 +512,9 @@ namespace IbArtMuseum
             }
             else
             {
-                // [★ 꼼수 차단 / 정상 층 오답]
-                // 텔레포트 성공 후 뒤돌아 꼼수를 부리려 하거나 정상 층인데 유턴한 경우 -> 직전 층({floorLevel + 1}층) 복도로 강제 롤백!
-                int rollbackFloor = Mathf.Min(floorLevel + 1, 8); // 8층 초과는 방지
-                Debug.LogWarning($"<color=#FF8800><b>[8번 출구 꼼수 차단] 🚫 꼼수 감지!</b> ({floorLevel}층은 정상 갤러리였는데 뒤돌아갔습니다. 직전 층인 {rollbackFloor}층 계단 복도로 강제 롤백 텔레포트됩니다!)</color>");
-                StartCoroutine(RollbackToPreviousFloorHallwayRoutine(rollbackFloor));
+                // [고민/탐색 허용 - 정상 층인데 파란색 원 쪽으로 와도 쫓아내지 않고 7층 상태 100% 그대로 유지!]
+                // 아무 일도 안 일어난 것처럼 7층 공간이 그대로 이어지며, 플레이어가 충분히 고민할 수 있도록 상태를 보존합니다.
+                Debug.Log($"<color=#88CCFF><b>[8번 출구] ℹ️ {floorLevel}층 탐색 유지 중...</b> (이상현상 없음 / 정상 갤러리 상태 유지 중. 충분히 확인하신 후 초록색 계단으로 내려가세요.)</color>");
             }
         }
 
