@@ -240,16 +240,17 @@ namespace IbArtMuseum
 
         public void SetDayEnvironment(bool isDay)
         {
-            // 1. 태양광 / 하늘 색상 제어 (밤 뷰를 살짝 더 밝고 화사하게: 13500 lux, Exposure 10.1)
+            // 1. 태양광 / 하늘 색상 제어 (자연스럽고 편안한 대낮 자연광 32000 lux, 밤 12000 lux)
             if (sunDirectionalLight != null)
             {
-                sunDirectionalLight.transform.rotation = Quaternion.Euler(isDay ? 50f : -3.5f, 30f, 0f);
-                sunDirectionalLight.color = isDay ? new Color(1f, 0.96f, 0.92f) : new Color(0.65f, 0.78f, 1.0f);
-                sunDirectionalLight.intensity = isDay ? 3.0f : 1.2f;
+                sunDirectionalLight.transform.rotation = Quaternion.Euler(isDay ? 48f : -3.5f, 30f, 0f);
+                sunDirectionalLight.color = isDay ? new Color(1f, 0.97f, 0.94f) : new Color(0.65f, 0.78f, 1.0f);
+                sunDirectionalLight.intensity = isDay ? 1.4f : 0.8f;
                 var hdSun = sunDirectionalLight.GetComponent<UnityEngine.Rendering.HighDefinition.HDAdditionalLightData>();
                 if (hdSun != null)
                 {
-                    hdSun.intensity = isDay ? 80000f : 13500f; // ★ 밤 뷰 밝기 상향!
+                    hdSun.intensity = isDay ? 32000f : 12000f; // ★ 눈부심 없이 쾌적하고 맑은 하늘!
+                    hdSun.volumetricDimmer = 0.25f; // 태양광으로 인한 하늘 백화 현상 방지
                 }
             }
 

@@ -603,13 +603,14 @@ namespace IbArtMuseum
 
                 if (artName.Contains("Statue") || artName.Contains("Rose"))
                 {
+                    // 조각상/장미 좌대에서 충분히 뒤로 떨어져 부드럽게 전체를 비추도록 오프셋 확장!
                     CreateFloorCanUplight(lightingRoot.transform, $"{artName}_Uplight_1",
-                        art.transform.position + new Vector3(-1.8f, 0.02f, -1.1f),
+                        art.transform.position + new Vector3(-2.8f, 0.02f, -2.2f),
                         art.transform.position + new Vector3(0, 1.6f, 0),
                         3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
 
                     CreateFloorCanUplight(lightingRoot.transform, $"{artName}_Uplight_2",
-                        art.transform.position + new Vector3(1.8f, 0.02f, 1.1f),
+                        art.transform.position + new Vector3(2.8f, 0.02f, 2.2f),
                         art.transform.position + new Vector3(0, 1.6f, 0),
                         3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
                 }
@@ -873,19 +874,41 @@ namespace IbArtMuseum
                 EditorUtility.SetDirty(globalVolume.profile);
             }
 
-            // 2. 씬의 모든 조명에 Volumetric Dimmer를 4.0배로 대폭 증폭하여 쨍하고 선명한 빛줄기 연출!
+            // 2. 조명 유형별 최적 Volumetric Dimmer 설정 (태양광은 0.2로 하늘 백화 방지, 실내 스팟/업라이트는 4.0으로 쨍한 빛줄기)
             HDAdditionalLightData[] allHdLights = Object.FindObjectsByType<HDAdditionalLightData>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var hdL in allHdLights)
             {
                 if (hdL != null)
                 {
-                    hdL.volumetricDimmer = 4.0f; // 빛줄기 선명도 400% 증폭!
-                    hdL.volumetricShadowDimmer = 1.0f;
+                    Light l = hdL.GetComponent<Light>();
+                    if (l != null && l.type == LightType.Directional)
+                    {
+                        hdL.volumetricDimmer = 0.20f; // 태양광으로 인한 하늘 백화 및 눈부심 원천 차단!
+                        hdL.volumetricShadowDimmer = 0.8f;
+                    }
+                    else
+                    {
+                        hdL.volumetricDimmer = 4.0f; // 실내 스팟/업라이트 빛줄기는 400% 선명하게!
+                        hdL.volumetricShadowDimmer = 1.0f;
+                    }
                     EditorUtility.SetDirty(hdL);
                 }
             }
 
-            Debug.Log("<color=#33FF33><b>[Volumetric Lighting] 실내는 맑고 투명하며 빛줄기는 4배로 선명하게(Anisotropy 0.75, Dimmer 4.0) 튜닝 완료되었습니다!</b></color>");
+            // 3. 모든 액자 그림의 BoxCollider를 벽 앞으로 시원하게 돌출시켜 정면 [E] 상호작용 100% 보장!
+            IbInteractableArtwork[] artworks = Object.FindObjectsByType<IbInteractableArtwork>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var art in artworks)
+            {
+                if (art == null) continue;
+                BoxCollider col = art.GetComponent<BoxCollider>();
+                if (col == null) col = art.gameObject.AddComponent<BoxCollider>();
+                col.isTrigger = true;
+                col.size = new Vector3(Mathf.Max(col.size.x, 2.0f), Mathf.Max(col.size.y, 2.6f), 0.60f); // 앞뒤 두께 0.6m
+                col.center = new Vector3(col.center.x, col.center.y, -0.20f); // 벽면 앞쪽으로 돌출!
+                EditorUtility.SetDirty(col);
+            }
+
+            Debug.Log("<color=#33FF33><b>[Volumetric Lighting & Colliders] 태양광 눈부심 차단, 실내 빛줄기 4배 선명화, 전 액자 정면 [E] 감지 콜라이더 최적화 완료!</b></color>");
         }
 
         [MenuItem("Tools/Ib Museum/🌙 Toggle Blue Night Mode (푸른 밤 모드 즉시 테스트)", false, 3)]

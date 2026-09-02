@@ -187,22 +187,40 @@ namespace IbArtMuseum
             }
 
             Ray ray = new Ray(playerCamera.position, playerCamera.forward);
-            RaycastHit hit;
+            RaycastHit[] hits = Physics.RaycastAll(ray, interactDistance, interactLayerMask, QueryTriggerInteraction.Collide);
 
             IbInteractableArtwork interactable = null;
             IbRiddleGuardNPC guard = null;
             IbSaveVase vase = null;
+            float closestDistance = float.MaxValue;
 
-            if (Physics.Raycast(ray, out hit, interactDistance, interactLayerMask, QueryTriggerInteraction.Collide))
+            if (hits != null && hits.Length > 0)
             {
-                interactable = hit.collider.GetComponentInParent<IbInteractableArtwork>();
-                if (interactable == null) interactable = hit.collider.GetComponent<IbInteractableArtwork>();
+                // 거리순으로 정렬하여 가장 가까운 유효 상호작용 대상 선택
+                System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 
-                guard = hit.collider.GetComponentInParent<IbRiddleGuardNPC>();
-                if (guard == null) guard = hit.collider.GetComponent<IbRiddleGuardNPC>();
+                foreach (var hit in hits)
+                {
+                    var art = hit.collider.GetComponentInParent<IbInteractableArtwork>() ?? hit.collider.GetComponent<IbInteractableArtwork>();
+                    var grd = hit.collider.GetComponentInParent<IbRiddleGuardNPC>() ?? hit.collider.GetComponent<IbRiddleGuardNPC>();
+                    var vs = hit.collider.GetComponentInParent<IbSaveVase>() ?? hit.collider.GetComponent<IbSaveVase>();
 
-                vase = hit.collider.GetComponentInParent<IbSaveVase>();
-                if (vase == null) vase = hit.collider.GetComponent<IbSaveVase>();
+                    if (grd != null && !grd.IsCleared)
+                    {
+                        guard = grd;
+                        break;
+                    }
+                    if (vs != null)
+                    {
+                        vase = vs;
+                        break;
+                    }
+                    if (art != null)
+                    {
+                        interactable = art;
+                        break;
+                    }
+                }
             }
 
             _currentHoveredInteractable = interactable;
