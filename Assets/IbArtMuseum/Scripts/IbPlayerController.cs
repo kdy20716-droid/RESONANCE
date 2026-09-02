@@ -108,6 +108,8 @@ namespace IbArtMuseum
         /// </summary>
         public void SwitchBGM(bool isDay)
         {
+            if (!Application.isPlaying) return; // 에디터 모드에서는 절대 재생하지 않음!
+
             AudioClip targetClip = isDay ? (dayBgmClip ?? bgmClip) : (nightBgmClip ?? bgmClip);
             if (bgmAudioSource != null && targetClip != null)
             {

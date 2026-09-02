@@ -28,6 +28,13 @@ namespace IbArtMuseum
                 if (t != null) Object.DestroyImmediate(t.gameObject);
             }
 
+            // 에디터에서 재생 중인 모든 오디오 강제 중지
+            AudioSource[] allAudio = Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var a in allAudio)
+            {
+                if (a != null && a.isPlaying) a.Stop();
+            }
+
             Debug.Log($"<color=#33FF33><b>[Clean Triggers] {count}개의 중복 Museum_Strict_Triggers 및 레거시 트리거를 깔끔하게 모두 삭제했습니다!</b></color>");
         }
 
