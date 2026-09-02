@@ -503,8 +503,6 @@ namespace IbArtMuseum
         {
             if (isTransitioning) return;
             if (currentPhase != GamePhase.Night_Loop) return;
-            if (!hasPassedYellow) return; // 노란색 원을 밟기 전에는 유턴 판정 안 함
-
             if (isCurrentFloorAnomalyActive)
             {
                 // [정답 - 이상현상을 올바르게 간파하고 유턴함! -> 다음 하강 층으로 심리스 텔레포트 전진!]
@@ -514,10 +512,36 @@ namespace IbArtMuseum
             }
             else
             {
-                // [오답 - 정상 층인데 되돌아감 -> 9->8층 파란색 원으로 루프 리셋!]
-                Debug.LogWarning($"<color=#FF3333><b>[8번 출구] 🔄 정상 층 오답!</b> ({floorLevel}층에는 이상현상이 없었는데 유턴했습니다. 9->8층 파란색 원으로 루프 리셋됩니다!)</color>");
-                StartCoroutine(LoopResetTo8FStairRoutine());
+                // [★ 꼼수 차단 / 정상 층 오답]
+                // 텔레포트 성공 후 뒤돌아 꼼수를 부리려 하거나 정상 층인데 유턴한 경우 -> 직전 층({floorLevel + 1}층) 복도로 강제 롤백!
+                int rollbackFloor = Mathf.Min(floorLevel + 1, 8); // 8층 초과는 방지
+                Debug.LogWarning($"<color=#FF8800><b>[8번 출구 꼼수 차단] 🚫 꼼수 감지!</b> ({floorLevel}층은 정상 갤러리였는데 뒤돌아갔습니다. 직전 층인 {rollbackFloor}층 계단 복도로 강제 롤백 텔레포트됩니다!)</color>");
+                StartCoroutine(RollbackToPreviousFloorHallwayRoutine(rollbackFloor));
             }
+        }
+
+        /// <summary>
+        /// 꼼수 차단 텔레포트: 이상현상이 없는데 유턴하거나 꼼수를 쓰면 직전 층(예: 8F->7F 복도)으로 강제 롤백
+        /// </summary>
+        public IEnumerator RollbackToPreviousFloorHallwayRoutine(int targetFloorLevel)
+        {
+            isTransitioning = true;
+            hasPassedYellow = false;
+            hasPassedGreen = false;
+            isCurrentFloorAnomalyActive = false;
+            anomalyManager?.DeactivateAllAnomalies();
+
+            currentTrackingFloor = targetFloorLevel;
+            currentFloorIndex = 10 - targetFloorLevel;
+
+            if (currentFloorIndex < floorCheckpoints.Length)
+            {
+                FloorCheckpoint cp = floorCheckpoints[currentFloorIndex];
+                if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
+            }
+
+            yield return new WaitForSeconds(0.15f);
+            isTransitioning = false;
         }
 
         private IEnumerator EndingEscapeSequenceRoutine()
