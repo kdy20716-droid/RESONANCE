@@ -54,6 +54,26 @@ namespace IbArtMuseum
             gm.anomalyManager = am;
             gm.audioAmbience = audio;
 
+            // ★ Assets/musics/emotion.mp3 BGM 캐릭터에 자동 장착!
+            AudioClip emotionClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/musics/emotion.mp3");
+            if (emotionClip != null && player != null)
+            {
+                player.bgmClip = emotionClip;
+                player.bgmVolume = 0.32f; // 은은하게 살짝 줄인 볼륨
+
+                AudioSource aSource = player.GetComponent<AudioSource>();
+                if (aSource == null) aSource = player.gameObject.AddComponent<AudioSource>();
+                aSource.clip = emotionClip;
+                aSource.loop = true;
+                aSource.volume = 0.32f;
+                aSource.spatialBlend = 0f;
+                aSource.playOnAwake = true;
+                player.bgmAudioSource = aSource;
+
+                EditorUtility.SetDirty(player);
+                Debug.Log("<color=#33FF33><b>[Audio Setup] emotion.mp3 BGM이 플레이어 캐릭터에게 성공적으로 장착되었습니다! (무한 루프, 볼륨 0.32)</b></color>");
+            }
+
             // 2. 10층 거대 동상 바인딩 검증
             GameObject monument = GameObject.Find("Grand_RESONANCE_Monument");
             if (monument != null)

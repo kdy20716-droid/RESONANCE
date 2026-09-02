@@ -7,6 +7,7 @@ namespace IbArtMuseum
         [Header("Audio Sources")]
         public AudioSource bgmSource;
         public AudioSource sfxSource;
+        public AudioClip customBgmClip;
 
         private void Awake()
         {
@@ -34,11 +35,17 @@ namespace IbArtMuseum
 
         private void PlayAtmosphericBGM()
         {
-            // 절차적 스산한 미술관 드론 앰비언스 생성
-            AudioClip ambientClip = GenerateDroneClip();
-            if (ambientClip != null && bgmSource != null)
+            // 플레이어에 이미 emotion.mp3가 재생 중이면 중복 BGM 방지
+            if (IbPlayerController.LocalPlayer != null && IbPlayerController.LocalPlayer.bgmClip != null)
             {
-                bgmSource.clip = ambientClip;
+                return;
+            }
+
+            AudioClip clipToPlay = (customBgmClip != null) ? customBgmClip : GenerateDroneClip();
+            if (clipToPlay != null && bgmSource != null)
+            {
+                bgmSource.clip = clipToPlay;
+                bgmSource.volume = 0.35f;
                 bgmSource.Play();
             }
         }

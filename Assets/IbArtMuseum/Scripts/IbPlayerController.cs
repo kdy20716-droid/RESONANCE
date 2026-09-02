@@ -27,9 +27,10 @@ namespace IbArtMuseum
 
         [Header("Head Bob Settings")]
         public bool enableHeadBob = true;
-        public float bobFrequency = 2.0f;
-        public float bobHorizontalAmplitude = 0.03f;
-        public float bobVerticalAmplitude = 0.04f;
+        [Header("BGM Settings")]
+        public AudioSource bgmAudioSource;
+        public AudioClip bgmClip;
+        [Range(0f, 1f)] public float bgmVolume = 0.35f; // 소리 살짝 줄임
 
         private CharacterController _characterController;
         private float _verticalRotation = 0f;
@@ -61,11 +62,38 @@ namespace IbArtMuseum
                 playerCamera.localPosition = new Vector3(0, 1.65f, 0);
                 _defaultCameraPosY = 1.65f;
             }
+
+            // 캐릭터에 BGM AudioSource 구성
+            if (bgmAudioSource == null)
+            {
+                bgmAudioSource = GetComponent<AudioSource>();
+                if (bgmAudioSource == null) bgmAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            if (bgmAudioSource != null)
+            {
+                bgmAudioSource.loop = true;
+                bgmAudioSource.spatialBlend = 0f; // 2D BGM (균일한 볼륨)
+                bgmAudioSource.volume = bgmVolume;
+                bgmAudioSource.playOnAwake = true;
+
+                if (bgmClip != null)
+                {
+                    bgmAudioSource.clip = bgmClip;
+                }
+            }
         }
 
         private void Start()
         {
             LockCursor();
+
+            // 게임 시작 시 BGM 지속 무한 재생
+            if (bgmAudioSource != null && bgmAudioSource.clip != null && !bgmAudioSource.isPlaying)
+            {
+                bgmAudioSource.volume = bgmVolume;
+                bgmAudioSource.Play();
+            }
         }
 
         private void Update()
