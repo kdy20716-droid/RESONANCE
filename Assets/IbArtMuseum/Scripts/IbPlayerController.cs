@@ -34,7 +34,7 @@ namespace IbArtMuseum
         [Header("BGM Settings")]
         public AudioSource bgmAudioSource;
         public AudioClip bgmClip;
-        [Range(0f, 1f)] public float bgmVolume = 0.32f; // 소리 살짝 줄임
+        [Range(0f, 1f)] public float bgmVolume = 0.05f; // 은은한 볼륨 0.05로 통일
 
         private CharacterController _characterController;
         private float _verticalRotation = 0f;
@@ -181,7 +181,7 @@ namespace IbArtMuseum
 
             if (guard != null && !guard.IsCleared)
             {
-                IbMuseumUI.Instance?.SetInteractPromptVisible(true, $"[ E ] 관리인과 대화 & 퀴즈 풀기 ({guard.floorLevel}F ➔ {guard.floorLevel + 1}F)");
+                IbMuseumUI.Instance?.SetInteractPromptVisible(true, "[ E ]");
                 if (CheckInteractKeyPressed())
                 {
                     guard.Interact();
@@ -189,7 +189,7 @@ namespace IbArtMuseum
             }
             else if (vase != null)
             {
-                IbMuseumUI.Instance?.SetInteractPromptVisible(true, "[ E ] 생명의 화병 세이브 & 힐링");
+                IbMuseumUI.Instance?.SetInteractPromptVisible(true, "[ E ]");
                 if (CheckInteractKeyPressed())
                 {
                     vase.Interact();
@@ -197,7 +197,7 @@ namespace IbArtMuseum
             }
             else if (_currentHoveredInteractable != null)
             {
-                IbMuseumUI.Instance?.SetInteractPromptVisible(true, _currentHoveredInteractable.interactPrompt);
+                IbMuseumUI.Instance?.SetInteractPromptVisible(true, "[ E ]");
 
                 // E 키 입력 시 상호작용 발동!
                 if (CheckInteractKeyPressed())

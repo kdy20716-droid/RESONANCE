@@ -66,10 +66,18 @@ namespace IbArtMuseum
         {
             if (isCleared) return;
 
-            if (IbRiddleInputUI.Instance != null && !IbRiddleInputUI.Instance.IsOpen)
+            var ui = IbRiddleInputUI.Instance;
+            if (ui == null) ui = UnityEngine.Object.FindFirstObjectByType<IbRiddleInputUI>();
+            if (ui == null)
+            {
+                GameObject uiGo = new GameObject("IbRiddleInputUI_Controller");
+                ui = uiGo.AddComponent<IbRiddleInputUI>();
+            }
+
+            if (ui != null && !ui.IsOpen)
             {
                 if (audioSource != null && voiceSound != null) audioSource.PlayOneShot(voiceSound);
-                IbRiddleInputUI.Instance.OpenRiddleUI(null, riddleTitle, riddleQuestion, this);
+                ui.OpenRiddleUI(null, riddleTitle, riddleQuestion, this);
             }
         }
 
@@ -186,7 +194,7 @@ namespace IbArtMuseum
                 isPlayerNearby = true;
                 if (!isCleared && IbMuseumUI.Instance != null)
                 {
-                    IbMuseumUI.Instance.SetInteractPromptVisible(true, $"[ E ] 관리인과 대화 & 퀴즈 풀기 ({floorLevel}F ➔ {floorLevel + 1}F)");
+                    IbMuseumUI.Instance.SetInteractPromptVisible(true, "[ E ]");
                 }
             }
         }

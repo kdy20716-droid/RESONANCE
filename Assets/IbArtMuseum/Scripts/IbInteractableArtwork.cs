@@ -21,7 +21,7 @@ namespace IbArtMuseum
         public string nightDescription = "";
 
         [Header("Interaction Settings")]
-        public string interactPrompt = "[ E ] Inspect";
+        public string interactPrompt = "[ E ]";
         public bool isResonanceMonument = false;
 
         public UnityEvent onInteracted;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -103,28 +103,51 @@ namespace IbArtMuseum
             questionText.alignment = TextAlignmentOptions.Center;
             questionText.color = Color.white;
 
-            // Input Field
+            // Input Field (텍스트 입력창)
             GameObject inputObj = new GameObject("AnswerInputField");
             inputObj.transform.SetParent(riddleModalPanel.transform, false);
             RectTransform inRt = inputObj.AddComponent<RectTransform>();
             inRt.anchoredPosition = new Vector2(0, -35f);
-            inRt.sizeDelta = new Vector2(480f, 50f);
+            inRt.sizeDelta = new Vector2(500f, 50f);
             Image inBg = inputObj.AddComponent<Image>();
-            inBg.color = new Color(0.12f, 0.16f, 0.25f, 1f);
+            inBg.color = new Color(0.08f, 0.12f, 0.20f, 1f);
 
+            // Placeholder
+            GameObject phObj = new GameObject("Placeholder");
+            phObj.transform.SetParent(inputObj.transform, false);
+            RectTransform phRt = phObj.AddComponent<RectTransform>();
+            phRt.anchorMin = Vector2.zero;
+            phRt.anchorMax = Vector2.one;
+            phRt.sizeDelta = Vector2.zero;
+            phRt.offsetMin = new Vector2(15, 5);
+            phRt.offsetMax = new Vector2(-15, -5);
+            TMP_Text phText = phObj.AddComponent<TextMeshProUGUI>();
+            phText.text = "Type your answer in English here...";
+            phText.fontSize = 18;
+            phText.fontStyle = FontStyles.Italic;
+            phText.color = new Color(0.6f, 0.65f, 0.75f, 0.6f);
+            phText.alignment = TextAlignmentOptions.Left;
+
+            // Input Text Component
             GameObject textObj = new GameObject("Text");
             textObj.transform.SetParent(inputObj.transform, false);
             RectTransform textRt = textObj.AddComponent<RectTransform>();
-            textRt.sizeDelta = new Vector2(460f, 40f);
+            textRt.anchorMin = Vector2.zero;
+            textRt.anchorMax = Vector2.one;
+            textRt.sizeDelta = Vector2.zero;
+            textRt.offsetMin = new Vector2(15, 5);
+            textRt.offsetMax = new Vector2(-15, -5);
             TMP_Text inText = textObj.AddComponent<TextMeshProUGUI>();
             inText.fontSize = 20;
-            inText.color = Color.white;
-            inText.alignment = TextAlignmentOptions.Center;
+            inText.color = new Color(0.3f, 1.0f, 0.4f);
+            inText.alignment = TextAlignmentOptions.Left;
 
             answerInputField = inputObj.AddComponent<TMP_InputField>();
             answerInputField.textComponent = inText;
+            answerInputField.placeholder = phText;
+            answerInputField.fontAsset = inText.font;
 
-            // Feedback
+            // Feedback Text
             GameObject fbObj = new GameObject("FeedbackText");
             fbObj.transform.SetParent(riddleModalPanel.transform, false);
             RectTransform fbRt = fbObj.AddComponent<RectTransform>();

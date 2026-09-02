@@ -59,19 +59,33 @@ namespace IbArtMuseum
             if (emotionClip != null && player != null)
             {
                 player.bgmClip = emotionClip;
-                player.bgmVolume = 0.32f; // 은은하게 살짝 줄인 볼륨
+                player.bgmVolume = 0.05f; // 은은하게 통일된 0.05 볼륨
 
                 AudioSource aSource = player.GetComponent<AudioSource>();
                 if (aSource == null) aSource = player.gameObject.AddComponent<AudioSource>();
                 aSource.clip = emotionClip;
                 aSource.loop = true;
-                aSource.volume = 0.32f;
+                aSource.volume = 0.05f;
                 aSource.spatialBlend = 0f;
                 aSource.playOnAwake = true;
                 player.bgmAudioSource = aSource;
 
                 EditorUtility.SetDirty(player);
-                Debug.Log("<color=#33FF33><b>[Audio Setup] emotion.mp3 BGM이 플레이어 캐릭터에게 성공적으로 장착되었습니다! (무한 루프, 볼륨 0.32)</b></color>");
+                Debug.Log("<color=#33FF33><b>[Audio Setup] emotion.mp3 BGM이 플레이어 캐릭터에게 성공적으로 장착되었습니다! (무한 루프, 볼륨 0.05)</b></color>");
+            }
+
+            // ★ UI 캔버스에 수수께끼 대화 & 정답 입력 UI (IbRiddleInputUI) 사전 구축 및 바인딩
+            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+            if (canvas != null)
+            {
+                IbRiddleInputUI riddleUI = canvas.GetComponentInChildren<IbRiddleInputUI>(true);
+                if (riddleUI == null)
+                {
+                    GameObject rGo = new GameObject("IbRiddleInputUI");
+                    rGo.transform.SetParent(canvas.transform, false);
+                    riddleUI = rGo.AddComponent<IbRiddleInputUI>();
+                }
+                EditorUtility.SetDirty(riddleUI);
             }
 
             // 2. 10층 거대 동상 바인딩 검증
