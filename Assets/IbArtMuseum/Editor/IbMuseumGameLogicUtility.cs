@@ -789,11 +789,12 @@ namespace IbArtMuseum
 
                     Light sl = areaLightGo.AddComponent<Light>();
                     sl.type = LightType.Rectangle; // Area Light!
+                    sl.areaSize = new Vector2(0.45f, 2.2f);
+                    sl.range = 8.5f;
                     sl.color = new Color(0.98f, 0.98f, 1.0f);
                     sl.shadows = LightShadows.Soft;
 
                     var hdLightData = areaLightGo.AddComponent<HDAdditionalLightData>();
-                    hdLightData.lightTypeExtent = LightTypeExtent.Rectangle;
                     hdLightData.shapeWidth = 0.45f;
                     hdLightData.shapeHeight = 2.2f;
                     hdLightData.range = 8.5f;
