@@ -218,7 +218,7 @@
         </div>
         <div onclick="goToSlide(5)" class="card-glass p-3 rounded-xl cursor-pointer transition-all flex items-center space-x-3 border-purple-500/40 bg-purple-950/20">
           <span class="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center font-bold text-purple-300 font-mono">05</span>
-          <span class="font-semibold text-purple-200">투명 벽 & 영어 수수께끼</span>
+          <span class="font-semibold text-purple-200">수수께끼 관리인 & 비켜서기</span>
         </div>
         <div onclick="goToSlide(6)" class="card-glass p-3 rounded-xl cursor-pointer transition-all flex items-center space-x-3">
           <span class="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center font-bold text-yellow-300 font-mono">06</span>
@@ -362,8 +362,8 @@
           </div>
 
           <div class="p-3 rounded-xl card-glass border-purple-500/30">
-            <b class="text-purple-300 text-sm">Step 2. [3F ~ 9F] Ib 스타일 공포 퍼즐 상승 (수수께끼 액자 풀기)</b>
-            <p class="text-slate-300 mt-0.5">계단 입구를 막은 투명 벽 해제를 위해 층별 관찰형 영어 퀴즈 풀기! <b>(3/5/7/9층 유리 화병 세이브 & 힐링)</b></p>
+            <b class="text-purple-300 text-sm">Step 2. [3F ~ 9F] Ib 스타일 공포 퍼즐 상승 (수수께끼 관리인 퀴즈)</b>
+            <p class="text-slate-300 mt-0.5">계단 앞 복도를 막아선 의문의 관리인 NPC에게 관찰 퀴즈를 맞추고 통과! <b>(3/5/7/9층 유리 화병 세이브 & 힐링)</b></p>
           </div>
 
           <div class="p-3 rounded-xl card-glass border-blue-500/30">
@@ -375,6 +375,7 @@
             <b class="text-rose-300 text-sm">Step 4. [10F ~ 1F] 8번 출구 하강 + 동료 서사 + 2F 메리 보스전!</b>
             <p class="text-slate-300 mt-0.5">
               • 8층: 청년(게리) 합류 / 4층: 소녀(메리) 합류<br>
+              • <b>이상현상 파훼:</b> 유턴 시 다음 층으로 즉시 심리스 텔레포트 전진 (오답 시 9F 계단 리셋)<br>
               • <b>2층 반전:</b> 소녀가 모든 장난의 주동자! 거대 그림으로 계단을 막고 <b>메리 보스전</b> 발발 ➔ 격파 후 1층 탈출!
             </p>
           </div>
@@ -382,11 +383,11 @@
       </div>
     </section>
 
-    <!-- ==================== SLIDE 5: RIDDLE BARRIER SYSTEM (NEW ARTWORK EMBEDDED) ==================== -->
+    <!-- ==================== SLIDE 5: RIDDLE CURATOR SYSTEM ==================== -->
     <section class="slide flex-col justify-center w-full space-y-5">
       <div class="border-b border-slate-800 pb-3">
-        <span class="text-sm uppercase tracking-widest text-purple-400 font-mono">05. Puzzle & Riddle Mechanics</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">투명 벽 차단 & 관찰형 영어 수수께끼 시스템</h2>
+        <span class="text-sm uppercase tracking-widest text-purple-400 font-mono">05. Puzzle & NPC Mechanics</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white font-cinzel">수수께끼 관리인 NPC & 복도 차단 / 비켜서기 시스템</h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center text-xs">
@@ -395,24 +396,24 @@
           <div class="img-frame rounded-2xl overflow-hidden w-full bg-slate-950">
             <img src="riddle_barrier_puzzle.jpg" alt="Lina looking at glowing riddle frame on invisible barrier" class="w-full h-72 md:h-88 object-cover hover:scale-105 transition-all duration-500">
           </div>
-          <span class="text-xs text-purple-300/80 mt-2 font-mono">▲ 투명 벽에 떠 있는 수수께끼 액자를 바라보는 소녀 리나</span>
+          <span class="text-xs text-purple-300/80 mt-2 font-mono">▲ 계단 앞 복도를 지키는 의문의 미술관 관리인과 리나</span>
         </div>
 
         <!-- Right: Riddle Concept & Modal Mockup -->
         <div class="md:col-span-7 space-y-3">
           <div class="card-glass p-4 rounded-2xl space-y-2 border-purple-500/40">
             <h3 class="text-base font-bold text-purple-300 flex items-center space-x-2">
-              <span>🧩</span>
-              <span>계단 입구 수수께끼 액자 & 입력 UI 시스템</span>
+              <span>👤</span>
+              <span>계단 복도 차단 콜라이더 & 대화형 퀴즈 시스템</span>
             </h3>
             <p class="text-slate-300 leading-relaxed">
-              3층부터 10층까지 위층으로 가는 계단 복도가 <b>투명 콜라이더 벽(Invisible Barrier)</b>에 막혀 오도가도 못하는 상황 발생. 계단 앞 황금 액자에서 <b>[E] 키를 눌러 퀴즈를 풀고 타이핑해야만 투명 벽이 해제</b>됩니다.
+              3층부터 10층까지 위층으로 가는 계단 복도를 <b>미술관 관리인 NPC</b>와 <b>비비기 방지 차단 박스 콜라이더</b>가 가로막고 있습니다. 다가가서 <b>[E] 키를 눌러 미술관 관찰형 퀴즈를 맞추면 NPC가 정답 대사와 함께 부드럽게 옆으로 비켜서며 복도를 열어줍니다.</b>
             </p>
 
             <!-- Mock UI Box -->
             <div class="p-3 rounded-xl bg-slate-950 border border-purple-500/50 space-y-1.5 font-mono">
-              <div class="text-center text-amber-300 font-bold text-xs">Riddle of the 3rd Floor (Observation)</div>
-              <div class="text-center text-slate-300 text-[11px]">"How many human figures are depicted across all lower floor portraits?"</div>
+              <div class="text-center text-amber-300 font-bold text-xs">3F Curator's Trial (Observation)</div>
+              <div class="text-center text-slate-300 text-[11px]">"To proceed upward, answer: How many human figures are in 1F & 2F portraits?"</div>
               <div class="p-1.5 rounded bg-slate-900 border border-slate-700 text-center text-emerald-400 font-bold text-xs tracking-wider">
                 [ 7 ]  <span class="text-slate-500 text-[10px]">◀ Type English Answer</span>
               </div>

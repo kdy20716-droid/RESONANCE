@@ -68,8 +68,8 @@ namespace IbArtMuseum
             // 7. 각 층마다 4~5명의 대화 가능한 관람객 NPC 스폰
             SetupDaytimeVisitorNPCs();
 
-            // 8. 3/5/7/9층 생명의 화병 & 3~9층 수수께끼 투명 벽 장벽 설치!
-            SetupRiddleBarriersAndSaveVases();
+            // 8. 3/5/7/9층 생명의 화병 & 3~9층 계단 앞 수수께끼 관리인 NPC 및 복도 차단 콜라이더 설치!
+            SetupRiddleGuardsAndSaveVases();
 
             gm.InitializeStrictFloorCheckpoints();
             gm.SetDayEnvironment(true); // 낮으로 시작
@@ -77,10 +77,10 @@ namespace IbArtMuseum
             EditorUtility.SetDirty(gm);
             AssetDatabase.SaveAssets();
 
-            Debug.Log("<color=#33FF33><b>[Ib GameLogic Setup] 3~9F 수수께끼 액자 투명 벽, 화병 세이브, 조명 및 게임플레이 시스템 세팅 완료!</b></color>");
+            Debug.Log("<color=#33FF33><b>[Ib GameLogic Setup] 3~9F 수수께끼 관리인 NPC, 복도 차단 콜라이더, 화병 세이브 세팅 완료!</b></color>");
         }
 
-        private static void SetupRiddleBarriersAndSaveVases()
+        private static void SetupRiddleGuardsAndSaveVases()
         {
             Transform existingGroup = GameObject.Find("Riddle_And_Save_Systems")?.transform;
             if (existingGroup != null) Object.DestroyImmediate(existingGroup.gameObject);
@@ -112,44 +112,57 @@ namespace IbArtMuseum
                     vaseObj.GetComponent<MeshRenderer>().material = glassMat;
                 }
 
-                // 2. 3F ~ 9F 다음 층으로 가는 계단 입구 투명 벽 및 수수께끼 액자 배치
-                Vector3 barrierPos = isEvenFloor 
-                    ? new Vector3(0f, floorY + 1.8f, -18.0f) 
-                    : new Vector3(0f, floorY + 1.8f, 18.0f);
+                // 2. 3F ~ 9F 다음 층으로 가는 계단 앞 복도를 완전히 가로막는 수수께끼 관리인 NPC & 차단 콜라이더
+                Vector3 guardPos = isEvenFloor 
+                    ? new Vector3(0f, floorY, -18.0f) 
+                    : new Vector3(0f, floorY, 18.0f);
 
-                GameObject riddleObj = new GameObject($"RiddleBarrier_{f}F_to_{f+1}F");
-                riddleObj.transform.SetParent(rootGroup.transform);
-                riddleObj.transform.position = barrierPos;
+                Quaternion guardRot = Quaternion.Euler(0, isEvenFloor ? 0f : 180f, 0);
 
-                // 투명 벽 콜라이더
-                GameObject invisibleWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                invisibleWall.name = "Invisible_Barrier_Collider";
-                invisibleWall.transform.SetParent(riddleObj.transform);
-                invisibleWall.transform.localPosition = Vector3.zero;
-                invisibleWall.transform.localScale = new Vector3(10.0f, 4.0f, 0.6f);
-                invisibleWall.GetComponent<MeshRenderer>().enabled = false;
+                GameObject guardObj = new GameObject($"RiddleCuratorGuard_{f}F_to_{f+1}F");
+                guardObj.transform.SetParent(rootGroup.transform);
+                guardObj.transform.position = guardPos;
+                guardObj.transform.rotation = guardRot;
 
-                // 수수께끼 액자 오브젝트
-                GameObject riddleFrame = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                riddleFrame.name = "Riddle_Painting_Frame";
-                riddleFrame.transform.SetParent(riddleObj.transform);
-                riddleFrame.transform.localPosition = new Vector3(isEvenFloor ? 2.5f : -2.5f, 0f, isEvenFloor ? 0.5f : -0.5f);
-                riddleFrame.transform.localRotation = Quaternion.Euler(0, isEvenFloor ? 180f : 0f, 0);
-                riddleFrame.transform.localScale = new Vector3(1.6f, 2.2f, 1f);
+                // 1) NPC 3D 외형 (정장 코트 바디 + 헤드)
+                Material suitMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+                suitMat.color = new Color(0.12f, 0.14f, 0.22f); // 짙은 네이비 정장
 
-                BoxCollider frameCol = riddleFrame.AddComponent<BoxCollider>();
-                frameCol.isTrigger = true;
-                frameCol.size = new Vector3(2.5f, 2.5f, 2.5f);
+                GameObject body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                body.name = "Body";
+                body.transform.SetParent(guardObj.transform, false);
+                body.transform.localPosition = new Vector3(0, 0.9f, 0);
+                body.transform.localScale = new Vector3(0.5f, 0.9f, 0.4f);
+                body.GetComponent<MeshRenderer>().material = suitMat;
 
-                Material frameMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
-                frameMat.color = new Color(0.85f, 0.75f, 0.4f);
-                riddleFrame.GetComponent<MeshRenderer>().material = frameMat;
+                GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                head.name = "Head";
+                head.transform.SetParent(guardObj.transform, false);
+                head.transform.localPosition = new Vector3(0, 1.9f, 0);
+                head.transform.localScale = new Vector3(0.35f, 0.4f, 0.35f);
+                head.GetComponent<MeshRenderer>().material = suitMat;
 
-                var barrierComp = riddleObj.AddComponent<IbRiddleBarrier>();
-                barrierComp.floorLevel = f;
-                barrierComp.invisibleBarrierCollider = invisibleWall;
-                barrierComp.riddlePaintingFrame = riddleFrame;
-                barrierComp.SetupDefaultRiddleForFloor();
+                // 2) 플레이어 비비기 완전 차단용 박스 콜라이더 (복도 폭 전체 차단: 8m x 4m x 1m)
+                GameObject blockWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                blockWall.name = "Blocking_Corridor_BoxCollider";
+                blockWall.transform.SetParent(guardObj.transform, false);
+                blockWall.transform.localPosition = new Vector3(0, 1.8f, 0);
+                blockWall.transform.localScale = new Vector3(9.0f, 4.0f, 0.8f);
+                blockWall.GetComponent<MeshRenderer>().enabled = false; // 투명화
+
+                BoxCollider blockCol = blockWall.GetComponent<BoxCollider>();
+
+                // 3) 상호작용 트리거 콜라이더
+                BoxCollider interactTrigger = guardObj.AddComponent<BoxCollider>();
+                interactTrigger.isTrigger = true;
+                interactTrigger.center = new Vector3(0, 1.0f, 0);
+                interactTrigger.size = new Vector3(3.5f, 2.5f, 3.5f);
+
+                // 4) 수수께끼 관리인 컴포넌트 연결
+                var guardComp = guardObj.AddComponent<IbRiddleGuardNPC>();
+                guardComp.floorLevel = f;
+                guardComp.blockingCollider = blockCol;
+                guardComp.SetupDefaultRiddleForFloor();
             }
         }
 

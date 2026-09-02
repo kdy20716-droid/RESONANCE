@@ -391,14 +391,14 @@ namespace IbArtMuseum
 
             if (!hadAnomaly)
             {
-                // [정답 - 문제없음 진행!]
-                Debug.Log($"<color=#33FF33><b>[8번 출구] 문제없음 진행!</b> ({floorLevel}층은 정상 갤러리입니다. 계단을 걸어 {floorLevel - 1}층으로 내려갑니다.)</color>");
+                // [정답 - 정상 갤러리이므로 계단을 내려가 다음 층으로 전진!]
+                Debug.Log($"<color=#33FF33><b>[8번 출구] 정상 층 통과!</b> ({floorLevel}층은 정상입니다. 계단을 걸어 {floorLevel - 1}층으로 내려갑니다.)</color>");
             }
             else
             {
-                // [오답 - 이상현상 있었는데 그냥 내려감]
-                Debug.LogWarning($"<color=#FF3333><b>[8번 출구] 이상현상 무시 오답!</b> ({floorLevel}층에 이상현상이 있었는데 내려갔습니다. 장미 1개 차감 후 {floorLevel}층 시작 체크포인트로 루프합니다.)</color>");
-                OnSeamlessWrongChoiceMade();
+                // [오답 - 이상현상이 있었는데 무시하고 그냥 내려감 -> 9층으로 루프 리셋! (체력 미차감)]
+                Debug.LogWarning($"<color=#FF5555><b>[8번 출구] 이상현상 무시 오답!</b> ({floorLevel}층에 이상현상이 있었는데 내려갔습니다. 체력 감소 없이 9층 계단으로 루프 리셋됩니다.)</color>");
+                StartCoroutine(LoopResetTo9FRoutine());
             }
         }
 
@@ -418,15 +418,15 @@ namespace IbArtMuseum
 
             if (hadAnomaly)
             {
-                // [정답 - 이상현상! 되돌아갑니다]
-                Debug.Log($"<color=#33FF33><b>[8번 출구] 이상현상! 되돌아갑니다.</b> ({floorLevel}층 이상현상 파훼 성공! {floorLevel - 1}층으로 진행합니다.)</color>");
+                // [정답 - 이상현상 파훼 성공! 다음 하강 층(예: 7층에서 유턴 시 6층)으로 즉시 심리스 텔레포트!]
+                Debug.Log($"<color=#33FF33><b>[8번 출구] 이상현상 파훼 성공!</b> ({floorLevel}층 이상현상을 발견하고 유턴했습니다. {floorLevel - 1}층 계단으로 즉시 심리스 이동합니다.)</color>");
                 StartCoroutine(SeamlessAdvanceToNextFloorRoutine());
             }
             else
             {
-                // [오답 - 정상 층인데 되돌아감]
-                Debug.LogWarning($"<color=#FF3333><b>[8번 출구] 정상 층 오답!</b> ({floorLevel}층에는 이상현상이 없었는데 되돌아갔습니다. 장미 1개 차감 후 {floorLevel}층 시작 체크포인트로 루프합니다.)</color>");
-                OnSeamlessWrongChoiceMade();
+                // [오답 - 정상 층인데 되돌아감 -> 9층으로 루프 리셋! (체력 미차감)]
+                Debug.LogWarning($"<color=#FF5555><b>[8번 출구] 정상 층 오답!</b> ({floorLevel}층에는 이상현상이 없었는데 되돌아갔습니다. 체력 감소 없이 9층 계단으로 루프 리셋됩니다.)</color>");
+                StartCoroutine(LoopResetTo9FRoutine());
             }
         }
 
@@ -491,9 +491,34 @@ namespace IbArtMuseum
                 }
                 else
                 {
-                    OnSeamlessWrongChoiceMade();
+                    // 사망 시 완전 처음이 아닌 10층 공명 후 밤 상태(8번 출구 모드)로 즉시 재시작!
+                    RespawnAt10FNight();
                 }
             }
+        }
+
+        /// <summary>
+        /// 체력이 모두 닳았을 때 10층 공명 직후의 밤 루프 상태로 즉시 재시작
+        /// </summary>
+        public void RespawnAt10FNight()
+        {
+            roseLife = 3;
+            currentFloorIndex = 0; // 10F
+            currentPhase = GamePhase.Night_Loop;
+            hasExploredCurrentFloor = false;
+            uiManager?.SetRoseLife(3);
+
+            SetDayEnvironment(false); // 밤 환경 유지
+
+            if (floorCheckpoints != null && floorCheckpoints.Length > 0)
+            {
+                FloorCheckpoint cp = floorCheckpoints[0];
+                if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
+            }
+
+            anomalyManager?.DecideAndApplyAnomaly(0);
+
+            Debug.Log("<color=#FFD700><b>[부활] 체력 소진으로 10층 밤 8번 출구 시작 지점에서 재시작합니다!</b></color>");
         }
 
         public void RespawnAtFloor(int floorLevel)
@@ -521,29 +546,9 @@ namespace IbArtMuseum
             }
         }
 
-        private void OnSeamlessWrongChoiceMade()
-        {
-            roseLife--;
-            uiManager?.SetRoseLife(roseLife);
-
-            if (roseLife > 0)
-            {
-                StartCoroutine(SeamlessRetryCurrentFloorRoutine());
-            }
-            else
-            {
-                if (IbMainMenuManager.Instance != null)
-                {
-                    IbMainMenuManager.Instance.ShowGameOver();
-                }
-                else
-                {
-                    uiManager?.PlayGlitchFlash(0.35f, Color.black);
-                    uiManager?.ShowDialogueBox("Game Over", "<size=22><color=#E63946>All roses have withered. Returning to the beginning...</color></size>", () => FullRestartToPrologue());
-                }
-            }
-        }
-
+        /// <summary>
+        /// 이상현상 발생 시 유턴하면 다음 층으로 즉시 심리스 텔레포트
+        /// </summary>
         private IEnumerator SeamlessAdvanceToNextFloorRoutine()
         {
             isTransitioning = true;
@@ -554,24 +559,30 @@ namespace IbArtMuseum
             if (currentFloorIndex < floorCheckpoints.Length)
             {
                 FloorCheckpoint cp = floorCheckpoints[currentFloorIndex];
-                player.Teleport(cp.spawnPosition, cp.spawnRotation);
+                if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
             }
 
             anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
 
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.12f);
             isTransitioning = false;
         }
 
-        private IEnumerator SeamlessRetryCurrentFloorRoutine()
+        /// <summary>
+        /// 어떤 층이든 오답을 냈을 때 9층에서 8층으로 내려가는 계단으로 루프 리셋 (장미 미차감)
+        /// </summary>
+        private IEnumerator LoopResetTo9FRoutine()
         {
             isTransitioning = true;
             hasExploredCurrentFloor = false;
 
-            if (currentFloorIndex < floorCheckpoints.Length)
+            // 9층 (floorIndex = 1)으로 리셋
+            currentFloorIndex = 1;
+
+            if (floorCheckpoints != null && floorCheckpoints.Length > 1)
             {
-                FloorCheckpoint cp = floorCheckpoints[currentFloorIndex];
-                player.Teleport(cp.spawnPosition, cp.spawnRotation);
+                FloorCheckpoint cp = floorCheckpoints[1];
+                if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
             }
 
             anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);

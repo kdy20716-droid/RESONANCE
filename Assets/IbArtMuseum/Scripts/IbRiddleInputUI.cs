@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +8,7 @@ using TMPro;
 namespace IbArtMuseum
 {
     /// <summary>
-    /// 수수께끼 액자 정답 입력을 위한 UI 팝업 컨트롤러 (ESC 취소, Enter 제출, 절차적 UI 자동 생성 지원)
+    /// 수수께끼 관리인 NPC 정답 입력을 위한 UI 팝업 컨트롤러 (ESC 취소, Enter 제출, 절차적 UI 자동 생성 지원)
     /// </summary>
     public class IbRiddleInputUI : MonoBehaviour
     {
@@ -24,6 +24,7 @@ namespace IbArtMuseum
         public Button cancelButton;
 
         private IbRiddleBarrier currentBarrier;
+        private IbRiddleGuardNPC currentGuardNPC;
         private bool isOpen = false;
 
         public bool IsOpen => isOpen;
@@ -182,11 +183,12 @@ namespace IbArtMuseum
             riddleModalPanel.SetActive(false);
         }
 
-        public void OpenRiddleUI(IbRiddleBarrier barrier, string title, string question)
+        public void OpenRiddleUI(IbRiddleBarrier barrier, string title, string question, IbRiddleGuardNPC guardNPC = null)
         {
             EnsureProceduralUI();
 
             currentBarrier = barrier;
+            currentGuardNPC = guardNPC;
             isOpen = true;
 
             if (riddleModalPanel != null) riddleModalPanel.SetActive(true);
@@ -212,7 +214,7 @@ namespace IbArtMuseum
 
         public void OnSubmitClicked()
         {
-            if (currentBarrier == null || answerInputField == null) return;
+            if (answerInputField == null) return;
 
             string inputAnswer = answerInputField.text.Trim();
             if (string.IsNullOrEmpty(inputAnswer))
@@ -221,10 +223,19 @@ namespace IbArtMuseum
                 return;
             }
 
-            bool isCorrect = currentBarrier.CheckAnswer(inputAnswer);
+            bool isCorrect = false;
+            if (currentGuardNPC != null)
+            {
+                isCorrect = currentGuardNPC.CheckAnswer(inputAnswer);
+            }
+            else if (currentBarrier != null)
+            {
+                isCorrect = currentBarrier.CheckAnswer(inputAnswer);
+            }
+
             if (isCorrect)
             {
-                if (feedbackText != null) feedbackText.text = "<color=#55FF55><b>Correct! The invisible barrier is dissipating...</b></color>";
+                if (feedbackText != null) feedbackText.text = "<color=#55FF55><b>Correct! The curator is stepping aside...</b></color>";
                 StartCoroutine(CloseAfterSuccessRoutine());
             }
             else
@@ -238,9 +249,13 @@ namespace IbArtMuseum
 
         private IEnumerator CloseAfterSuccessRoutine()
         {
-            yield return new WaitForSeconds(0.8f);
+            yield return new WaitForSeconds(0.6f);
             CloseRiddleUI();
-            if (currentBarrier != null)
+            if (currentGuardNPC != null)
+            {
+                currentGuardNPC.OnSolveSuccess();
+            }
+            else if (currentBarrier != null)
             {
                 currentBarrier.OnSolveSuccess();
             }
