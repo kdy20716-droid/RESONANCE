@@ -616,17 +616,17 @@ namespace IbArtMuseum
                 }
                 else if (artName.Contains("Monument") || artName.Contains("RESONANCE"))
                 {
-                    // 10층 거대 조형물 전용: 간판 앞/뒤 조명은 없애고, 좌/우 양옆에서 멀리 떨어진 2개의 업라이트만 배치!
+                    // 10층 거대 조형물 전용: 조형물 좌대(반경 5.2m)에서 8.5m로 시원하게 멀리 떨어뜨리고, 사진 기준 시계방향으로 대각선 배치!
                     Vector3 coreTarget = art.transform.position + new Vector3(0, 4.2f, 0);
 
-                    // 1) 좌측(서쪽) 멀리 떨어진 업라이트
+                    // 1) 좌측 뒤쪽 (북서쪽 - 사진 기준 시계방향으로 회전 및 8.5m 이격)
                     CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Left",
-                        art.transform.position + new Vector3(-7.2f, 0.02f, 0f),
+                        art.transform.position + new Vector3(-7.5f, 0.02f, 3.8f),
                         coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
 
-                    // 2) 우측(동쪽) 멀리 떨어진 업라이트
+                    // 2) 우측 앞쪽 (남동쪽 - 8.5m 이격)
                     CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Right",
-                        art.transform.position + new Vector3(7.2f, 0.02f, 0f),
+                        art.transform.position + new Vector3(7.5f, 0.02f, -3.8f),
                         coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
                 }
             }
