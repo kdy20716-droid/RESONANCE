@@ -43,8 +43,8 @@ namespace IbArtMuseum
             }
 
             initialPosition = transform.position;
-            // 벽면 쪽으로 살짝 물러서며 통과를 허용
-            stepAsideTargetPosition = initialPosition + Vector3.left * 1.2f;
+            // 반대편 벽(분리벽 기둥) 쪽으로 비켜서서 통로를 완벽 개방
+            stepAsideTargetPosition = initialPosition + (floorLevel % 2 == 0 ? Vector3.left * 1.8f : Vector3.right * 1.8f);
 
             SetupDefaultRiddleForFloor();
         }
@@ -160,7 +160,7 @@ namespace IbArtMuseum
         private IEnumerator StepAsideSmoothRoutine()
         {
             float elapsed = 0f;
-            float duration = 1.0f;
+            float duration = 1.8f; // 천천히 부드럽게 비켜섬
             Vector3 startPos = transform.position;
 
             while (elapsed < duration)
