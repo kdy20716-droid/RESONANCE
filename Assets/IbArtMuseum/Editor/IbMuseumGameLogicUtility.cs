@@ -137,14 +137,10 @@ namespace IbArtMuseum
                     vaseObj.GetComponent<MeshRenderer>().material = glassMat;
                 }
 
-                // 2. 3F ~ 9F 전시장 분리벽 앞, 플레이어가 바라보는 방향 기준 왼쪽 벽에서 살짝 떨어진 위치에 수수께끼 관리인 NPC 배치
-                // 홀수층: 남쪽(-Z)을 바라보고 올 때 왼쪽 벽(동쪽) 혹은 분리벽 앞 -> X = -4.5f, Z = -17.5f (바라보는 방향: 북쪽 0도)
-                // 짝수층: 북쪽(+Z)을 바라보고 올 때 왼쪽 벽(서쪽) 혹은 분리벽 앞 -> X = 4.5f, Z = 17.5f (바라보는 방향: 남쪽 180도)
-                Vector3 guardPos = isEvenFloor 
-                    ? new Vector3(4.5f, floorY, 17.5f) 
-                    : new Vector3(-4.5f, floorY, -17.5f);
-
-                Quaternion guardRot = Quaternion.Euler(0, isEvenFloor ? 180f : 0f, 0);
+                // 2. 3F ~ 9F 전시장 서쪽(왼쪽) 벽면 액자 앞, 사용자가 지정한 완벽한 위치에 수수께끼 관리인 NPC 배치!
+                // X = -15.5f (왼쪽 벽에서 살짝 떨어진 위치), Z = 짝수층 12.0f / 홀수층 -12.0f, 전시장 중앙(동쪽)을 바라봄 (90도)
+                Vector3 guardPos = new Vector3(-15.5f, floorY, isEvenFloor ? 12.0f : -12.0f);
+                Quaternion guardRot = Quaternion.Euler(0, 90f, 0);
 
                 GameObject guardObj = new GameObject($"RiddleCuratorGuard_{f}F_to_{f+1}F");
                 guardObj.transform.SetParent(rootGroup.transform);
@@ -174,7 +170,7 @@ namespace IbArtMuseum
                 blockWall.name = "Blocking_Corridor_BoxCollider";
                 blockWall.transform.SetParent(guardObj.transform, false);
                 blockWall.transform.localPosition = new Vector3(0, 1.0f, 0);
-                blockWall.transform.localScale = new Vector3(1.4f, 2.0f, 1.4f);
+                blockWall.transform.localScale = new Vector3(1.2f, 2.0f, 1.2f);
                 blockWall.GetComponent<MeshRenderer>().enabled = false; // 투명화
 
                 BoxCollider blockCol = blockWall.GetComponent<BoxCollider>();
@@ -182,7 +178,7 @@ namespace IbArtMuseum
                 // 3) 상호작용 트리거 콜라이더
                 BoxCollider interactTrigger = guardObj.AddComponent<BoxCollider>();
                 interactTrigger.isTrigger = true;
-                interactTrigger.center = new Vector3(0, 1.0f, 0.5f);
+                interactTrigger.center = new Vector3(0, 1.0f, 0);
                 interactTrigger.size = new Vector3(2.5f, 2.2f, 2.5f);
 
                 // 4) 수수께끼 관리인 컴포넌트 연결

@@ -42,8 +42,8 @@ namespace IbArtMuseum
             }
 
             initialPosition = transform.position;
-            // 문 옆 벽면 쪽으로 부드럽게 비켜서서 계단 출입구를 완전히 개방
-            stepAsideTargetPosition = initialPosition + (floorLevel % 2 == 0 ? Vector3.right * 2.0f : Vector3.left * 2.0f);
+            // 벽면 쪽으로 살짝 물러서며 통과를 허용
+            stepAsideTargetPosition = initialPosition + Vector3.left * 1.2f;
 
             SetupDefaultRiddleForFloor();
         }
