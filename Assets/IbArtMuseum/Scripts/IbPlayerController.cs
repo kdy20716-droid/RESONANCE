@@ -81,7 +81,7 @@ namespace IbArtMuseum
                 bgmAudioSource.loop = true;
                 bgmAudioSource.spatialBlend = 0f; // 2D BGM (균일한 볼륨)
                 bgmAudioSource.volume = bgmVolume;
-                bgmAudioSource.playOnAwake = true;
+                bgmAudioSource.playOnAwake = false; // 씬 뷰에서 소리 안 나도록 false!
 
                 AudioClip initialClip = dayBgmClip ?? bgmClip;
                 if (initialClip != null)

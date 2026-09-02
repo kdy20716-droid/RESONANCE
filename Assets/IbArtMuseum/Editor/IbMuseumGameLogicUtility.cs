@@ -71,7 +71,7 @@ namespace IbArtMuseum
                 aSource.loop = true;
                 aSource.volume = 0.05f;
                 aSource.spatialBlend = 0f;
-                aSource.playOnAwake = true;
+                aSource.playOnAwake = false; // 씬 뷰에서 소리 안 나도록 false!
                 player.bgmAudioSource = aSource;
 
                 EditorUtility.SetDirty(player);
