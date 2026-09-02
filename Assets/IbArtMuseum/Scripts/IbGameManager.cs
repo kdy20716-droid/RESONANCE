@@ -312,13 +312,22 @@ namespace IbArtMuseum
                 IbPlayerController.LocalPlayer.SwitchBGM(isDay);
             }
 
-            // 6. 관람객 NPC (낮에는 1~9층 등장, 밤에는 모두 소멸!)
+            // 6. 관람객 NPC 및 수수께끼 관리인 가드 NPC (낮에는 등장, 밤에는 모두 소멸 & 통로 100% 개방!)
             IbVisitorNPC[] visitors = Object.FindObjectsByType<IbVisitorNPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var v in visitors)
             {
                 if (v != null)
                 {
                     v.gameObject.SetActive(isDay);
+                }
+            }
+
+            IbRiddleGuardNPC[] guards = Object.FindObjectsByType<IbRiddleGuardNPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var g in guards)
+            {
+                if (g != null)
+                {
+                    g.gameObject.SetActive(isDay); // 밤에는 가드 소멸!
                 }
             }
 

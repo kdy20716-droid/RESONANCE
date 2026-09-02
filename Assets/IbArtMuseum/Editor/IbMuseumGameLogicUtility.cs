@@ -616,27 +616,17 @@ namespace IbArtMuseum
                 }
                 else if (artName.Contains("Monument") || artName.Contains("RESONANCE"))
                 {
-                    // 10층 거대 조형물 전용: 좌대 바깥으로 멀리 떨어진 4방향 대칭 바닥 업라이트 (앞/뒤 반대편에서 균형 있게 투사)
+                    // 10층 거대 조형물 전용: 간판 앞/뒤 조명은 없애고, 좌/우 양옆에서 멀리 떨어진 2개의 업라이트만 배치!
                     Vector3 coreTarget = art.transform.position + new Vector3(0, 4.2f, 0);
 
-                    // 1) 앞쪽-왼쪽 (남서)
-                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_FrontLeft",
-                        art.transform.position + new Vector3(-5.2f, 0.02f, -4.8f),
+                    // 1) 좌측(서쪽) 멀리 떨어진 업라이트
+                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Left",
+                        art.transform.position + new Vector3(-7.2f, 0.02f, 0f),
                         coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
 
-                    // 2) 앞쪽-오른쪽 (남동)
-                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_FrontRight",
-                        art.transform.position + new Vector3(5.2f, 0.02f, -4.8f),
-                        coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
-
-                    // 3) 반대편 뒤쪽-왼쪽 (북서)
-                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_BackLeft",
-                        art.transform.position + new Vector3(-5.2f, 0.02f, 4.8f),
-                        coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
-
-                    // 4) 반대편 뒤쪽-오른쪽 (북동)
-                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_BackRight",
-                        art.transform.position + new Vector3(5.2f, 0.02f, 4.8f),
+                    // 2) 우측(동쪽) 멀리 떨어진 업라이트
+                    CreateFloorCanUplight(lightingRoot.transform, "Monument_Uplight_Right",
+                        art.transform.position + new Vector3(7.2f, 0.02f, 0f),
                         coreTarget, 3000f, brassMat, darkBronzeMat, bulbEmissiveMat);
                 }
             }
