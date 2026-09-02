@@ -365,6 +365,14 @@ namespace IbArtMuseum
                 }
 
                 // 2) 모든 형광등 디퓨저 패널 머티리얼을 낮(light) / 밤(black)으로 실시간 교체!
+                if (nightCeilingBlackMat == null)
+                {
+                    nightCeilingBlackMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+                    nightCeilingBlackMat.name = "Runtime_Night_Black_Mat";
+                    nightCeilingBlackMat.SetColor("_BaseColor", new Color(0.04f, 0.04f, 0.04f, 1f));
+                    nightCeilingBlackMat.SetFloat("_Smoothness", 0.05f);
+                }
+
                 Material targetPanelMat = isDay ? dayCeilingLightMat : nightCeilingBlackMat;
                 if (targetPanelMat != null)
                 {
