@@ -341,7 +341,8 @@ namespace IbArtMuseum
                 }
             }
 
-            RenderSettings.ambientLight = isDay ? new Color(0.85f, 0.85f, 0.85f) : new Color(0.08f, 0.12f, 0.22f);
+            // 사방이 막힌 실내 갤러리이므로 앰비언트 광을 차분하게 낮추어, 오직 실내 핀조명/스팟라이트에 의해서만 밝기가 결정되도록 설정!
+            RenderSettings.ambientLight = isDay ? new Color(0.08f, 0.09f, 0.12f) : new Color(0.02f, 0.03f, 0.05f);
         }
 
         // ==================== 3. 정밀 8번 출구 체크포인트 루프 로직 ====================

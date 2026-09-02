@@ -503,11 +503,11 @@ namespace IbArtMuseum
                 Vector3 canvasFacingDir = (canvasT != null) ? -canvasT.forward : -art.transform.forward;
                 Vector3 canvasPos = (canvasT != null) ? canvasT.position : art.transform.position;
 
-                Vector3 mountPos = canvasPos + (-canvasFacingDir * 0.06f) + Vector3.up * 1.52f; // 살짝 더 위쪽에 안정적으로 장착!
-                Vector3 lampHeadPos = mountPos + (canvasFacingDir * 0.44f) + Vector3.down * 0.06f;
-                Vector3 targetAimPos = canvasPos + Vector3.up * 0.15f; // 그림 캔버스 중심 타겟
+                Vector3 mountPos = canvasPos + (-canvasFacingDir * 0.06f) + Vector3.up * 2.15f; // 액자 상단 위로 시원하게 높게 장착!
+                Vector3 lampHeadPos = mountPos + (canvasFacingDir * 0.50f) + Vector3.down * 0.18f;
+                Vector3 targetAimPos = canvasPos + Vector3.up * 0.10f; // 그림 캔버스 중심 타겟
                 Vector3 aimDir = (targetAimPos - lampHeadPos).normalized;
-                Quaternion shadeRot = Quaternion.FromToRotation(Vector3.down, aimDir); // 그림을 바라보는 자연스러운 틸트 회전
+                Quaternion shadeRot = Quaternion.FromToRotation(Vector3.down, aimDir); // 그림을 향해 자연스럽게 내려다보는 틸트
 
                 GameObject fixtureGo = new GameObject($"Fixture_{artName}");
                 fixtureGo.transform.SetParent(lightingRoot.transform);
@@ -518,15 +518,15 @@ namespace IbArtMuseum
                 rosette.transform.SetParent(fixtureGo.transform);
                 rosette.transform.position = mountPos;
                 rosette.transform.rotation = Quaternion.LookRotation(canvasFacingDir, Vector3.up) * Quaternion.Euler(90f, 0, 0);
-                rosette.transform.localScale = new Vector3(0.08f, 0.018f, 0.08f);
+                rosette.transform.localScale = new Vector3(0.09f, 0.02f, 0.09f);
                 rosette.GetComponent<MeshRenderer>().material = brassMat;
                 Object.DestroyImmediate(rosette.GetComponent<Collider>());
 
-                // 2) 부드럽고 우아한 백조목(Swan-Neck) 아치형 곡선 파이프 (유려한 곡선)
+                // 2) 부드럽고 우아한 백조목(Swan-Neck) 높은 아치형 곡선 파이프
                 Vector3 p0 = mountPos;
-                Vector3 p1 = mountPos + Vector3.up * 0.12f + canvasFacingDir * 0.08f;
-                Vector3 p2 = mountPos + Vector3.up * 0.15f + canvasFacingDir * 0.25f;
-                Vector3 p3 = lampHeadPos + Vector3.up * 0.06f;
+                Vector3 p1 = mountPos + Vector3.up * 0.15f + canvasFacingDir * 0.10f;
+                Vector3 p2 = mountPos + Vector3.up * 0.20f + canvasFacingDir * 0.32f;
+                Vector3 p3 = lampHeadPos + Vector3.up * 0.10f;
                 Vector3 p4 = lampHeadPos;
 
                 Vector3[] curvePoints = new Vector3[] { p0, p1, p2, p3, p4 };
@@ -540,18 +540,18 @@ namespace IbArtMuseum
                     pipeSeg.transform.SetParent(fixtureGo.transform);
                     pipeSeg.transform.position = (segStart + segEnd) / 2f;
                     pipeSeg.transform.rotation = Quaternion.FromToRotation(Vector3.up, (segEnd - segStart).normalized);
-                    pipeSeg.transform.localScale = new Vector3(0.016f, (segEnd - segStart).magnitude / 2f, 0.016f);
+                    pipeSeg.transform.localScale = new Vector3(0.018f, (segEnd - segStart).magnitude / 2f, 0.018f);
                     pipeSeg.GetComponent<MeshRenderer>().material = brassMat;
                     Object.DestroyImmediate(pipeSeg.GetComponent<Collider>());
                 }
 
-                // 3) 고풍스러운 황동 돔/벨 쉐이드 갓 (그림을 바라보도록 살짝 틸트 회전)
+                // 3) 고풍스러운 황동 돔/벨 쉐이드 갓 (그림을 바라보도록 틸트 회전)
                 GameObject bellShade = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 bellShade.name = "Antique_Bell_Shade";
                 bellShade.transform.SetParent(fixtureGo.transform);
                 bellShade.transform.position = lampHeadPos;
                 bellShade.transform.rotation = shadeRot;
-                bellShade.transform.localScale = new Vector3(0.14f, 0.06f, 0.14f);
+                bellShade.transform.localScale = new Vector3(0.16f, 0.07f, 0.16f);
                 bellShade.GetComponent<MeshRenderer>().material = brassMat;
                 Object.DestroyImmediate(bellShade.GetComponent<Collider>());
 
@@ -559,8 +559,8 @@ namespace IbArtMuseum
                 GameObject finial = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 finial.name = "Shade_Top_Finial";
                 finial.transform.SetParent(fixtureGo.transform);
-                finial.transform.position = lampHeadPos - (aimDir * 0.04f);
-                finial.transform.localScale = new Vector3(0.032f, 0.032f, 0.032f);
+                finial.transform.position = lampHeadPos - (aimDir * 0.045f);
+                finial.transform.localScale = new Vector3(0.036f, 0.036f, 0.036f);
                 finial.GetComponent<MeshRenderer>().material = darkBronzeMat;
                 Object.DestroyImmediate(finial.GetComponent<Collider>());
 
@@ -568,23 +568,23 @@ namespace IbArtMuseum
                 GameObject bulb = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 bulb.name = "Recessed_Emissive_Bulb";
                 bulb.transform.SetParent(fixtureGo.transform);
-                bulb.transform.position = lampHeadPos + (aimDir * 0.025f);
+                bulb.transform.position = lampHeadPos + (aimDir * 0.028f);
                 bulb.transform.rotation = shadeRot;
-                bulb.transform.localScale = new Vector3(0.11f, 0.012f, 0.11f);
+                bulb.transform.localScale = new Vector3(0.13f, 0.014f, 0.13f);
                 bulb.GetComponent<MeshRenderer>().material = bulbEmissiveMat;
                 Object.DestroyImmediate(bulb.GetComponent<Collider>());
 
                 // 6) ★ 갓 내부 렌즈에서 캔버스 중앙을 향해 정확히 투사되는 스팟라이트 광원!
                 GameObject spotLightGo = new GameObject($"PictureLight_{artName}");
                 spotLightGo.transform.SetParent(fixtureGo.transform);
-                spotLightGo.transform.position = lampHeadPos + (aimDir * 0.035f);
+                spotLightGo.transform.position = lampHeadPos + (aimDir * 0.040f);
                 spotLightGo.transform.LookAt(targetAimPos);
 
                 Light l = spotLightGo.AddComponent<Light>();
                 l.type = LightType.Spot;
-                l.range = 6.5f;
+                l.range = 7.5f;
                 l.spotAngle = 75f;
-                l.innerSpotAngle = 40f;
+                l.innerSpotAngle = 50f; // ★ Inner Spot Angle 50도 고정!
                 l.color = new Color(1f, 0.97f, 0.92f);
                 l.shadows = LightShadows.Soft;
 
@@ -689,8 +689,8 @@ namespace IbArtMuseum
             Light l = spotGo.AddComponent<Light>();
             l.type = LightType.Spot;
             l.range = 14.0f;
-            l.spotAngle = 60f;
-            l.innerSpotAngle = 35f;
+            l.spotAngle = 70f;
+            l.innerSpotAngle = 50f; // ★ Inner Spot Angle 50도 고정!
             l.color = new Color(1f, 0.96f, 0.90f);
             l.shadows = LightShadows.Soft;
 
