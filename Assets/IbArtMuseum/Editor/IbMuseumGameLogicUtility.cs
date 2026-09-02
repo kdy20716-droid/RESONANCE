@@ -844,7 +844,8 @@ namespace IbArtMuseum
             Debug.Log("<color=#FFFFFF><b>[Ceiling Lights 3x3 Area] 1~9층 전 층에 3x3(9개) Area 직사각형 조명(silver 테두리 + light 형광등) 생성 완료!</b></color>");
         }
 
-        private static void SetupFloorNumberTypographyOnWalls()
+        [MenuItem("Tools/Ib Museum/🔢 Setup Floor Numbers On Walls (층수 숫자 벽면 즉시 부착)", false, 2)]
+        public static void SetupFloorNumberTypographyOnWalls()
         {
             GameObject existingRoot = GameObject.Find("Museum_Floor_Numbers");
             if (existingRoot != null) Object.DestroyImmediate(existingRoot);
@@ -862,70 +863,52 @@ namespace IbArtMuseum
                 {
                     bool needReimport = false;
                     if (!ti.alphaIsTransparency) { ti.alphaIsTransparency = true; needReimport = true; }
+                    if (ti.textureCompression != TextureImporterCompression.Uncompressed) { ti.textureCompression = TextureImporterCompression.Uncompressed; needReimport = true; }
                     if (needReimport) ti.SaveAndReimport();
                 }
 
                 Texture2D numTex = AssetDatabase.LoadAssetAtPath<Texture2D>(texPath);
                 if (numTex == null) continue;
 
-                // 투명 갤러리 타이포그래피 머티리얼
-                Material numMat = new Material(Shader.Find("HDRP/Unlit") ?? Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+                // 투명 갤러리 타이포그래피 머티리얼 (HDRP Lit / Double-Sided)
+                Material numMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
                 numMat.name = $"Mat_FloorNumber_{f}F";
+                numMat.SetTexture("_BaseColorMap", numTex);
                 numMat.mainTexture = numTex;
+                numMat.SetColor("_BaseColor", Color.white);
                 if (numMat.HasProperty("_SurfaceType")) numMat.SetFloat("_SurfaceType", 1f); // Transparent
                 if (numMat.HasProperty("_BlendMode")) numMat.SetFloat("_BlendMode", 0f);   // Alpha
+                if (numMat.HasProperty("_DoubleSidedEnable")) numMat.SetFloat("_DoubleSidedEnable", 1f); // 양면 렌더링 (어디서 봐도 보임!)
                 numMat.renderQueue = 3000;
 
-                // 1) 복도 모퉁이를 딱 돌았을 때 보이는 왼쪽 외벽 (메인 시선 - 모퉁이 돌자마자 바로 보이는 거대한 숫자!)
-                Vector3 wallPos1;
-                Quaternion wallRot1;
-                if (isEvenFloor)
-                {
-                    // 짝수층: 동쪽 외벽 안쪽 표면 (X = 17.55m, Z = -16.0m), 서쪽(-X) 바라봄
-                    wallPos1 = new Vector3(17.55f, floorY + 2.8f, -16.0f);
-                    wallRot1 = Quaternion.Euler(0, -90f, 0);
-                }
-                else
-                {
-                    // 홀수층: 서쪽 외벽 안쪽 표면 (X = -17.55m, Z = 16.0f), 동쪽(+X) 바라봄
-                    wallPos1 = new Vector3(-17.55f, floorY + 2.8f, 16.0f);
-                    wallRot1 = Quaternion.Euler(0, 90f, 0);
-                }
+                // 1) 복도 모퉁이를 딱 돌았을 때 보이는 왼쪽 외벽 (메인 시선 - 모퉁이 돌자마자 왼쪽 눈앞!)
+                Vector3 wallPos1 = isEvenFloor ? new Vector3(17.48f, floorY + 2.8f, -16.0f) : new Vector3(-17.48f, floorY + 2.8f, 16.0f);
+                Quaternion wallRot1 = isEvenFloor ? Quaternion.Euler(0, -90f, 0) : Quaternion.Euler(0, 90f, 0);
 
-                GameObject numQuad1 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                numQuad1.name = $"FloorNumber_{f}F_MainTurn";
-                numQuad1.transform.SetParent(numbersRoot.transform);
-                numQuad1.transform.position = wallPos1;
-                numQuad1.transform.rotation = wallRot1;
-                numQuad1.transform.localScale = new Vector3(2.6f, 2.6f, 1.0f);
-                numQuad1.GetComponent<MeshRenderer>().material = numMat;
-                Object.DestroyImmediate(numQuad1.GetComponent<Collider>());
+                GameObject numPlate1 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                numPlate1.name = $"Floor_{f}F_Number_MainTurn";
+                numPlate1.transform.SetParent(numbersRoot.transform);
+                numPlate1.transform.position = wallPos1;
+                numPlate1.transform.rotation = wallRot1;
+                numPlate1.transform.localScale = new Vector3(2.8f, 2.8f, 0.05f); // 얇은 3D 슬림 판넬
+                numPlate1.GetComponent<MeshRenderer>().material = numMat;
+                Object.DestroyImmediate(numPlate1.GetComponent<Collider>());
 
-                // 2) 계단 복도를 걸어오면서 보이는 왼쪽 분리벽 모퉁이 코너 (보조 시선)
-                Vector3 wallPos2;
-                Quaternion wallRot2;
-                if (isEvenFloor)
-                {
-                    wallPos2 = new Vector3(13.5f, floorY + 2.8f, -19.52f);
-                    wallRot2 = Quaternion.Euler(0, 180f, 0);
-                }
-                else
-                {
-                    wallPos2 = new Vector3(-13.5f, floorY + 2.8f, 19.52f);
-                    wallRot2 = Quaternion.Euler(0, 0f, 0);
-                }
+                // 2) 계단 복도를 걸어가면서 보이는 왼쪽 분리벽 모퉁이 코너 (복도 시선)
+                Vector3 wallPos2 = isEvenFloor ? new Vector3(13.0f, floorY + 2.8f, -19.45f) : new Vector3(-13.0f, floorY + 2.8f, 19.45f);
+                Quaternion wallRot2 = isEvenFloor ? Quaternion.Euler(0, 180f, 0) : Quaternion.Euler(0, 0f, 0);
 
-                GameObject numQuad2 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                numQuad2.name = $"FloorNumber_{f}F_CorridorSide";
-                numQuad2.transform.SetParent(numbersRoot.transform);
-                numQuad2.transform.position = wallPos2;
-                numQuad2.transform.rotation = wallRot2;
-                numQuad2.transform.localScale = new Vector3(2.4f, 2.4f, 1.0f);
-                numQuad2.GetComponent<MeshRenderer>().material = numMat;
-                Object.DestroyImmediate(numQuad2.GetComponent<Collider>());
+                GameObject numPlate2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                numPlate2.name = $"Floor_{f}F_Number_CorridorCorner";
+                numPlate2.transform.SetParent(numbersRoot.transform);
+                numPlate2.transform.position = wallPos2;
+                numPlate2.transform.rotation = wallRot2;
+                numPlate2.transform.localScale = new Vector3(2.8f, 2.8f, 0.05f);
+                numPlate2.GetComponent<MeshRenderer>().material = numMat;
+                Object.DestroyImmediate(numPlate2.GetComponent<Collider>());
             }
 
-            Debug.Log("<color=#33FF33><b>[Floor Numbers] 1~9층 전 층 계단 복도 모퉁이 왼쪽 벽면에 거대한 검은색 층수 숫자 텍스처 부착 완료!</b></color>");
+            Debug.Log("<color=#33FF33><b>[Floor Numbers] 1~9층 전 층 계단 복도 모퉁이 왼쪽 벽면에 거대한 검은색 층수 숫자 판넬 부착 완료!</b></color>");
         }
 
         private static void SetupDaytimeVisitorNPCs()
