@@ -30,6 +30,7 @@ namespace IbArtMuseum
         private bool isPlayerNearby = false;
         private Vector3 initialPosition;
         private Vector3 stepAsideTargetPosition;
+        public bool IsCleared => isCleared;
 
         private void Awake()
         {
@@ -57,11 +58,18 @@ namespace IbArtMuseum
         {
             if (isPlayerNearby && !isCleared && Input.GetKeyDown(KeyCode.E))
             {
-                if (IbRiddleInputUI.Instance != null && !IbRiddleInputUI.Instance.IsOpen)
-                {
-                    if (audioSource != null && voiceSound != null) audioSource.PlayOneShot(voiceSound);
-                    IbRiddleInputUI.Instance.OpenRiddleUI(null, riddleTitle, riddleQuestion, this);
-                }
+                Interact();
+            }
+        }
+
+        public void Interact()
+        {
+            if (isCleared) return;
+
+            if (IbRiddleInputUI.Instance != null && !IbRiddleInputUI.Instance.IsOpen)
+            {
+                if (audioSource != null && voiceSound != null) audioSource.PlayOneShot(voiceSound);
+                IbRiddleInputUI.Instance.OpenRiddleUI(null, riddleTitle, riddleQuestion, this);
             }
         }
 

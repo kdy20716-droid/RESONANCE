@@ -162,18 +162,40 @@ namespace IbArtMuseum
             RaycastHit hit;
 
             IbInteractableArtwork interactable = null;
+            IbRiddleGuardNPC guard = null;
+            IbSaveVase vase = null;
+
             if (Physics.Raycast(ray, out hit, interactDistance, interactLayerMask, QueryTriggerInteraction.Collide))
             {
                 interactable = hit.collider.GetComponentInParent<IbInteractableArtwork>();
-                if (interactable == null)
-                {
-                    interactable = hit.collider.GetComponent<IbInteractableArtwork>();
-                }
+                if (interactable == null) interactable = hit.collider.GetComponent<IbInteractableArtwork>();
+
+                guard = hit.collider.GetComponentInParent<IbRiddleGuardNPC>();
+                if (guard == null) guard = hit.collider.GetComponent<IbRiddleGuardNPC>();
+
+                vase = hit.collider.GetComponentInParent<IbSaveVase>();
+                if (vase == null) vase = hit.collider.GetComponent<IbSaveVase>();
             }
 
             _currentHoveredInteractable = interactable;
 
-            if (_currentHoveredInteractable != null)
+            if (guard != null && !guard.IsCleared)
+            {
+                IbMuseumUI.Instance?.SetInteractPromptVisible(true, $"[ E ] 관리인과 대화 & 퀴즈 풀기 ({guard.floorLevel}F ➔ {guard.floorLevel + 1}F)");
+                if (CheckInteractKeyPressed())
+                {
+                    guard.Interact();
+                }
+            }
+            else if (vase != null)
+            {
+                IbMuseumUI.Instance?.SetInteractPromptVisible(true, "[ E ] 생명의 화병 세이브 & 힐링");
+                if (CheckInteractKeyPressed())
+                {
+                    vase.Interact();
+                }
+            }
+            else if (_currentHoveredInteractable != null)
             {
                 IbMuseumUI.Instance?.SetInteractPromptVisible(true, _currentHoveredInteractable.interactPrompt);
 
