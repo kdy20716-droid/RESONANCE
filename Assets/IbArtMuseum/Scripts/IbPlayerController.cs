@@ -33,7 +33,9 @@ namespace IbArtMuseum
 
         [Header("BGM Settings")]
         public AudioSource bgmAudioSource;
-        public AudioClip bgmClip;
+        public AudioClip dayBgmClip;   // emotion.mp3 (낮 BGM)
+        public AudioClip nightBgmClip; // RESONANCE.mp3 (밤 BGM)
+        public AudioClip bgmClip;      // 기본/호환 클립
         [Range(0f, 1f)] public float bgmVolume = 0.05f; // 은은한 볼륨 0.05로 통일
 
         private CharacterController _characterController;
@@ -81,9 +83,10 @@ namespace IbArtMuseum
                 bgmAudioSource.volume = bgmVolume;
                 bgmAudioSource.playOnAwake = true;
 
-                if (bgmClip != null)
+                AudioClip initialClip = dayBgmClip ?? bgmClip;
+                if (initialClip != null)
                 {
-                    bgmAudioSource.clip = bgmClip;
+                    bgmAudioSource.clip = initialClip;
                 }
             }
         }
@@ -97,6 +100,29 @@ namespace IbArtMuseum
             {
                 bgmAudioSource.volume = bgmVolume;
                 bgmAudioSource.Play();
+            }
+        }
+
+        /// <summary>
+        /// 낮/밤 상태에 따라 BGM을 즉시 자연스럽게 전환 (낮: emotion.mp3 / 밤: RESONANCE.mp3)
+        /// </summary>
+        public void SwitchBGM(bool isDay)
+        {
+            AudioClip targetClip = isDay ? (dayBgmClip ?? bgmClip) : (nightBgmClip ?? bgmClip);
+            if (bgmAudioSource != null && targetClip != null)
+            {
+                if (bgmAudioSource.clip != targetClip)
+                {
+                    bgmAudioSource.clip = targetClip;
+                    bgmAudioSource.volume = bgmVolume;
+                    bgmAudioSource.loop = true;
+                    bgmAudioSource.Play();
+                }
+                else if (!bgmAudioSource.isPlaying)
+                {
+                    bgmAudioSource.volume = bgmVolume;
+                    bgmAudioSource.Play();
+                }
             }
         }
 

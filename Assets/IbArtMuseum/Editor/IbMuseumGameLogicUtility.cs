@@ -54,10 +54,14 @@ namespace IbArtMuseum
             gm.anomalyManager = am;
             gm.audioAmbience = audio;
 
-            // ★ Assets/musics/emotion.mp3 BGM 캐릭터에 자동 장착!
+            // ★ Assets/musics/emotion.mp3 & RESONANCE.mp3 낮/밤 BGM 캐릭터에 자동 장착!
             AudioClip emotionClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/musics/emotion.mp3");
-            if (emotionClip != null && player != null)
+            AudioClip resonanceClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/musics/RESONANCE.mp3");
+
+            if (player != null)
             {
+                player.dayBgmClip = emotionClip;
+                player.nightBgmClip = resonanceClip;
                 player.bgmClip = emotionClip;
                 player.bgmVolume = 0.05f; // 은은하게 통일된 0.05 볼륨
 
@@ -71,7 +75,7 @@ namespace IbArtMuseum
                 player.bgmAudioSource = aSource;
 
                 EditorUtility.SetDirty(player);
-                Debug.Log("<color=#33FF33><b>[Audio Setup] emotion.mp3 BGM이 플레이어 캐릭터에게 성공적으로 장착되었습니다! (무한 루프, 볼륨 0.05)</b></color>");
+                Debug.Log("<color=#33FF33><b>[Audio Setup] 낮 BGM(emotion.mp3) & 밤 BGM(RESONANCE.mp3)이 플레이어에게 성공적으로 장착되었습니다! (볼륨 0.05)</b></color>");
             }
 
             // ★ UI 캔버스에 수수께끼 대화 & 정답 입력 UI (IbRiddleInputUI) 사전 구축 및 바인딩
@@ -514,7 +518,7 @@ namespace IbArtMuseum
                 l.shadows = LightShadows.Soft;
 
                 var hdLight = spotLightGo.AddComponent<HDAdditionalLightData>();
-                hdLight.intensity = 3000f;
+                hdLight.intensity = 300000f; // 낮 기본 조명 강도 300000 lux!
                 hdLight.useScreenSpaceShadows = true;
             }
 

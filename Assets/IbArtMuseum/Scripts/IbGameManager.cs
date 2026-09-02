@@ -267,7 +267,8 @@ namespace IbArtMuseum
                 sunShaft.SetActive(isDay);
             }
 
-            // 4. 실내 조명(핀조명, 업라이트)은 intensity 3000 고정 및 자연스러운 갤러리 백색 유지!
+            // 4. 작품 및 액자 핀조명/스팟라이트 강도 전환: 낮 300000, 밤 3000!
+            float targetPictureIntensity = isDay ? 300000f : 3000f;
             Light[] allLights = Object.FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var l in allLights)
             {
@@ -277,10 +278,11 @@ namespace IbArtMuseum
                     if (l.gameObject.name != "CoreGlowLight")
                     {
                         l.color = new Color(1f, 0.97f, 0.92f);
+                        l.intensity = targetPictureIntensity;
                         var hdL = l.GetComponent<UnityEngine.Rendering.HighDefinition.HDAdditionalLightData>();
                         if (hdL != null)
                         {
-                            hdL.intensity = 3000f;
+                            hdL.intensity = targetPictureIntensity;
                         }
                     }
                 }
@@ -297,6 +299,16 @@ namespace IbArtMuseum
                         exp.fixedExposure.value = isDay ? 10.2f : 10.1f;
                     }
                 }
+            }
+
+            // 6. 플레이어 BGM 자동 전환 (낮: emotion.mp3 / 밤: RESONANCE.mp3)
+            if (player != null)
+            {
+                player.SwitchBGM(isDay);
+            }
+            else if (IbPlayerController.LocalPlayer != null)
+            {
+                IbPlayerController.LocalPlayer.SwitchBGM(isDay);
             }
 
             // 6. 관람객 NPC (낮에는 1~9층 등장, 밤에는 모두 소멸!)
