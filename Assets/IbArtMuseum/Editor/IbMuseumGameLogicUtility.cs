@@ -15,7 +15,7 @@ namespace IbArtMuseum
             int count = 0;
             foreach (var go in allSceneObjects)
             {
-                if (go != null && (go.name == "Museum_Strict_Triggers" || go.name.StartsWith("Museum_Strict_Triggers")))
+                if (go != null && (go.name == "Museum_Strict_Triggers" || go.name.StartsWith("Museum_Strict_Triggers") || go.name.Contains("Volumetric_Light_Shaft")))
                 {
                     Object.DestroyImmediate(go);
                     count++;
@@ -521,9 +521,6 @@ namespace IbArtMuseum
                 var hdLight = spotLightGo.AddComponent<HDAdditionalLightData>();
                 hdLight.intensity = 300000f; // 낮 기본 조명 강도 300000 lux!
                 hdLight.useScreenSpaceShadows = true;
-
-                // ★ 액자 상단에서 캔버스로 쏟아지는 선명한 3D 반투명 빛줄기(Volumetric Light Beam Shaft) 생성!
-                CreateVolumetricLightConeBeam(spotLightGo.transform, lampHeadPos, targetAimPos, 3.2f, 1.4f, 0.12f, new Color(1f, 0.96f, 0.88f, 0.22f));
             }
 
             // 3. 조각상 / 장미 / 10층 거대 동상 바닥 업라이트 & 동상 안쪽 조명 (3000 lux)
@@ -603,84 +600,6 @@ namespace IbArtMuseum
             var hdLight = spotGo.AddComponent<HDAdditionalLightData>();
             hdLight.intensity = intensity;
             hdLight.useScreenSpaceShadows = true;
-
-            // 바닥 업라이트 3D 빛줄기 생성
-            CreateVolumetricLightConeBeam(spotGo.transform, spotGo.transform.position, targetPos, 7.0f, 2.2f, 0.15f, new Color(1f, 0.95f, 0.85f, 0.18f));
-        }
-
-        private static void CreateVolumetricLightConeBeam(Transform parent, Vector3 startPos, Vector3 targetPos, float length, float baseRadius, float topRadius, Color beamColor)
-        {
-            GameObject beamGo = new GameObject("Volumetric_Light_Shaft_Beam");
-            beamGo.transform.SetParent(parent, false);
-            beamGo.transform.localPosition = Vector3.zero;
-            beamGo.transform.localRotation = Quaternion.identity;
-
-            MeshFilter mf = beamGo.AddComponent<MeshFilter>();
-            MeshRenderer mr = beamGo.AddComponent<MeshRenderer>();
-
-            int segments = 16;
-            Mesh mesh = new Mesh();
-            mesh.name = "LightShaft_Cone_Mesh";
-
-            List<Vector3> verts = new List<Vector3>();
-            List<Color> colors = new List<Color>();
-            List<int> tris = new List<int>();
-
-            for (int i = 0; i <= segments; i++)
-            {
-                float angle = (i / (float)segments) * Mathf.PI * 2f;
-                float sin = Mathf.Sin(angle);
-                float cos = Mathf.Cos(angle);
-
-                // 상단 링 (조명 시작점)
-                verts.Add(new Vector3(cos * topRadius, sin * topRadius, 0));
-                colors.Add(new Color(beamColor.r, beamColor.g, beamColor.b, beamColor.a * 1.5f));
-
-                // 하단 링 (빛이 퍼지는 목표점)
-                verts.Add(new Vector3(cos * baseRadius, sin * baseRadius, length));
-                colors.Add(new Color(beamColor.r, beamColor.g, beamColor.b, 0f));
-            }
-
-            for (int i = 0; i < segments; i++)
-            {
-                int idx = i * 2;
-                // 양면 렌더링으로 어느 각도에서 보아도 찬란하게 보임
-                tris.Add(idx);
-                tris.Add(idx + 1);
-                tris.Add(idx + 2);
-
-                tris.Add(idx + 2);
-                tris.Add(idx + 1);
-                tris.Add(idx + 3);
-
-                tris.Add(idx + 2);
-                tris.Add(idx + 1);
-                tris.Add(idx);
-
-                tris.Add(idx + 3);
-                tris.Add(idx + 1);
-                tris.Add(idx + 2);
-            }
-
-            mesh.SetVertices(verts);
-            mesh.SetColors(colors);
-            mesh.SetTriangles(tris, 0);
-            mesh.RecalculateNormals();
-            mf.sharedMesh = mesh;
-
-            // HDRP 반투명 가산 블렌딩 쉐이더 머티리얼
-            Material beamMat = new Material(Shader.Find("HDRP/Unlit") ?? Shader.Find("Particles/Standard Unlit") ?? Shader.Find("Standard"));
-            beamMat.name = "Mat_Volumetric_LightShaft";
-            beamMat.color = beamColor;
-
-            if (beamMat.HasProperty("_SurfaceType")) beamMat.SetFloat("_SurfaceType", 1f); // Transparent
-            if (beamMat.HasProperty("_BlendMode")) beamMat.SetFloat("_BlendMode", 1f); // Additive
-            if (beamMat.HasProperty("_CullMode")) beamMat.SetFloat("_CullMode", 0f); // Double sided
-            if (beamMat.HasProperty("_ZWrite")) beamMat.SetFloat("_ZWrite", 0f);
-
-            mr.material = beamMat;
-            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            mr.receiveShadows = false;
         }
 
         private static void SetupDaytimeVisitorNPCs()
