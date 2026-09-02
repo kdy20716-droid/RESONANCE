@@ -27,10 +27,14 @@ namespace IbArtMuseum
 
         [Header("Head Bob Settings")]
         public bool enableHeadBob = true;
+        public float bobFrequency = 2.0f;
+        public float bobHorizontalAmplitude = 0.03f;
+        public float bobVerticalAmplitude = 0.04f;
+
         [Header("BGM Settings")]
         public AudioSource bgmAudioSource;
         public AudioClip bgmClip;
-        [Range(0f, 1f)] public float bgmVolume = 0.35f; // 소리 살짝 줄임
+        [Range(0f, 1f)] public float bgmVolume = 0.32f; // 소리 살짝 줄임
 
         private CharacterController _characterController;
         private float _verticalRotation = 0f;
