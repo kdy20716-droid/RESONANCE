@@ -53,6 +53,8 @@ namespace IbArtMuseum
             set => _canMove = value;
         }
 
+        public float CameraPitch => _verticalRotation;
+
         private void Awake()
         {
             LocalPlayer = this;
@@ -354,19 +356,47 @@ namespace IbArtMuseum
 
         public void Teleport(Vector3 position, Quaternion rotation)
         {
+            TeleportSeamless(position, rotation, preservePitch: false, preserveVelocity: false);
+        }
+
+        /// <summary>
+        /// 심리스 텔레포트: 플레이어의 카메라 상하 각도(Pitch)와 이동 속도(Velocity)를 보존하여 화면 덜컥거림 없이 자연스럽게 연결
+        /// </summary>
+        public void TeleportSeamless(Vector3 position, Quaternion rotation, bool preservePitch = true, bool preserveVelocity = true)
+        {
             if (_characterController != null)
             {
                 _characterController.enabled = false;
             }
 
+            // 회전 차이 계산
+            Quaternion rotDelta = rotation * Quaternion.Inverse(transform.rotation);
+
             transform.position = position;
             transform.rotation = rotation;
-            _velocity = Vector3.zero;
+
+            if (preserveVelocity)
+            {
+                // 걸어가던 속도 벡터도 새 회전에 맞추어 회전시켜 발걸음 관성 유지!
+                _velocity = rotDelta * _velocity;
+            }
+            else
+            {
+                _velocity = Vector3.zero;
+            }
 
             if (playerCamera != null)
             {
-                _verticalRotation = 0f;
-                playerCamera.localRotation = Quaternion.identity;
+                if (!preservePitch)
+                {
+                    _verticalRotation = 0f;
+                    playerCamera.localRotation = Quaternion.identity;
+                }
+                else
+                {
+                    // 카메라 상하 회전(Pitch)을 완벽하게 그대로 유지!
+                    playerCamera.localRotation = Quaternion.Euler(_verticalRotation, 0f, 0f);
+                }
             }
 
             if (_characterController != null)

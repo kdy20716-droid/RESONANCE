@@ -185,7 +185,14 @@ namespace IbArtMuseum
         private void OnRestartClicked()
         {
             HideEnding();
-            IbGameManager.Instance?.FullRestartToPrologue();
+            if (IbStartMenuUI.Instance != null)
+            {
+                IbStartMenuUI.Instance.ShowStartMenu();
+            }
+            else
+            {
+                IbGameManager.Instance?.FullRestartToPrologue();
+            }
         }
     }
 }

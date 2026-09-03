@@ -60,6 +60,7 @@ namespace IbArtMuseum
         public bool hasPassedGreen = false;             // 초록색 원(계단 하단) 밟았는지 여부
         public bool isCurrentFloorAnomalyActive = false; // 이번 층에 이상현상이 발동되었는지 여부
         public int currentTrackingFloor = 10;           // 현재 진행 중인 층수
+        public bool hasExploredCorridor = false;         // 파란색 원을 벗어나 복도로 나갔는지 여부 (유턴 감지 핵심 플래그)
 
         private bool hasTriggeredCutscene = false;
         private bool isTransitioning = false;
@@ -75,10 +76,78 @@ namespace IbArtMuseum
 
         private void Start()
         {
-            FullRestartToPrologue();
+            // 첫 화면: 1층(처음부터 시작) vs 10층(10층부터 시작) 선택 메뉴 모달 표시
+            if (IbStartMenuUI.Instance == null)
+            {
+                gameObject.AddComponent<IbStartMenuUI>();
+            }
+            IbStartMenuUI.Instance.ShowStartMenu();
         }
 
-        // 10층부터 1층까지 정확한 Y축 고유 좌표 초기화
+        private void Update()
+        {
+            if (isTransitioning || currentPhase != GamePhase.Night_Loop || player == null) return;
+
+            // 플레이어가 파란색 원에서 2.5m 이상 벗어나 복도로 걸어나가면 즉시 복도 탐색 플래그 활성화!
+            // (노란색 원을 안 밟아도 1~2번 액자에서 이상현상을 보고 유턴하면 무조건 유턴으로 인정되도록 보장!)
+            if (!hasExploredCorridor && floorCheckpoints != null && currentFloorIndex < floorCheckpoints.Length)
+            {
+                Vector3 cpPos = floorCheckpoints[currentFloorIndex].spawnPosition;
+                float distFromStart = Vector2.Distance(
+                    new Vector2(player.transform.position.x, player.transform.position.z),
+                    new Vector2(cpPos.x, cpPos.z)
+                );
+                if (distFromStart > 2.5f)
+                {
+                    hasExploredCorridor = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 10층부터 바로 시작 (공명 각성 푸른 밤 & 8번 출구 루프 즉시 진입)
+        /// </summary>
+        public void StartFrom10FNight()
+        {
+            if (prologueRoutine != null) StopCoroutine(prologueRoutine);
+
+            currentPhase = GamePhase.Night_Loop;
+            currentFloorIndex = 0; // 10F
+            currentTrackingFloor = 10;
+            roseLife = 3;
+            hasExploredCurrentFloor = false;
+            hasTriggeredCutscene = true;
+            isTransitioning = false;
+
+            // 1. 완벽한 푸른 밤(Night) 환경 세팅 (RESONANCE.mp3 BGM, 조명 3000 lux)
+            SetDayEnvironment(false);
+
+            // 2. 10층 동상 코어 및 링 조명 끄기
+            if (monumentRingsRoot != null) monumentRingsRoot.gameObject.SetActive(false);
+            if (monumentSoulCore != null) monumentSoulCore.SetActive(false);
+            if (monumentGlowLight != null) monumentGlowLight.SetActive(false);
+
+            // 3. UI 정리 & 장미 3송이 라이프 HUD 활성화
+            uiManager?.HideEnding();
+            uiManager?.SetRoseLife(3);
+
+            // 4. 플레이어 10층 공명 조형물 정면 스폰 (북쪽 바라봄)
+            Vector3 pos10F = (floorCheckpoints != null && floorCheckpoints.Length > 0) ? floorCheckpoints[0].spawnPosition : new Vector3(0f, 9 * floorHeight + 0.15f, -8.0f);
+            Quaternion rot10F = (floorCheckpoints != null && floorCheckpoints.Length > 0) ? floorCheckpoints[0].spawnRotation : Quaternion.Euler(0, 0f, 0);
+
+            if (player != null)
+            {
+                player.Teleport(pos10F, rot10F);
+                player.CanMove = true;
+            }
+
+            // 5. 화면 글리치 및 알림 대사
+            uiManager?.PlayGlitchFlash(0.2f, new Color(0.4f, 0.7f, 1.0f, 0.4f));
+            uiManager?.ShowDialogueBox("10F RESONANCE", "<size=20><color=#87CEEB><i>10F Weismann Gallery Top Floor.\nThe blue resonance has awakened. Descend through the stairs to 1F to escape.</i></color></size>");
+            Debug.Log("<color=#55FFFF><b>[Start] Started directly from 10F! Blue night 8th Exit loop mode activated.</b></color>");
+        }
+
+        // 10층부터 1층까지 파란색 원 바로 살짝 위 정확한 고유 좌표 및 시선 각도 초기화
         public void InitializeStrictFloorCheckpoints()
         {
             floorCheckpoints = new FloorCheckpoint[10];
@@ -94,20 +163,38 @@ namespace IbArtMuseum
 
                 if (floorNum == 10)
                 {
-                    spPos = new Vector3(0f, floorY + 0.1f, -8.0f);
+                    spPos = new Vector3(0f, floorY + 0.15f, -8.0f);
                     spRot = Quaternion.Euler(0, 0f, 0);
                 }
                 else if (isEvenFloor)
                 {
-                    // 짝수층: 북쪽 계단 착지 3걸음 앞 (X = 0.5m, Y = 고유 층 높이, Z = 21.75m), 서쪽 바라봄
-                    spPos = new Vector3(0.5f, floorY + 0.1f, 21.75f);
-                    spRot = Quaternion.Euler(0, -90f, 0);
+                    // 짝수층(8F, 6F, 4F, 2F): 남쪽 계단 착지 지점 파란색 원 바로 살짝 위 (X = 1.0m, Z = -21.75m)
+                    // 복도(+X, 동쪽) 및 벽면 대형 층수 숫자(Floor 8 Plate 등)를 정면으로 바라봄!
+                    spPos = new Vector3(1.0f, floorY + 0.15f, -21.75f);
+                    spRot = Quaternion.Euler(0, 90f, 0);
                 }
                 else
                 {
-                    // 홀수층: 남쪽 계단 착지 3걸음 앞 (X = -0.5m, Y = 고유 층 높이, Z = -21.75m), 동쪽 바라봄
-                    spPos = new Vector3(-0.5f, floorY + 0.1f, -21.75f);
-                    spRot = Quaternion.Euler(0, 90f, 0);
+                    // 홀수층(9F, 7F, 5F, 3F, 1F): 북쪽 계단 착지 지점 파란색 원 바로 살짝 위 (X = 1.0m, Z = 21.75m)
+                    // 복도(-X, 서쪽) 및 벽면 대형 층수 숫자를 정면으로 바라봄!
+                    spPos = new Vector3(1.0f, floorY + 0.15f, 21.75f);
+                    spRot = Quaternion.Euler(0, -90f, 0);
+                }
+
+                // 씬에 배치된 실제 FloorArrivalTrigger(파란색 원) 오브젝트가 있다면 좌표를 정확히 일치시킴!
+                GameObject trigObj = GameObject.Find($"FloorArrivalTrigger_{floorNum}F");
+                if (trigObj != null)
+                {
+                    spPos.x = trigObj.transform.position.x;
+                    spPos.z = trigObj.transform.position.z;
+                    spPos.y = floorY + 0.15f; // 바닥 파란색 링 바로 살짝 위
+                }
+
+                // 씬에 SpawnPoint 오브젝트가 있다면 동기화
+                if (floorSpawnPoints != null && f < floorSpawnPoints.Length && floorSpawnPoints[f] != null)
+                {
+                    floorSpawnPoints[f].position = spPos;
+                    floorSpawnPoints[f].rotation = spRot;
                 }
 
                 floorCheckpoints[f] = new FloorCheckpoint
@@ -395,7 +482,7 @@ namespace IbArtMuseum
 
         // 1) 🔵 파란색 원: 계단 착지 및 텔레포트 담당
         // - 초록색 원을 밟고 내려왔다면 ➔ 하강 판정 (정상 통과 vs 이상현상 무시 오답)
-        // - 노란색 원을 밟고 되돌아왔다면 ➔ 유턴 판정 (이상현상 회피 성공 vs 정상 층 오답)
+        // - 복도를 탐색하다가 되돌아왔다면 ➔ 유턴 판정 (이상현상 회피 성공 vs 정상 층 오답)
         public void OnFloorArrival(int floorLevel)
         {
             if (isTransitioning) return;
@@ -408,14 +495,14 @@ namespace IbArtMuseum
                 return;
             }
 
-            // Case A: 노란색 원을 밟았고 초록색 원은 밟지 않은 채 현재 층 파란색 원으로 되돌아온 경우 (유턴 감지!)
-            if (hasPassedYellow && !hasPassedGreen && floorLevel == currentTrackingFloor)
+            // Case A: 복도를 탐색하다가(노란색 원을 밟았거나 파란색 원을 벗어남) 초록색 계단을 안 밟고 현재 층 파란색 원으로 되돌아온 경우 (유턴 감지!)
+            if ((hasPassedYellow || hasExploredCorridor) && !hasPassedGreen && floorLevel == currentTrackingFloor)
             {
                 OnTurnedBackOnAnomaly(floorLevel);
                 return;
             }
 
-            // Case B: 초록색 원을 찍고 아랫층 파란색 원을 찍은 경우 (하강 감지!)
+            // Case B: 초록색 원을 찍고 아랫층 파란색 원을 찍은 경우 (계단 하강 감지!)
             if (hasPassedGreen)
             {
                 if (isCurrentFloorAnomalyActive)
@@ -432,57 +519,43 @@ namespace IbArtMuseum
                 }
             }
 
-            // 새로운 층 착지 완료 ➔ 상태 리셋 (노란색 원을 밟기 전까지는 대기)
+            // 새로운 층 착지 완료 ➔ 상태 세팅
             currentTrackingFloor = floorLevel;
             currentFloorIndex = 10 - floorLevel;
             hasPassedYellow = false;
             hasPassedGreen = false;
-            isCurrentFloorAnomalyActive = false;
-            anomalyManager?.DeactivateAllAnomalies();
+            hasExploredCorridor = false;
 
-            Debug.Log($"<color=#55FFFF><b>[8번 출구] 🔵 {floorLevel}층 도착 (파란색 원)!</b> 복도 4번째 액자 앞 노란색 원으로 가시면 이상현상 테스트가 시작됩니다.</color>");
+            // ★ [핵심] 착지하는 즉시 50:50 확률로 이번 층의 이상현상을 미리 결정하여 복도 1번 액자부터 적용!
+            if (floorLevel >= 2 && floorLevel <= 8)
+            {
+                anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
+                isCurrentFloorAnomalyActive = (anomalyManager != null && anomalyManager.HasActiveAnomaly());
+                Debug.Log($"<color=#55FFFF><b>[8번 출구] 🔵 {floorLevel}층 착지 완료!</b> (이상현상 활성 상태: {isCurrentFloorAnomalyActive})</color>");
+            }
+            else
+            {
+                isCurrentFloorAnomalyActive = false;
+                anomalyManager?.DeactivateAllAnomalies();
+                Debug.Log($"<color=#55FFFF><b>[8번 출구] 🔵 {floorLevel}층 착지 완료!</b> (정상 갤러리)</color>");
+            }
         }
 
         // 2) 🟡 노란색 원: 복도 4번째 액자 앞 (이상현상 테스트 시작!)
-        // - 파란색 원을 밟고 온 뒤 이 원을 밟으면 이 층의 이상현상이 나타나거나 안 나타나게 결정!
+        // 2) 🟡 노란색 원: 복도 4번째 액자 앞
         public void OnPlayerEnteredMainHall() => OnPlayerEnteredMainHall(currentTrackingFloor);
         public void OnPlayerEnteredMainHall(int floorLevel)
         {
             if (isTransitioning) return;
             if (currentPhase != GamePhase.Night_Loop) return;
-            if (hasPassedYellow) return; // 이미 이번 층 테스트가 시작되었다면 중복 실행 방지
 
             hasPassedYellow = true;
+            hasExploredCorridor = true;
             currentTrackingFloor = floorLevel;
             currentFloorIndex = 10 - floorLevel;
-
-            // ★ 9층은 분위기용 시작 층이므로 무조건 이상현상 0% (정상 갤러리 보장!)
-            if (floorLevel >= 9)
-            {
-                isCurrentFloorAnomalyActive = false;
-                anomalyManager?.DeactivateAllAnomalies();
-                Debug.Log($"<color=#66FF66><b>[8번 출구] 🟡 {floorLevel}층 시작 분위기 층 (이상현상 없음)</b> ➔ 초록색 계단을 통해 8층으로 내려가세요!</color>");
-                return;
-            }
-
-            // 8층 ~ 2층: 이상현상 주사위 롤링 (테스트 개시)
-            anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
-            isCurrentFloorAnomalyActive = (anomalyManager != null && anomalyManager.HasActiveAnomaly());
-
-            if (isCurrentFloorAnomalyActive)
-            {
-                string aName = (anomalyManager.CurrentActiveAnomaly != null) ? anomalyManager.CurrentActiveAnomaly.anomalyName : "알 수 없는 이상현상";
-                Debug.Log($"<color=#FF5555><b>[8번 출구] 🟡 {floorLevel}층 이상현상 발생: [{aName}]!</b> (⚠️ 이상현상을 발견했으니 뒤돌아서 파란색 원으로 유턴해야 탈출 가능!)</color>");
-            }
-            else
-            {
-                Debug.Log($"<color=#66FF66><b>[8번 출구] 🟡 {floorLevel}층 정상 갤러리!</b> (✅ 이상현상이 없으니 초록색 계단을 통해 다음 층으로 내려가세요!)</color>");
-            }
         }
 
         // 3) 🟢 초록색 원: 계단 하단 (하강 감지 센서)
-        // - 이상현상이 없으면 아무 일도 안 일어남
-        // - 이상현상이 있는데 밟으면 "이상현상 간파 실패!" 콘솔 출력
         public void OnDescendedStairs() => OnDescendedStairs(currentTrackingFloor);
         public void OnDescendedStairs(int floorLevel)
         {
@@ -490,39 +563,29 @@ namespace IbArtMuseum
             if (currentPhase != GamePhase.Night_Loop) return;
 
             hasPassedGreen = true;
-
-            if (isCurrentFloorAnomalyActive)
-            {
-                // 이상현상이 있는데 초록색 원을 밟음 -> 콘솔로 경고!
-                Debug.LogWarning($"<color=#FF4444><b>[8번 출구] ❌ 이상현상 간파 실패! ({floorLevel}층에 이상현상이 있었는데 계단을 내려갔습니다. 아랫층 파란색 원을 밟으면 9->8층으로 루프 리셋됩니다!)</b></color>");
-            }
-            else
-            {
-                // 이상현상이 없으므로 아무 일도 일어나지 않음 (정상 통과)
-                Debug.Log($"<color=#44FF44><b>[8번 출구] 🟢 정상 층 확인 중... (이상현상 없음. 계단을 마저 내려가세요.)</b></color>");
-            }
         }
 
-        // 4) 🔵 파란색 원 유턴 판정 (노란색 원을 밟고 난 뒤 초록색 원을 안 밟고 다시 파란색 원으로 되돌아옴)
-        // - 이상현상이 있었을 때 유턴하면 정답 (다음 층으로 심리스 이동!)
+        // 4) 🔵 파란색 원 유턴 판정
+        // - 이상현상이 있었을 때 유턴하면 정답 (무조건 한 층 아래로 전진! 5F -> 4F)
         // - 이상현상이 없었는데 유턴하면 오답 (9->8층 파란색 원으로 루프 리셋!)
         public void OnTurnedBackOnAnomaly() => OnTurnedBackOnAnomaly(currentTrackingFloor);
         public void OnTurnedBackOnAnomaly(int floorLevel)
         {
             if (isTransitioning) return;
             if (currentPhase != GamePhase.Night_Loop) return;
+
             if (isCurrentFloorAnomalyActive)
             {
-                // [정답 - 이상현상을 올바르게 간파하고 유턴함! -> 다음 하강 층으로 심리스 텔레포트 전진!]
-                int nextFloor = floorLevel - 1;
+                // ★ [정답] 이상현상을 올바르게 간파하고 유턴함! -> 무조건 한 층 아래(floorLevel - 1)로 심리스 전진!
+                int nextFloor = Mathf.Max(1, floorLevel - 1);
                 Debug.Log($"<color=#33FF33><b>[8번 출구] 🌟 이상현상 간파 성공!</b> ({floorLevel}층 이상현상을 확인하고 유턴했습니다. {nextFloor}층 파란색 원으로 심리스 전진합니다!)</color>");
                 StartCoroutine(SeamlessAdvanceToNextFloorRoutine(nextFloor));
             }
             else
             {
-                // [고민/탐색 허용 - 정상 층인데 파란색 원 쪽으로 와도 쫓아내지 않고 7층 상태 100% 그대로 유지!]
-                // 아무 일도 안 일어난 것처럼 7층 공간이 그대로 이어지며, 플레이어가 충분히 고민할 수 있도록 상태를 보존합니다.
-                Debug.Log($"<color=#88CCFF><b>[8번 출구] ℹ️ {floorLevel}층 탐색 유지 중...</b> (이상현상 없음 / 정상 갤러리 상태 유지 중. 충분히 확인하신 후 초록색 계단으로 내려가세요.)</color>");
+                // [오답 - 이상현상이 없었는데 유턴함! -> 9->8층 계단 착지 파란색 원으로 루프 리셋!]
+                Debug.LogWarning($"<color=#FF4444><b>[8번 출구] ❌ 잘못된 유턴 (오답)!</b> ({floorLevel}층에 이상현상이 없었는데 뒤로 돌아갔습니다. 9->8층 계단 착지 파란색 원으로 루프 리셋됩니다!)</color>");
+                StartCoroutine(LoopResetTo8FStairRoutine());
             }
         }
 
@@ -667,7 +730,8 @@ namespace IbArtMuseum
         }
 
         /// <summary>
-        /// 이상현상 발생 시 유턴하면 다음 목표 층으로 심리스 텔레포트 전진!
+        /// 이상현상 발생 시 유턴하면 다음 목표 층으로 심리스 상대 텔레포트 전진!
+        /// 파란색 원 내부에서만 진행되며, 마우스 시선 방향과 걸음걸이를 계산하여 벽을 뚫지 않고 자연스럽게 연결
         /// </summary>
         private IEnumerator SeamlessAdvanceToNextFloorRoutine(int targetFloorLevel)
         {
@@ -677,21 +741,63 @@ namespace IbArtMuseum
             isCurrentFloorAnomalyActive = false;
             anomalyManager?.DeactivateAllAnomalies();
 
+            int fromFloor = currentTrackingFloor;
             currentTrackingFloor = targetFloorLevel;
             currentFloorIndex = 10 - targetFloorLevel;
 
-            if (currentFloorIndex < floorCheckpoints.Length)
+            if (player != null && currentFloorIndex < floorCheckpoints.Length)
             {
-                FloorCheckpoint cp = floorCheckpoints[currentFloorIndex];
-                if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
+                FloorCheckpoint toCp = floorCheckpoints[currentFloorIndex];
+                bool toIsEven = (targetFloorLevel % 2 == 0);
+
+                // 목표 층(아랫층)의 파란색 원 위치
+                Vector3 targetPos = toCp.spawnPosition;
+                targetPos.y = (targetFloorLevel - 1) * floorHeight + 0.15f; // 목표 층 바닥 바로 살짝 위 안착
+
+                // ★ 핵심: 다음 목표 층에서는 복도 안쪽(대형 층수 숫자가 있는 전시장 방향)을 정면으로 바라보도록 정렬!
+                // 짝수층(4F, 6F, 8F): 복도 동쪽(+X, Yaw = 90도) ➔ 4번 숫자가 정면에 훤히 보이며 복도로 걸어나감!
+                // 홀수층(3F, 5F, 7F): 복도 서쪽(-X, Yaw = -90도) ➔ 해당 층 숫자가 정면에 훤히 보이며 복도로 걸어나감!
+                float corridorYaw = toIsEven ? 90f : -90f;
+                Quaternion targetRot = Quaternion.Euler(0f, corridorYaw, 0f);
+
+                // 복도 진행 방향 기준 살짝 뒤쪽(계단 착지 지점)에 스폰하여, 앞으로 복도를 걸어나가며 대형 숫자를 여유롭게 볼 수 있도록 배치!
+                Vector3 forwardDir = targetRot * Vector3.forward;
+                targetPos -= forwardDir * 0.50f;
+
+                // 파란색 원 내부 안전 클램핑 (벽 관통 100% 차단)
+                targetPos.x = Mathf.Clamp(targetPos.x, toCp.spawnPosition.x - 0.85f, toCp.spawnPosition.x + 0.85f);
+                targetPos.z = Mathf.Clamp(targetPos.z, toCp.spawnPosition.z - 0.55f, toCp.spawnPosition.z + 0.55f);
+
+                // 심리스 텔레포트 실행: 카메라 상하 Pitch 보존 및 이동 속도 유지!
+                player.TeleportSeamless(targetPos, targetRot, preservePitch: true, preserveVelocity: true);
+
+                // 화면 중앙에 새로운 층수 알림 표시 (1.5초간)
+                uiManager?.SetInteractPromptVisible(true, $"[ {targetFloorLevel}F ] WEISMANN GALLERY");
+
+                // ★ 도착한 새 층(예: 4층)의 이상현상을 50:50 확률로 즉시 적용!
+                if (targetFloorLevel >= 2 && targetFloorLevel <= 8)
+                {
+                    anomalyManager?.DecideAndApplyAnomaly(currentFloorIndex);
+                    isCurrentFloorAnomalyActive = (anomalyManager != null && anomalyManager.HasActiveAnomaly());
+                }
+                else
+                {
+                    isCurrentFloorAnomalyActive = false;
+                    anomalyManager?.DeactivateAllAnomalies();
+                }
+
+                Debug.Log($"<color=#33FF33><b>[8번 출구] 🌟 이상현상 간파 성공! {fromFloor}F ➔ {targetFloorLevel}F 안착 완료!</b> (정면의 {targetFloorLevel}번 숫자를 확인하고 복도를 탐색하세요.)</color>");
             }
 
-            yield return new WaitForSeconds(0.12f);
+            yield return new WaitForSeconds(0.15f);
             isTransitioning = false;
+
+            yield return new WaitForSeconds(1.5f);
+            uiManager?.SetInteractPromptVisible(false);
         }
 
         /// <summary>
-        /// 8번 출구 오답 시: 9층에서 8층으로 내려가는 계단 착지 지점(8층 파란색 원)으로 즉시 루프 리셋!
+        /// 8번 출구 오답 시: 9층에서 8층으로 내려가는 계단 착지 지점(8층 파란색 원, 8번 숫자가 보이는 층)으로 심리스 리셋!
         /// </summary>
         private IEnumerator LoopResetTo8FStairRoutine()
         {
@@ -701,14 +807,31 @@ namespace IbArtMuseum
             isCurrentFloorAnomalyActive = false;
             anomalyManager?.DeactivateAllAnomalies();
 
-            // 8층 (floorIndex = 2, 즉 9층에서 내려온 8층 파란색 원)
+            int fromFloor = currentTrackingFloor;
             currentTrackingFloor = 8;
-            currentFloorIndex = 2;
+            currentFloorIndex = 2; // 8F
 
-            if (floorCheckpoints != null && floorCheckpoints.Length > 2)
+            if (player != null && floorCheckpoints != null && floorCheckpoints.Length > 2)
             {
-                FloorCheckpoint cp = floorCheckpoints[2];
-                if (player != null) player.Teleport(cp.spawnPosition, cp.spawnRotation);
+                int fromFloorIndex = Mathf.Clamp(10 - fromFloor, 0, floorCheckpoints.Length - 1);
+                FloorCheckpoint fromCp = floorCheckpoints[fromFloorIndex];
+                FloorCheckpoint toCp = floorCheckpoints[2];
+
+                Vector3 playerPos = player.transform.position;
+                Vector3 offset = playerPos - fromCp.spawnPosition;
+                offset.y = 0f;
+                offset = Vector3.ClampMagnitude(offset, 0.6f);
+
+                // 8층 파란색 원 내부에서 진행 방향(동쪽 +X) 기준 살짝 뒤쪽(X = 0.5m)으로 스폰
+                Vector3 targetPos = new Vector3(toCp.spawnPosition.x - 0.50f, 7 * floorHeight + 0.15f, toCp.spawnPosition.z + offset.z);
+                targetPos.x = Mathf.Clamp(targetPos.x, toCp.spawnPosition.x - 0.80f, toCp.spawnPosition.x + 0.80f);
+                targetPos.z = Mathf.Clamp(targetPos.z, toCp.spawnPosition.z - 0.50f, toCp.spawnPosition.z + 0.50f);
+
+                // 시선: 정면 복도 및 8번 숫자가 시원하게 보이는 동쪽(90도) 방향
+                Quaternion targetRot = Quaternion.Euler(0f, 90f, 0f);
+
+                player.TeleportSeamless(targetPos, targetRot, preservePitch: true, preserveVelocity: false);
+                Debug.Log("<color=#FF5555><b>[8번 출구] 🔄 루프 리셋: 9층->8층 계단 착지 지점 (8층 파란색 원 살짝 뒤쪽)으로 안전 이동 완료!</b></color>");
             }
 
             yield return new WaitForSeconds(0.15f);

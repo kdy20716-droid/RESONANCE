@@ -42,15 +42,16 @@ namespace IbArtMuseum
             int floorLevel = 10 - floorIndex; // 10, 9, 8, ..., 1
 
             // 10층(시작), 9층(프롤로그 분위기 층), 1층(엔딩)은 항상 정상 갤러리 (이상현상 0% 보장!)
-            if (floorIndex == 0 || floorIndex == 1 || floorIndex >= 9)
+            if (floorLevel >= 9 || floorLevel <= 1)
             {
                 currentActiveAnomaly = null;
                 Debug.Log($"<color=#66FF66>[이상현상 시스템] {floorLevel}층: ✅ 이상현상 없음 (정상 갤러리)</color>");
                 return;
             }
 
-            // 55% 확률로 이상현상 발생!
-            bool spawnAnomaly = Random.value < 0.55f;
+            // ★ 8층부터 2층까지는 50대 50 (50% 확률)로 이상현상 발생!
+            bool spawnAnomaly = (floorLevel >= 2 && floorLevel <= 8) && (Random.value < 0.50f);
+
             if (spawnAnomaly && anomalies.Count > 0)
             {
                 // 현재 층에 위치한 이상현상을 우선 검색
@@ -76,13 +77,13 @@ namespace IbArtMuseum
                 if (currentActiveAnomaly != null)
                 {
                     currentActiveAnomaly.ActivateAnomaly();
-                    Debug.Log($"<color=#FF5555>[이상현상 시스템] {floorLevel}층 도착: ⚠️ 이상현상 발생! [{currentActiveAnomaly.anomalyName}] (발견 시 되돌아가야 함!)</color>");
+                    Debug.Log($"<color=#FF5555>[이상현상 시스템] {floorLevel}층 [50:50 발생]: ⚠️ 이상현상 발생! [{currentActiveAnomaly.anomalyName}] (발견 시 뒤돌아서 유턴해야 탈출 가능!)</color>");
                 }
             }
             else
             {
                 currentActiveAnomaly = null;
-                Debug.Log($"<color=#66FF66>[이상현상 시스템] {floorLevel}층 도착: ✅ 이상현상 없음 (정상 갤러리) (계단으로 내려가야 함!)</color>");
+                Debug.Log($"<color=#66FF66>[이상현상 시스템] {floorLevel}층: ✅ 이상현상 없음 (정상 갤러리) (계단으로 내려가야 함!)</color>");
             }
         }
 
