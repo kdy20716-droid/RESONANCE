@@ -153,6 +153,9 @@ namespace IbArtMuseum
             // 11. ★ 1층 액자들에만 제미나이 나노바나나 고화질 그림 적용!
             ApplyNanoBananaPaintingsTo1F();
 
+            // 12. ★ 2층 전시홀 에코의 캔버스 (올라갈 땐 일반 명화, 공명 후엔 선택지 새드엔딩 분기) 설치!
+            Setup2FEchoEndingCanvas();
+
             // 천장 조명 낮/밤 머티리얼 바인딩 (낮: light.mat, 밤: black.mat)
             gm.dayCeilingLightMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/light.mat");
             gm.nightCeilingBlackMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/black.mat");
@@ -163,7 +166,87 @@ namespace IbArtMuseum
             EditorUtility.SetDirty(gm);
             AssetDatabase.SaveAssets();
 
-            Debug.Log("<color=#33FF33><b>[Ib GameLogic Setup] 3~9F 수수께끼 관리인 NPC, 복도 차단 콜라이더, 화병 세이브 세팅 완료!</b></color>");
+            Debug.Log("<color=#33FF33><b>[Ib GameLogic Setup] 3~9F 수수께끼, 2F 에코 캔버스(선택지 분기), 3대 엔딩 세팅 완료!</b></color>");
+        }
+
+        private static void Setup2FEchoEndingCanvas()
+        {
+            // 구 1층 오브젝트 정리
+            GameObject old1F = GameObject.Find("Echo_Sad_Ending_Canvas_1F");
+            if (old1F != null) Object.DestroyImmediate(old1F);
+
+            GameObject existing = GameObject.Find("Echo_Canvas_2F");
+            if (existing != null) Object.DestroyImmediate(existing);
+
+            float floorY_2F = 7.0f; // 2층 바닥 Y좌표
+            GameObject canvasRoot = new GameObject("Echo_Canvas_2F");
+            canvasRoot.transform.position = new Vector3(-2.0f, floorY_2F, 2.5f);
+            canvasRoot.transform.rotation = Quaternion.Euler(0, 40f, 0);
+
+            // 이젤/받침대
+            GameObject easel = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            easel.name = "EaselStand";
+            easel.transform.SetParent(canvasRoot.transform);
+            easel.transform.localPosition = new Vector3(0, 0.6f, 0);
+            easel.transform.localScale = new Vector3(0.08f, 0.6f, 0.08f);
+            var easelMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+            easelMat.color = new Color(0.18f, 0.14f, 0.1f);
+            easel.GetComponent<MeshRenderer>().material = easelMat;
+
+            // 캔버스 프레임
+            GameObject frame = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            frame.name = "Frame";
+            frame.transform.SetParent(canvasRoot.transform);
+            frame.transform.localPosition = new Vector3(0, 1.45f, 0);
+            frame.transform.localScale = new Vector3(1.6f, 1.9f, 0.08f);
+            var frameMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+            frameMat.color = new Color(0.78f, 0.62f, 0.35f); // 앤틱 골드 프레임
+            frame.GetComponent<MeshRenderer>().material = frameMat;
+
+            GameObject canvasObj = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            canvasObj.name = "Canvas";
+            canvasObj.transform.SetParent(canvasRoot.transform);
+            canvasObj.transform.localPosition = new Vector3(0, 1.45f, -0.045f);
+            canvasObj.transform.localScale = new Vector3(1.4f, 1.7f, 1f);
+
+            // 그림 텍스처
+            Texture2D echoTex = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/lina_museum_exploration.jpg") 
+                             ?? AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/weismann_resonance_monument.jpg");
+            Material canvasMat = new Material(Shader.Find("HDRP/Lit") ?? Shader.Find("Standard"));
+            canvasMat.name = "Echo_2F_Canvas_Mat";
+            if (echoTex != null) canvasMat.mainTexture = echoTex;
+            canvasMat.color = new Color(0.88f, 0.92f, 1f);
+            canvasObj.GetComponent<MeshRenderer>().material = canvasMat;
+
+            // BoxCollider & IbInteractableArtwork
+            BoxCollider col = canvasRoot.AddComponent<BoxCollider>();
+            col.isTrigger = true;
+            col.size = new Vector3(2.5f, 2.8f, 2.2f);
+            col.center = new Vector3(0, 1.4f, -0.5f);
+
+            IbInteractableArtwork art = canvasRoot.AddComponent<IbInteractableArtwork>();
+            art.artworkTitle = "어린 딸의 초상 (Portrait of a Young Girl)";
+            art.author = "Carl Weismann";
+            art.description = "바이스만 박사가 생전 가장 아꼈던 어린 딸의 초상화.\n맑고 순수한 눈망울로 환하게 웃고 있다.";
+            art.interactPrompt = "[ E ] 작품을 감상한다 (Inspect)";
+            art.isEchoSadEndingCanvas = true;
+
+            // 은은한 핀 조명
+            GameObject lightObj = new GameObject("EchoCanvas_SpotLight");
+            lightObj.transform.SetParent(canvasRoot.transform);
+            lightObj.transform.localPosition = new Vector3(0, 3.2f, -1.8f);
+            lightObj.transform.localRotation = Quaternion.Euler(55f, 0, 0);
+            Light spot = lightObj.AddComponent<Light>();
+            spot.type = LightType.Spot;
+            spot.color = new Color(0.6f, 0.8f, 1.0f); // 몽환적인 푸른 빛
+            spot.range = 7f;
+            spot.spotAngle = 45f;
+            spot.intensity = 5000f;
+            var hdL = lightObj.AddComponent<HDAdditionalLightData>();
+            hdL.intensity = 5000f;
+
+            EditorUtility.SetDirty(canvasRoot);
+            Debug.Log("<color=#55FFFF><b>[Echo 2F Canvas Setup] 2층에 에코의 캔버스(어린 딸의 초상 -> 공명 후 선택지 분기) 배치가 완료되었습니다!</b></color>");
         }
 
         private static void SetupRiddleGuardsAndSaveVases()

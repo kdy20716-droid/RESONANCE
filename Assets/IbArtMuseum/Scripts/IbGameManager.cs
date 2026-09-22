@@ -66,6 +66,20 @@ namespace IbArtMuseum
         private bool isTransitioning = false;
         private Coroutine prologueRoutine;
 
+        public static readonly (string nameKo, string nameEn, string desc)[] FloorThemes = new (string, string, string)[]
+        {
+            ("감각", "Sensation", "평화로운 관람과 외부 세계의 입구"),       // 1F
+            ("기억", "Memory", "행복했던 과거의 가족 초상화"),               // 2F
+            ("이성", "Reason", "논리와 관찰의 첫 번째 수수께끼"),             // 3F
+            ("감정", "Emotion", "슬픔의 비와 흘러내리는 기억"),              // 4F
+            ("무의식", "Subconscious", "억압된 트라우마와 심연"),           // 5F
+            ("집착", "Obsession", "딸을 향한 광기와 붉은 캔버스"),           // 6F
+            ("인공", "Artificial", "기계 인형과 인공 생명"),                 // 7F
+            ("자아", "Ego", "영혼의 복제와 정체성 혼란"),                   // 8F
+            ("경고", "Warning", "접근 금지 구역과 시스템 경고"),             // 9F
+            ("공명", "Resonance", "싱귤래리티와 에코의 각성")                // 10F
+        };
+
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -314,7 +328,7 @@ namespace IbArtMuseum
             }
 
             // 소멸 & 번쩍임!
-            uiManager?.PlayGlitchFlash(0.2f, new Color(0.6f, 0.8f, 1.0f, 0.9f));
+            uiManager?.PlayGlitchFlash(0.3f, new Color(0.6f, 0.8f, 1.0f, 0.95f));
 
             if (monumentRingsRoot != null) monumentRingsRoot.gameObject.SetActive(false);
             if (monumentSoulCore != null) monumentSoulCore.SetActive(false);
@@ -331,8 +345,6 @@ namespace IbArtMuseum
             uiManager?.SetRoseLife(3);
 
             if (player != null) player.CanMove = true;
-
-            uiManager?.ShowDialogueBox("Darkness", "<size=22><color=#87CEEB><i>A deep blue night descends over the gallery. The stars shine through the skylight. You must find your way down to 1F.</i></color></size>");
         }
 
         public void SetDayEnvironment(bool isDay)
@@ -613,11 +625,33 @@ namespace IbArtMuseum
             isTransitioning = false;
         }
 
+        // ==================== 4. 3대 분기 엔딩 시스템 ====================
+
+        // 1) ☀️ 해피 엔딩: 현실 귀환 (1층 정문 출구 도달)
+        public void TriggerHappyEnding()
+        {
+            StartCoroutine(HappyEndingRoutine());
+        }
+
         private IEnumerator EndingEscapeSequenceRoutine()
         {
-            isTransitioning = true;
-            currentPhase = GamePhase.Prologue_Day;
+            yield return StartCoroutine(HappyEndingRoutine());
+        }
 
+        private IEnumerator HappyEndingRoutine()
+        {
+            isTransitioning = true;
+            if (player != null) player.CanMove = false;
+
+            // 1. 등 뒤에서 들려오는 에코의 다급한 애원
+            bool echoPlea = false;
+            uiManager?.ShowDialogueBox("ECHO", "<size=24><b><color=#67E8F9>ECHO:</color></b> \"가지 마... 제발 나 혼자 두지 마 리나...!\"</size>", () => echoPlea = true);
+            while (!echoPlea) yield return null;
+            yield return new WaitForSeconds(0.2f);
+
+            // 2. 문을 박차고 아침 햇살 속으로 탈출!
+            uiManager?.PlayGlitchFlash(0.5f, Color.white);
+            currentPhase = GamePhase.Prologue_Day;
             SetDayEnvironment(true);
 
             if (player != null && prologueSpawnPoint_1F != null)
@@ -627,7 +661,6 @@ namespace IbArtMuseum
                 {
                     player.LookAtTarget(prologueParentsTarget.position);
                 }
-                player.CanMove = false;
             }
 
             yield return new WaitForSeconds(0.4f);
@@ -642,7 +675,59 @@ namespace IbArtMuseum
             while (!step2Done) yield return null;
 
             yield return new WaitForSeconds(0.3f);
-            uiManager?.ShowEnding(true);
+            uiManager?.ShowEnding(IbMuseumUI.EndingType.Happy_Escape);
+        }
+
+        // 2) 🥀 새드 엔딩: 영원한 캔버스 (1층 로비 에코 캔버스 손잡기)
+        public void TriggerSadEnding()
+        {
+            StartCoroutine(SadEndingRoutine());
+        }
+
+        private IEnumerator SadEndingRoutine()
+        {
+            isTransitioning = true;
+            if (player != null) player.CanMove = false;
+
+            bool step1 = false;
+            uiManager?.ShowDialogueBox("ECHO", "<size=24><b><color=#67E8F9>ECHO:</color></b> \"...내 손을 잡아주는 거야? 정말로...?\"</size>", () => step1 = true);
+            while (!step1) yield return null;
+            yield return new WaitForSeconds(0.15f);
+
+            bool step2 = false;
+            uiManager?.ShowDialogueBox("ECHO", "<size=24><b><color=#67E8F9>ECHO:</color></b> \"고마워, 리나... 이제 우리 영원히 외롭지 않아. 함께 그림 속에서 웃자.\"</size>", () => step2 = true);
+            while (!step2) yield return null;
+
+            uiManager?.PlayGlitchFlash(0.7f, new Color(0.4f, 0.65f, 1f, 0.95f));
+            yield return new WaitForSeconds(0.3f);
+
+            uiManager?.ShowEnding(IbMuseumUI.EndingType.Sad_Canvas);
+        }
+
+        // 3) 💀 배드 엔딩: 육체 잠식 (장미 체력 0 소진 시)
+        public void TriggerBadEnding()
+        {
+            StartCoroutine(BadEndingRoutine());
+        }
+
+        private IEnumerator BadEndingRoutine()
+        {
+            isTransitioning = true;
+            if (player != null) player.CanMove = false;
+
+            uiManager?.PlayGlitchFlash(0.8f, new Color(0.85f, 0.05f, 0.05f, 0.95f));
+
+            bool step1 = false;
+            uiManager?.ShowDialogueBox("ECHO", "<size=24><b><color=#EF4444>ECHO:</color></b> \"후후... 드디어 몸을 찾았어.\"</size>", () => step1 = true);
+            while (!step1) yield return null;
+            yield return new WaitForSeconds(0.15f);
+
+            bool step2 = false;
+            uiManager?.ShowDialogueBox("ECHO", "<size=24><b><color=#EF4444>ECHO:</color></b> \"고마워, 리나. 네 따뜻한 심장과 두 발로... 바깥 세상을 구경하러 갈게.\"</size>", () => step2 = true);
+            while (!step2) yield return null;
+
+            yield return new WaitForSeconds(0.3f);
+            uiManager?.ShowEnding(IbMuseumUI.EndingType.Bad_Usurpation);
         }
 
         public void HealAllRoses()
@@ -664,19 +749,11 @@ namespace IbArtMuseum
         {
             roseLife--;
             uiManager?.SetRoseLife(roseLife);
-            uiManager?.PlayGlitchFlash(0.2f, new Color(1f, 0f, 0f, 0.5f));
+            uiManager?.PlayGlitchFlash(0.25f, new Color(1f, 0f, 0f, 0.6f));
 
             if (roseLife <= 0)
             {
-                if (IbMainMenuManager.Instance != null)
-                {
-                    IbMainMenuManager.Instance.ShowGameOver();
-                }
-                else
-                {
-                    // 사망 시 완전 처음이 아닌 10층 공명 후 밤 상태(8번 출구 모드)로 즉시 재시작!
-                    RespawnAt10FNight();
-                }
+                TriggerBadEnding();
             }
         }
 

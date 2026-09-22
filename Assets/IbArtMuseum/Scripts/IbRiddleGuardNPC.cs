@@ -86,39 +86,39 @@ namespace IbArtMuseum
             switch (floorLevel)
             {
                 case 3:
-                    riddleTitle = "3F Curator's Trial (Observation)";
-                    riddleQuestion = "To proceed upward, answer my question:\nHow many human figures are depicted across all the portraits on the 1st and 2nd floors?";
-                    acceptedAnswers = new string[] { "7", "seven", "7 people", "seven people" };
+                    riddleTitle = "3F Curator's Trial [이성: 관찰의 문]";
+                    riddleQuestion = "To proceed upward, answer my question:\n1~2층에 걸린 모든 초상화에 등장하는 '사람'의 총 수는 몇 명인가요?\n(How many human figures are depicted across all lower portraits?)";
+                    acceptedAnswers = new string[] { "7", "seven", "7 people", "seven people", "7명", "일곱", "일곱명", "7개" };
                     break;
                 case 4:
-                    riddleTitle = "4F Curator's Trial (Memory of Color)";
-                    riddleQuestion = "Observe carefully:\nWhat is the primary color of the elegant dress worn by the silent lady in the 3F grand portrait?";
-                    acceptedAnswers = new string[] { "red", "crimson", "scarlet", "red dress" };
+                    riddleTitle = "4F Curator's Trial [감정: 색채의 기억]";
+                    riddleQuestion = "Observe carefully:\n3층 대형 초상화 속 침묵하는 여인이 입고 있는 드레스의 메인 색상은 무엇인가요?\n(What is the primary color of the dress in the 3F grand portrait?)";
+                    acceptedAnswers = new string[] { "red", "crimson", "scarlet", "red dress", "빨강", "빨간색", "붉은색", "적색", "빨강색" };
                     break;
                 case 5:
-                    riddleTitle = "5F Curator's Trial (Neuro-Science)";
-                    riddleQuestion = "Tell me the truth:\nWhich human organ did founder Carl Weismann attempt to synchronize with art through Resonance?";
-                    acceptedAnswers = new string[] { "brain", "mind", "brainwave", "neural", "soul" };
+                    riddleTitle = "5F Curator's Trial [무의식: 뇌와 신경]";
+                    riddleQuestion = "Tell me the truth:\n바이스만 박사가 예술과의 공명(Resonance)을 시도했던 인간의 신체 기관은 무엇인가요?\n(Which human organ did founder Weismann attempt to synchronize?)";
+                    acceptedAnswers = new string[] { "brain", "mind", "brainwave", "neural", "soul", "뇌", "두뇌", "마음", "영혼" };
                     break;
                 case 6:
-                    riddleTitle = "6F Curator's Trial (The Cursed Canvas)";
-                    riddleQuestion = "Answer without fear:\nWhat red liquid is oozing down from the cursed portrait in this hall?";
-                    acceptedAnswers = new string[] { "blood", "red blood", "paint", "tears" };
+                    riddleTitle = "6F Curator's Trial [집착: 저주받은 캔버스]";
+                    riddleQuestion = "Answer without fear:\n복도 벽면의 액자에서 흘러내리고 있는 붉은 액체의 정체는 무엇인가요?\n(What red liquid is oozing down from the cursed portrait?)";
+                    acceptedAnswers = new string[] { "blood", "red blood", "paint", "tears", "피", "물감", "붉은 물감", "눈물" };
                     break;
                 case 7:
-                    riddleTitle = "7F Curator's Trial (Withered Petals)";
-                    riddleQuestion = "A delicate question:\nHow many petals have fallen on the floor from the withered rose vase on 4F?";
-                    acceptedAnswers = new string[] { "5", "five", "5 petals", "five petals" };
+                    riddleTitle = "7F Curator's Trial [인공: 떨어진 장미]";
+                    riddleQuestion = "A delicate question:\n4층 시든 장미 화병에서 바닥으로 떨어진 꽃잎은 총 몇 장인가요?\n(How many petals have fallen on the floor from the withered rose vase?)";
+                    acceptedAnswers = new string[] { "5", "five", "5 petals", "five petals", "5개", "다섯", "다섯개", "다섯 잎" };
                     break;
                 case 8:
-                    riddleTitle = "8F Curator's Trial (The Master's Name)";
-                    riddleQuestion = "State the identity:\nWhat is the surname of the genius founder who created this neural museum?";
-                    acceptedAnswers = new string[] { "weismann", "carl weismann", "carl" };
+                    riddleTitle = "8F Curator's Trial [자아: 창립자의 이름]";
+                    riddleQuestion = "State the identity:\n이 거대한 신경 갤러리와 공명 타워를 설계한 천재 뇌과학자의 성(Surname)은 무엇인가요?\n(What is the surname of the founder who created this neural museum?)";
+                    acceptedAnswers = new string[] { "weismann", "carl weismann", "carl", "바이스만", "칼 바이스만" };
                     break;
                 case 9:
-                    riddleTitle = "9F Curator's Trial (The Final Key)";
-                    riddleQuestion = "The final threshold before the 10th floor:\nWhat single word represents the harmonic phenomenon vibrating through this entire gallery?";
-                    acceptedAnswers = new string[] { "resonance", "the resonance" };
+                    riddleTitle = "9F Curator's Trial [경고: 최후의 열쇠]";
+                    riddleQuestion = "The final threshold before the 10th floor:\n이 미술관 전체를 진동시키며 영혼을 동조시키는 단 하나의 핵심 단어는 무엇인가요?\n(What single word represents the harmonic phenomenon vibrating through this gallery?)";
+                    acceptedAnswers = new string[] { "resonance", "the resonance", "공명", "레조넌스" };
                     break;
             }
         }
