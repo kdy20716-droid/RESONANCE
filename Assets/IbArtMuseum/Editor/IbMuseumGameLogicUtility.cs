@@ -150,6 +150,9 @@ namespace IbArtMuseum
             // 10. ★ 각 층 계단 복도 모퉁이 왼쪽 벽면에 큼직한 검은색 층수 숫자 텍스처 부착!
             SetupFloorNumberTypographyOnWalls();
 
+            // 11. ★ 1층 액자들에만 제미나이 나노바나나 고화질 그림 적용!
+            ApplyNanoBananaPaintingsTo1F();
+
             // 천장 조명 낮/밤 머티리얼 바인딩 (낮: light.mat, 밤: black.mat)
             gm.dayCeilingLightMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/light.mat");
             gm.nightCeilingBlackMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/texture/black.mat");
@@ -910,6 +913,129 @@ namespace IbArtMuseum
             }
 
             Debug.Log("<color=#33FF33><b>[Floor Numbers] 1~9층 전시장 벽면에 초대형(5.2m x 5.2m) 층수 숫자 판넬 배치 완료! (복도 비가시 / 전시장 & 반대편 계단 시야 완벽 확보)</b></color>");
+        }
+
+        [MenuItem("Tools/Ib Museum/🎨 Apply 1F NanoBanana Paintings (1층 나노바나나 그림 즉시 적용)", false, 4)]
+        public static void ApplyNanoBananaPaintingsTo1F()
+        {
+            var paintingsMap = new System.Collections.Generic.Dictionary<string, string>()
+            {
+                { "Hallway_1_1F", "Assets/IbArtMuseum/Artworks_1F/Hallway_1_1F.jpg" },
+                { "Hallway_2_1F", "Assets/IbArtMuseum/Artworks_1F/Hallway_2_1F.jpg" },
+                { "Hallway_3_1F", "Assets/IbArtMuseum/Artworks_1F/Hallway_3_1F.jpg" },
+                { "Hallway_4_1F", "Assets/IbArtMuseum/Artworks_1F/Hallway_4_1F.jpg" },
+                { "BleedingLady", "Assets/IbArtMuseum/Artworks_1F/WomanOfAbyss_1F.jpg" },
+                { "GazingEyes", "Assets/IbArtMuseum/Artworks_1F/TheWatcher_1F.jpg" },
+                { "FlippedMary", "Assets/IbArtMuseum/Artworks_1F/SmilingMary_1F.jpg" }
+            };
+
+            Shader litShader = Shader.Find("HDRP/Lit") ?? Shader.Find("Standard");
+
+            foreach (var kvp in paintingsMap)
+            {
+                string targetName = kvp.Key;
+                string texPath = kvp.Value;
+
+                TextureImporter ti = AssetImporter.GetAtPath(texPath) as TextureImporter;
+                if (ti != null)
+                {
+                    bool needReimport = false;
+                    if (ti.textureType != TextureImporterType.Default) { ti.textureType = TextureImporterType.Default; needReimport = true; }
+                    if (ti.sRGBTexture != true) { ti.sRGBTexture = true; needReimport = true; }
+                    if (needReimport) ti.SaveAndReimport();
+                }
+
+                Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(texPath);
+                if (tex == null)
+                {
+                    Debug.LogWarning($"[NanoBanana 1F] 텍스처를 찾을 수 없습니다: {texPath}");
+                    continue;
+                }
+
+                string matPath = $"Assets/IbArtMuseum/Artworks_1F/Mat_{System.IO.Path.GetFileNameWithoutExtension(texPath)}.mat";
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+                if (mat == null)
+                {
+                    mat = new Material(litShader);
+                    AssetDatabase.CreateAsset(mat, matPath);
+                }
+
+                mat.SetTexture("_BaseColorMap", tex);
+                mat.mainTexture = tex;
+                mat.SetColor("_BaseColor", Color.white);
+                mat.SetFloat("_Smoothness", 0.15f);
+                mat.SetFloat("_Metallic", 0.0f);
+                EditorUtility.SetDirty(mat);
+
+                // 1층 오브젝트 찾기
+                GameObject targetGo = null;
+                if (targetName.StartsWith("Hallway"))
+                {
+                    targetGo = GameObject.Find(targetName);
+                }
+                else
+                {
+                    // 1층 메인 홀 액자 검색
+                    GameObject art1F = GameObject.Find("Artworks_1F");
+                    if (art1F != null)
+                    {
+                        Transform child = art1F.transform.Find(targetName);
+                        if (child != null) targetGo = child.gameObject;
+                    }
+                    if (targetGo == null)
+                    {
+                        GameObject floor1 = GameObject.Find("Floor_1F");
+                        if (floor1 != null)
+                        {
+                            var allTransforms = floor1.GetComponentsInChildren<Transform>(true);
+                            foreach (var t in allTransforms)
+                            {
+                                if (t.name == targetName)
+                                {
+                                    targetGo = t.gameObject;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (targetGo != null)
+                {
+                    Transform canvasT = targetGo.transform.Find("Canvas");
+                    if (canvasT != null)
+                    {
+                        MeshRenderer mr = canvasT.GetComponent<MeshRenderer>();
+                        if (mr != null)
+                        {
+                            mr.material = mat;
+                            EditorUtility.SetDirty(mr);
+                            Debug.Log($"<color=#FFDF80><b>[NanoBanana 1F] 🎨 {targetName} 액자에 나노바나나 그림 적용 완료!</b></color>");
+                        }
+                    }
+
+                    BleedingPaintingAnomaly bpa = targetGo.GetComponent<BleedingPaintingAnomaly>();
+                    if (bpa != null)
+                    {
+                        bpa.normalMaterial = mat;
+                        EditorUtility.SetDirty(bpa);
+                    }
+
+                    IbInteractableArtwork art = targetGo.GetComponent<IbInteractableArtwork>();
+                    if (art != null)
+                    {
+                        art.dayMaterial = mat;
+                        EditorUtility.SetDirty(art);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[NanoBanana 1F] 1층 액자 오브젝트를 찾을 수 없습니다: {targetName}");
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            Debug.Log("<color=#33FF33><b>[NanoBanana 1F] 1층 7개 모든 액자에 제미나이 나노바나나 고화질 그림 적용 완료!</b></color>");
         }
 
         private static void SetupDaytimeVisitorNPCs()
