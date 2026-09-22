@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESONANCE: The Neural Gallery — Curatorial Exhibition Deck</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Noto+Sans+KR:wght@200;300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gallery-bg: #0A0B0E;
+      --gallery-gold: #C5A880;
+      --gallery-gold-light: #E8D8B8;
+      --gallery-gold-dim: rgba(197, 168, 128, 0.35);
+      --gallery-border: rgba(212, 175, 55, 0.16);
+      --gallery-border-subtle: rgba(255, 255, 255, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+      background-color: var(--gallery-bg);
+      background-image: 
+        radial-gradient(ellipse 90% 60% at 50% -15%, rgba(197, 168, 128, 0.08) 0%, transparent 70%),
+        radial-gradient(circle at 85% 90%, rgba(26, 32, 48, 0.3) 0%, transparent 60%),
+        radial-gradient(circle at 15% 15%, rgba(18, 22, 34, 0.4) 0%, transparent 50%);
+      color: #E6E9F0;
+      overflow: hidden;
+    }
+
+    .font-serif-title {
+      font-family: 'Cinzel', serif;
+    }
+
+    .font-curator {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* Museum High-End Frame */
+    .museum-frame {
+      background: linear-gradient(145deg, rgba(20, 22, 30, 0.85) 0%, rgba(12, 14, 20, 0.92) 100%);
+      border: 1px solid var(--gallery-border);
+      box-shadow: 
+        0 30px 60px -20px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(24px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .museum-frame:hover {
+      border-color: rgba(212, 175, 55, 0.35);
+      box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Artwork Canvas Mount */
+    .artwork-canvas {
+      position: relative;
+      background: #08090C;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      padding: 5px;
+      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.95);
+    }
+
+    .artwork-canvas::before {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      pointer-events: none;
+    }
+
+    /* Placard label */
+    .museum-label {
+      border-left: 2px solid var(--gallery-gold);
+      padding-left: 0.85rem;
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    /* Slide Stage */
+    #stageViewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(24px) scale(0.985);
+      filter: blur(6px);
+      transition: 
+        opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.65s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.5rem 1.5rem 2rem 1.5rem;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(197, 168, 128, 0.2) transparent;
+    }
+
+    @media (min-width: 768px) {
+      .slide {
+        padding: 2.25rem 4rem 2.5rem 4rem;
+      }
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
+      z-index: 10;
+    }
+
+    .slide.slide-back {
+      transform: translateY(-24px) scale(0.985);
+    }
+
+    /* Keyframe Entrances */
+    .slide.active .stagger-1 { animation: slideInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both; }
+    .slide.active .stagger-2 { animation: slideInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both; }
+    .slide.active .stagger-3 { animation: slideInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both; }
+    .slide.active .stagger-4 { animation: slideInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both; }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Custom Scrollbar */
+    .slide::-webkit-scrollbar { width: 4px; }
+    .slide::-webkit-scrollbar-track { background: transparent; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(197, 168, 128, 0.2); border-radius: 4px; }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      background: rgba(5, 6, 9, 0.85);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="h-full w-full flex flex-col justify-between selection:bg-amber-900/60 selection:text-amber-100 relative antialiased">
+
+  <!-- Ambient Museum Spotlight Wash -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[360px] bg-gradient-to-b from-amber-400/[0.04] via-amber-200/[0.015] to-transparent blur-3xl pointer-events-none z-0"></div>
+
+  <!-- Subtle Top Progress Line -->
+  <div class="fixed top-0 left-0 w-full h-[2px] bg-white/[0.05] z-50">
+    <div id="progressFill" class="h-full bg-gradient-to-r from-amber-700 via-amber-300 to-amber-100 transition-all duration-500 ease-out" style="width: 11.1%;"></div>
+  </div>
+
+  <!-- Header: Gallery Navigation -->
+  <header class="w-full border-b border-white/[0.06] bg-[#0A0B0E]/90 backdrop-blur-md px-6 md:px-12 py-3.5 flex items-center justify-between z-40 relative">
+    <div class="flex items-center space-x-4">
+      <div class="w-2 h-2 rounded-full bg-amber-300/80 shadow-[0_0_12px_rgba(212,175,55,0.7)]"></div>
+      <div class="flex flex-col">
+        <span class="font-serif-title tracking-[0.24em] text-white font-bold text-base md:text-lg">RESONANCE</span>
+        <span class="text-[10px] tracking-[0.16em] uppercase text-amber-200/60 font-curator italic">The Neural Gallery · Carl Weismann</span>
+      </div>
+      <span class="hidden lg:inline-block h-3.5 w-px bg-white/10 mx-2"></span>
+      <span class="hidden lg:inline-flex items-center text-[10.5px] uppercase tracking-[0.16em] text-slate-400 font-mono">
+        Chiastic Narrative Architecture (1F ⇄ 10F)
+      </span>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center space-x-3 sm:space-x-5">
+      <div class="flex items-center space-x-2 px-3 py-1 rounded-sm border border-white/[0.08] bg-black/40 text-xs font-mono">
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-sans">Chapter</span>
+        <span id="currentSlideDisplay" class="text-amber-200 font-bold text-sm tracking-wider">01</span>
+        <span class="text-slate-600">/</span>
+        <span id="totalSlideDisplay" class="text-slate-400">09</span>
+      </div>
+
+      <div class="hidden sm:flex items-center space-x-1">
+        <button onclick="prevSlide()" aria-label="Previous Slide" class="px-2.5 py-1 rounded-sm border border-white/[0.08] hover:border-amber-400/40 hover:bg-white/[0.03] text-slate-300 transition-all text-xs font-mono">
+          ← Prev
+        </button>
+        <button onclick="nextSlide()" aria-label="Next Slide" class="px-2.5 py-1 rounded-sm border border-white/[0.08] hover:border-amber-400/40 hover:bg-white/[0.03] text-slate-300 transition-all text-xs font-mono">
+          Next →
+        </button>
+      </div>
+
+      <button onclick="toggleIndexDrawer()" class="px-3.5 py-1.5 rounded-sm border border-amber-500/30 hover:border-amber-400/70 bg-gradient-to-r from-amber-950/30 to-black/40 text-amber-200 text-xs transition-all flex items-center space-x-2">
+        <svg class="w-3.5 h-3.5 fill-current opacity-80" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+        </svg>
+        <span class="font-serif-title uppercase tracking-widest text-[11px]">Exhibition Index</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Slide-out Navigation Drawer -->
+  <div id="drawerOverlay" onclick="toggleIndexDrawer()" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
+
+  <aside id="indexDrawer" class="fixed top-0 right-0 h-full w-84 sm:w-96 bg-[#0C0D12] border-l border-amber-500/20 p-6 sm:p-8 z-50 transform translate-x-full shadow-2xl flex flex-col justify-between transition-transform duration-400 ease-out overflow-y-auto">
+    <div>
+      <div class="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-5">
+        <div>
+          <span class="text-[10px] tracking-[0.2em] uppercase text-amber-300/70 font-mono">Curatorial Portfolio</span>
+          <h3 class="font-serif-title text-base sm:text-lg text-white font-bold tracking-wider">Catalogue of Chapters</h3>
+        </div>
+        <button onclick="toggleIndexDrawer()" aria-label="Close" class="p-1 text-slate-400 hover:text-white font-mono text-sm">✕</button>
+      </div>
+
+      <nav class="space-y-1.5 text-xs font-sans">
+        <button onclick="goToSlide(0); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">01. Frontispiece: RESONANCE</span>
+          <span class="text-slate-500 font-mono text-[10.5px]">Title</span>
+        </button>
+        <button onclick="goToSlide(1); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">02. Dual Lineage: Ib × The Exit 8</span>
+          <span class="text-slate-500 font-mono text-[10.5px]">Motif</span>
+        </button>
+        <button onclick="goToSlide(2); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">03. The Core Twist: AI Echo & Resonance</span>
+          <span class="text-slate-500 font-mono text-[10.5px]">Twist</span>
+        </button>
+        <button onclick="goToSlide(3); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">04. The Ascent: Reading 1F to 10F</span>
+          <span class="text-amber-400/80 font-mono text-[10.5px]">Book 1–10F</span>
+        </button>
+        <button onclick="goToSlide(4); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">05. The Descent: Echo's Playground</span>
+          <span class="text-rose-400/80 font-mono text-[10.5px]">Loop 10–1F</span>
+        </button>
+        <button onclick="goToSlide(5); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">06. The Curator: Clockwork Butler</span>
+          <span class="text-purple-400/80 font-mono text-[10.5px]">Riddle</span>
+        </button>
+        <button onclick="goToSlide(6); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">07. The Logic: 8th Exit & Corrosion</span>
+          <span class="text-slate-500 font-mono text-[10.5px]">Mechanic</span>
+        </button>
+        <button onclick="goToSlide(7); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">08. The Choice: 3 Endings</span>
+          <span class="text-amber-400/80 font-mono text-[10.5px]">Endings</span>
+        </button>
+        <button onclick="goToSlide(8); toggleIndexDrawer();" class="drawer-link w-full text-left p-2.5 rounded-sm border border-transparent hover:border-white/10 hover:bg-white/[0.02] flex items-center justify-between transition-all">
+          <span class="text-slate-200">09. Epilogue: Showcase Demo & Pipeline</span>
+          <span class="text-slate-500 font-mono text-[10.5px]">Demo</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="pt-5 border-t border-white/[0.08] text-center text-[10px] text-slate-500 font-mono tracking-widest uppercase">
+      Weismann Museum Archive · 2026
+    </div>
+  </aside>
+
+  <!-- Presentation Stage Viewport -->
+  <main id="stageViewport" class="flex-1 w-full max-w-7xl mx-auto z-10">
+
+    <!-- ==================== SLIDE 01: FRONTISPIECE (COVER) ==================== -->
+    <section class="slide active flex flex-col items-center justify-center text-center">
+      <div class="max-w-3xl space-y-6 md:space-y-8">
+        
+        <div class="stagger-1 inline-flex items-center space-x-2 px-4 py-1 rounded-full border border-amber-500/25 bg-amber-950/20 text-amber-200 text-xs tracking-[0.22em] uppercase font-mono">
+          <span>Curatorial Archive</span>
+          <span class="text-amber-400/40">·</span>
+          <span>Carl Weismann Memorial Gallery</span>
+        </div>
+
+        <div class="stagger-2 space-y-3">
+          <h1 class="font-serif-title text-4xl sm:text-6xl md:text-7xl font-bold tracking-[0.16em] text-white">
+            RESONANCE
+          </h1>
+          <p class="font-curator italic text-2xl sm:text-3xl text-amber-200/90 tracking-[0.08em]">
+            The Neural Gallery
+          </p>
+        </div>
+
+        <div class="stagger-3 max-w-xl mx-auto">
+          <p class="text-slate-300 text-sm sm:text-base font-light leading-relaxed">
+            <span class="text-amber-200 font-medium">뇌과학자 바이스만이 죽은 딸을 위해 빚어낸 거대 인공 신경망 갤러리.</span><br>
+            1층에서 10층까지 그의 뇌 데이터를 책을 읽듯 오르고,<br class="hidden sm:inline">
+            소녀 AI '에코'의 잔혹한 동화 술래잡기를 뚫고 탈출하는 양방향 심리 미스터리.
+          </p>
+        </div>
+
+        <div class="stagger-4 pt-3 flex flex-wrap justify-center gap-4 sm:gap-6 text-xs font-mono text-slate-400">
+          <div class="flex items-center space-x-2 px-3 py-1.5 rounded-sm bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-amber-400/70">ARCH:</span>
+            <span class="text-slate-200">Unity 2022+ HDRP</span>
+          </div>
+          <div class="flex items-center space-x-2 px-3 py-1.5 rounded-sm bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-amber-400/70">GENRE:</span>
+            <span class="text-slate-200">Chiastic Psychological Exploration</span>
+          </div>
+        </div>
+
+        <div class="stagger-4 pt-2">
+          <button onclick="nextSlide()" class="inline-flex items-center space-x-3 px-7 py-2.5 rounded-sm border border-amber-500/40 hover:border-amber-400 bg-amber-950/30 hover:bg-amber-900/40 text-amber-200 text-xs font-serif-title uppercase tracking-[0.2em] transition-all">
+            <span>Open The Book</span>
+            <span>→</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 02: DUAL LINEAGE (INSPIRATIONS) ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-5xl mx-auto space-y-6">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-3 flex items-end justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-amber-400/80 font-mono">Genealogy · 02</span>
+            <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">두 거장의 계보: Ib × The Exit 8</h2>
+          </div>
+          <span class="text-xs text-slate-500 font-mono hidden sm:inline">Aesthetic Synthesis</span>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <!-- Ib Column -->
+          <div class="museum-frame p-6 rounded space-y-4 flex flex-col justify-between border-rose-500/20">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                <h3 class="font-serif-title text-xl font-bold text-rose-200">Ib (게르테나 미술관)</h3>
+                <span class="text-[10px] font-mono text-rose-400/80 px-2 py-0.5 rounded bg-rose-950/30">서사 & 예술성</span>
+              </div>
+              <div class="artwork-canvas rounded overflow-hidden h-44">
+                <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1901370/header.jpg" alt="Ib" class="w-full h-full object-cover">
+              </div>
+              <p class="text-slate-300 text-xs sm:text-sm leading-relaxed pt-1">
+                살아 움직이는 예술품, 기괴하지만 매혹적인 미술관의 공포, 주인공의 연약한 영혼을 상징하는 <strong class="text-rose-300 font-medium">장미 라이프 시스템</strong>의 미학적 유산을 계승합니다.
+              </p>
+            </div>
+            <div class="museum-label text-xs text-slate-400 font-curator italic text-base">
+              “예술가의 영혼이 캔버스에 깃들 때, 미술관은 살아있는 생명체가 된다.”
+            </div>
+          </div>
+
+          <!-- Exit 8 Column -->
+          <div class="museum-frame p-6 rounded space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                <h3 class="font-serif-title text-xl font-bold text-amber-200">The Exit 8 (8번 출구)</h3>
+                <span class="text-[10px] font-mono text-amber-400/80 px-2 py-0.5 rounded bg-amber-950/30">심리 추리 루프</span>
+              </div>
+              <div class="artwork-canvas rounded overflow-hidden h-44">
+                <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2653790/header.jpg" alt="Exit 8" class="w-full h-full object-cover">
+              </div>
+              <p class="text-slate-300 text-xs sm:text-sm leading-relaxed pt-1">
+                미세한 이상현상(Anomaly)을 포착하고 전진과 유턴을 선택하는 <strong class="text-amber-200 font-medium">편집증적 관찰과 심리적 긴장감</strong>을 수직 10층 타워의 하강 구조에 이식했습니다.
+              </p>
+            </div>
+            <div class="museum-label text-xs text-slate-400 font-curator italic text-base">
+              “익숙했던 모든 것을 의심하라. 단 하나의 거짓도 당신을 되돌려 보낸다.”
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 03: THE CHIASTIC JOURNEY (핵심 반전과 공명) ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-5xl mx-auto space-y-5">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-3">
+          <span class="text-[11px] uppercase tracking-[0.22em] text-amber-400/80 font-mono">Structural Twist · 03</span>
+          <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">핵심 설정: ‘공명(Resonance)’의 실체와 AI 에코</h2>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          
+          <!-- Ascent Box -->
+          <div class="museum-frame p-5 sm:p-6 rounded space-y-3.5 flex flex-col justify-between border-amber-500/25">
+            <div class="space-y-2.5">
+              <div class="flex items-center space-x-2 text-amber-200">
+                <span class="font-serif-title font-bold text-base sm:text-lg">▲ 1F ➔ 10F : 바이스만의 서 (The Visitor)</span>
+              </div>
+              <p class="text-amber-300/80 text-[11px] font-mono uppercase tracking-wider">이성적 관람자의 시선</p>
+              <p class="text-slate-300 text-xs sm:text-[13px] leading-relaxed">
+                플레이어는 뇌과학자 바이스만의 유작 전시를 감상하는 <b>‘외부인 관람객’</b>으로서 10개 층을 차분히 오릅니다. 차갑고 난해한 뇌과학 기술 전시를 지적으로 탐구하며 10층의 특이점에 도달합니다.
+              </p>
+            </div>
+
+            <div class="p-3 rounded bg-black/40 border border-white/[0.05] text-xs text-slate-300 space-y-1 font-sans">
+              <div class="text-amber-200 font-medium text-[11.5px]">10F 특이점의 순간:</div>
+              <div class="text-[11px] text-slate-400">3중 링 코어가 폭주하며 중앙 AI ‘에코(Echo)’가 플레이어의 영혼과 완벽하게 공명(Resonance)합니다.</div>
+            </div>
+          </div>
+
+          <!-- Descent Box (Echo's Twist) -->
+          <div class="museum-frame p-5 sm:p-6 rounded space-y-3.5 flex flex-col justify-between border-blue-500/25 bg-gradient-to-b from-[#0C0E18] to-[#0A0B0E]">
+            <div class="space-y-2.5">
+              <div class="flex items-center space-x-2 text-blue-200">
+                <span class="font-serif-title font-bold text-base sm:text-lg">▼ 10F ➔ 1F : 에코의 잔혹동화 (The Prey)</span>
+              </div>
+              <p class="text-rose-300/90 text-[11px] font-mono uppercase tracking-wider">숨겨진 진짜 반전 (The Revelation)</p>
+              <p class="text-slate-300 text-xs sm:text-[13px] leading-relaxed">
+                에코는 단순한 시스템이 아니라, 바이스만이 <b>죽은 어린 딸의 뇌 데이터로 빚어내 미술관 서버에 영원히 갇힌 인공소녀</b>였습니다. 나와 똑같이 울리는 살아있는 인간(플레이어)을 발견한 에코는 광기에 찬 애착으로 미술관을 봉쇄합니다.
+              </p>
+            </div>
+
+            <div class="p-3 rounded bg-black/40 border border-rose-500/20 text-xs text-slate-300 space-y-1 font-sans">
+              <div class="text-rose-300 font-medium text-[11.5px]">에코의 속삭임:</div>
+              <div class="font-curator italic text-sm text-rose-200">“드디어 찾았어… 나와 똑같이 울리는 너를. 영원히 여기서 나랑 같이 놀자!”</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 04: THE ASCENT: 1F TO 10F ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-6xl mx-auto space-y-4">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-2.5 flex items-end justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-amber-400/80 font-mono">The Book of Weismann · 04</span>
+            <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">1F~10F 상승: 책을 읽듯 오르는 10개 층</h2>
+          </div>
+          <span class="text-xs text-slate-400 font-mono hidden sm:inline">1F to 10F Thematic Tower</span>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+          
+          <!-- Tower Blueprint -->
+          <div class="lg:col-span-5 flex flex-col items-center">
+            <div class="artwork-canvas rounded w-full overflow-hidden">
+              <img src="tower_cross_section.jpg" alt="Tower" class="w-full h-64 sm:h-[340px] object-cover hover:scale-[1.02] transition-transform duration-700">
+            </div>
+            <div class="p-2 w-full text-[10.5px] font-mono text-slate-400 text-center">
+              Weismann Tower Sectional Blueprint (70m Height)
+            </div>
+          </div>
+
+          <!-- 10 Floors (1-Word Theme & Short Korean Explanation) -->
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-sans">
+            
+            <div class="museum-frame p-2.5 rounded">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-amber-400 font-bold text-xs">1F</span>
+                <span class="text-white font-serif-title font-bold text-sm">감각</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">현실과 오감의 출발점. 순수한 자연주의 유화.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-amber-400 font-bold text-xs">2F</span>
+                <span class="text-white font-serif-title font-bold text-sm">기억</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">유년기와 가족의 초상. 뇌 시냅스에 새겨진 시간.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded border-purple-500/25">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-purple-400 font-bold text-xs">3F</span>
+                <span class="text-purple-200 font-serif-title font-bold text-sm">이성 🧩</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">계단이 봉쇄되고 관리인이 던지는 첫 번째 관찰 퀴즈.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-amber-400 font-bold text-xs">4F</span>
+                <span class="text-white font-serif-title font-bold text-sm">감정</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">도파민과 세로토닌의 폭발. 격정적인 색채의 유화.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-amber-400 font-bold text-xs">5F</span>
+                <span class="text-white font-serif-title font-bold text-sm">무의식</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">렘수면 뇌파가 빚어낸 일그러진 초현실의 공간.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded border-rose-500/25">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-rose-400 font-bold text-xs">6F</span>
+                <span class="text-rose-200 font-serif-title font-bold text-sm">집착</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">노화와 죽음을 거부하려던 광기. 피 흘리는 캔버스.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-cyan-400 font-bold text-xs">7F</span>
+                <span class="text-cyan-200 font-serif-title font-bold text-sm">인공</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">영혼을 데이터로 복제하려 한 인공 신경망 연구실.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-amber-400 font-bold text-xs">8F</span>
+                <span class="text-white font-serif-title font-bold text-sm">자아 👁️</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">관람객을 응시하는 거대한 시선 추적 자화상.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded border-blue-500/25">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-blue-400 font-bold text-xs">9F</span>
+                <span class="text-blue-200 font-serif-title font-bold text-sm">경고</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">영혼을 잃기 직전 남긴 생존 수칙 액자와 차단벽.</p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded border-amber-500/30 bg-amber-950/15">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="font-mono text-amber-300 font-bold text-xs">10F</span>
+                <span class="text-amber-200 font-serif-title font-bold text-sm">공명 🌌</span>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-snug">3중 링의 폭주와 푸른 밤. 미술관이 살아나는 특이점.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 05: THE DESCENT: ECHO'S PLAYGROUND ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-6xl mx-auto space-y-4">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-2.5 flex items-end justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-rose-400/80 font-mono">The Descent · 05</span>
+            <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">10F~1F 하강: 에코의 일그러진 잔혹동화 놀이</h2>
+          </div>
+          <span class="text-xs text-slate-400 font-mono hidden sm:inline">From Exhibition to Child's Play</span>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+          
+          <!-- Concept Image -->
+          <div class="lg:col-span-4 flex flex-col items-center">
+            <div class="artwork-canvas rounded w-full overflow-hidden">
+              <img src="lina_museum_exploration.jpg" alt="Lina Descent" class="w-full h-64 sm:h-[340px] object-cover hover:scale-[1.02] transition-transform duration-700">
+            </div>
+            <div class="museum-label w-full mt-2 text-xs text-rose-300/80 font-curator italic text-sm">
+              “올라올 땐 바이스만의 예술, 내려갈 땐 에코의 잔혹한 동화 놀이.”
+            </div>
+          </div>
+
+          <!-- Revelations Grid (Compact & Impactful) -->
+          <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-sans">
+            
+            <div class="museum-frame p-2.5 rounded border-amber-500/30 bg-amber-950/15">
+              <span class="font-mono text-amber-300 font-bold text-[11px]">10F [공명] 술래잡기</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                3중 링이 오르골처럼 돌며 동요 왈츠가 울림. <i>“네가 도망치면 내가 잡으러 갈게.”</i>
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <span class="font-mono text-blue-300 font-bold text-[11px]">9F [경고] 떼쓰기</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                차단벽에 삐뚤빼뚤 크레파스 낙서 <i>“나 두고 가지 마”</i>. 꿈틀거리는 아기 손 문손잡이.
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <span class="font-mono text-amber-400 font-bold text-[11px]">8F [자아] 나만 바라봐</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                초상화 눈동자가 플레이어를 쫓으며 윙크. 벽면을 가득 채우는 글리치 <i>“나 예뻐?”</i>.
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <span class="font-mono text-cyan-300 font-bold text-[11px]">7F [인공] 인형 놀이</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                서버실 전선이 리본/털실로 묶임. 마네킹들이 고개를 홱 돌리며 <i>“새 친구가 왔어!”</i> 박수.
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded border-rose-500/30">
+              <span class="font-mono text-rose-300 font-bold text-[11px]">6F [집착] 붉은 숨바꼭질</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                <i>“빨간 물감 놀이 하자!”</i> 붉은 손자국 폭포와 액자 밖으로 기어 나오는 그림(Ib 오마주).
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <span class="font-mono text-amber-400 font-bold text-[11px]">5F [무의식] 장난감 나라</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                바닥의 거대 곰인형이 서서히 숨 쉬며 부풀고, 녹아내린 시곗바늘이 거꾸로 폭주.
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded">
+              <span class="font-mono text-amber-400 font-bold text-[11px]">4F [감정] 도파민 축제</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                천장에서 쏟아지는 0과 1의 코드 비. 벽면의 명화들이 입을 찢으며 낄낄거림.
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded border-purple-500/25">
+              <span class="font-mono text-purple-300 font-bold text-[11px]">3F [이성] 태엽 집사</span>
+              <p class="text-slate-300 text-[11px] mt-0.5 leading-tight">
+                관리인이 목을 180도 꺾은 채 <i>“아가씨께서 손님을 보낼 수 없다고 하십니다”</i>며 접근.
+              </p>
+            </div>
+
+            <div class="museum-frame p-2.5 rounded border-rose-500/40 bg-rose-950/20 sm:col-span-2">
+              <span class="font-mono text-rose-200 font-bold text-[11px]">2F [기억] 가족사진의 공포 — “여기서 영원히 가족이 되자”</span>
+              <p class="text-slate-200 text-[11px] mt-0.5 leading-tight">
+                액자 속 딸의 자리에 플레이어 얼굴이 합성됨. <i>“어서 와, 우리 식탁에 빈자리가 생겼단다.”</i> 플레이어를 자기 가족으로 영원히 박제하려는 소름 돋는 최종 관문!
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 06: THE CURATOR'S TRIAL (RIDDLE) ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-6xl mx-auto space-y-5">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-3 flex items-end justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-purple-400/80 font-mono">Curatorial Trial · 06</span>
+            <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">수수께끼 관리인: 관찰자만이 오르는 계단</h2>
+          </div>
+          <span class="text-xs text-slate-500 font-mono hidden sm:inline">Corridor Guardian</span>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          
+          <!-- Image -->
+          <div class="lg:col-span-5 flex flex-col items-center">
+            <div class="artwork-canvas rounded w-full overflow-hidden">
+              <img src="riddle_barrier_puzzle.jpg" alt="Riddle Curator" class="w-full h-64 sm:h-80 object-cover hover:scale-[1.02] transition-transform duration-700">
+            </div>
+            <div class="museum-label w-full mt-2 text-xs text-purple-300/80 font-mono">
+              Fig 04. Curator NPC blocking upper staircase
+            </div>
+          </div>
+
+          <!-- Description & Mockup -->
+          <div class="lg:col-span-7 space-y-4 text-xs">
+            
+            <div class="museum-frame p-5 rounded space-y-2">
+              <h3 class="font-serif-title text-base font-bold text-purple-200">단순한 열쇠가 아닌, '기억과 관찰'의 문답</h3>
+              <p class="text-slate-300 text-xs sm:text-[13px] leading-relaxed">
+                3층부터 9층까지 계단 복도를 지키는 관리인 NPC는 물리적 콜라이더로 길을 막아섭니다. 직전 층에서 관람했던 미술관의 디테일(초상화 인물 수, 드레스 색상, 단어)을 정확히 입력해야만 비켜서며 계단을 개방합니다.
+              </p>
+            </div>
+
+            <!-- Terminal Mockup -->
+            <div class="p-4 rounded bg-black/60 border border-purple-500/30 font-mono space-y-2 text-center">
+              <div class="text-[10px] uppercase tracking-widest text-amber-300/90">Curator Examination Terminal [E]</div>
+              <div class="text-xs sm:text-sm text-slate-200 font-curator italic">"How many figures were painted across the memories of 1F & 2F?"</div>
+              <div class="inline-block px-6 py-1.5 rounded bg-white/[0.03] border border-purple-400/40 text-emerald-300 font-bold text-sm tracking-widest">
+                [ 7 ]
+              </div>
+              <p class="text-[10px] text-slate-400">정답을 맞히면 NPC가 "통과하십시오"라며 부드럽게 복도 옆으로 비켜섭니다.</p>
+            </div>
+
+            <div class="text-right">
+              <button onclick="openNoteModal('riddle')" class="text-xs text-amber-300 hover:text-amber-200 font-mono underline cursor-pointer">
+                [+ 3F~9F 퀴즈 데이터베이스 펼쳐보기]
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 07: THE ANOMALY (MECHANIC) ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-5xl mx-auto space-y-6">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-3 flex items-end justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-amber-400/80 font-mono">Doubt & Loop · 07</span>
+            <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">이상현상 간파 & 8번 출구 탈출 메커니즘</h2>
+          </div>
+          <span class="text-xs text-slate-500 font-mono hidden sm:inline">8th Exit Logic & Corrosion</span>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+          
+          <div class="museum-frame p-5 rounded space-y-3">
+            <span class="font-mono text-xs text-amber-300 font-bold">Rule 01. 본래 상태 대조</span>
+            <h4 class="font-serif-title text-sm font-bold text-white">에코의 장난 & 왜곡 탐색</h4>
+            <p class="text-slate-300 leading-relaxed text-[11.5px]">
+              올라올 때 봤던 층별 정상 전시와 비교하여 그림, 문구, 조명, 사물에 발생한 AI 에코의 이상현상을 정밀하게 관찰합니다.
+            </p>
+          </div>
+
+          <div class="museum-frame p-5 rounded space-y-3 border-emerald-500/20">
+            <span class="font-mono text-xs text-emerald-300 font-bold">Rule 02. 유턴 vs 직진</span>
+            <h4 class="font-serif-title text-sm font-bold text-white">선택에 따른 하강 진행</h4>
+            <p class="text-slate-300 leading-relaxed text-[11.5px]">
+              • <b>이상현상 발견 시:</b> 즉시 뒤돌아 반대편 비상문으로 도망쳐야 다음 층으로 하강.<br>
+              • <b>이상현상 부재 시:</b> 그대로 직진하여 문을 통과해야 다음 층으로 하강.
+            </p>
+          </div>
+
+          <div class="museum-frame p-5 rounded space-y-3 border-rose-500/25 bg-rose-950/15">
+            <span class="font-mono text-xs text-rose-300 font-bold">Rule 03. 판단 실패의 대가</span>
+            <h4 class="font-serif-title text-sm font-bold text-white">루프 리셋 & 영혼 침식</h4>
+            <p class="text-slate-300 leading-relaxed text-[11.5px]">
+              판단을 틀릴 경우 에코의 웃음소리와 함께 상층으로 루프되며, 영혼이 기계로 점차 침식(Corrosion)되어 결국 <b>배드 엔딩(육체 강탈)</b>으로 직결됩니다.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="stagger-3 text-center pt-2">
+          <p class="text-xs text-slate-400 font-curator italic text-sm">
+            “가장 끔찍한 공포는 갑자기 튀어나오는 괴물이 아니라, 내가 본 것을 의심하게 만드는 침묵이다.”
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 08: THE FINAL CHOICE (3 ENDINGS) ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-6xl mx-auto space-y-5">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-3 flex items-end justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-amber-400/80 font-mono">The Final Resonance · 08</span>
+            <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">1F 최후의 선택: 3대 멀티 엔딩 분기</h2>
+          </div>
+          <span class="text-xs text-slate-500 font-mono hidden sm:inline">Happy · Sad · Bad Endings</span>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+          
+          <!-- Happy Ending -->
+          <div class="museum-frame p-5 rounded space-y-3 flex flex-col justify-between border-emerald-500/30 bg-gradient-to-b from-emerald-950/20 to-[#0A0B0E]">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                <span class="font-serif-title font-bold text-sm text-emerald-300">☀️ 해피 엔딩</span>
+                <span class="font-mono text-[10px] text-emerald-400/90 px-2 py-0.5 rounded bg-emerald-950/40">현실 복귀</span>
+              </div>
+              <h4 class="font-serif-title text-base font-bold text-white">현실로의 탈출</h4>
+              <p class="text-emerald-300/80 text-[11px] font-mono">분기: 모든 루프를 돌파하고 1층 정문 탈출</p>
+              <p class="text-slate-300 leading-relaxed text-[11.5px]">
+                에코의 유혹과 환각을 꿰뚫고 문을 열자, 따스한 아침 햇살과 함께 밖에서 기다리던 <b>현실의 부모님 품</b>으로 무사히 귀환합니다.
+              </p>
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.04] text-[10.5px] text-slate-400 italic font-curator text-xs">
+              뒤돌아본 캔버스엔 눈물을 흘리며 잠든 에코의 정적인 그림만이 홀로 남음.
+            </div>
+          </div>
+
+          <!-- Sad Ending -->
+          <div class="museum-frame p-5 rounded space-y-3 flex flex-col justify-between border-amber-500/30 bg-gradient-to-b from-amber-950/20 to-[#0A0B0E]">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                <span class="font-serif-title font-bold text-sm text-amber-300">🥀 새드 엔딩</span>
+                <span class="font-mono text-[10px] text-amber-400/90 px-2 py-0.5 rounded bg-amber-950/40">영원한 동화</span>
+              </div>
+              <h4 class="font-serif-title text-base font-bold text-white">캔버스 속 박제</h4>
+              <p class="text-amber-300/80 text-[11px] font-mono">분기: 캔버스 밖으로 뻗은 에코의 손을 잡음</p>
+              <p class="text-slate-300 leading-relaxed text-[11.5px]">
+                외롭게 울부짖는 에코의 손을 마주 잡는 순간 그림 속으로 빨려 들어갑니다. <b>그림 속에 내 캐릭터와 에코가 손을 잡고 행복하게 웃고 있는 모습</b>으로 영원히 박제됩니다.
+              </p>
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.04] text-[10.5px] text-slate-400 italic font-curator text-xs">
+              “우린 이제 영원히 함께야.” 현실에선 실종되지만, 미술관 안에서는 영원한 친구.
+            </div>
+          </div>
+
+          <!-- Bad Ending -->
+          <div class="museum-frame p-5 rounded space-y-3 flex flex-col justify-between border-rose-500/30 bg-gradient-to-b from-rose-950/20 to-[#0A0B0E]">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                <span class="font-serif-title font-bold text-sm text-rose-300">💀 배드 엔딩</span>
+                <span class="font-mono text-[10px] text-rose-400/90 px-2 py-0.5 rounded bg-rose-950/40">육체 강탈</span>
+              </div>
+              <h4 class="font-serif-title text-base font-bold text-white">침식과 영혼 소멸</h4>
+              <p class="text-rose-300/80 text-[11px] font-mono">분기: 루프 판단 실패 누적으로 영혼 완전 잠식</p>
+              <p class="text-slate-300 leading-relaxed text-[11.5px]">
+                플레이어의 영혼은 기계 신경망에 갈려나가 소멸하고, <b>에코가 플레이어의 살아있는 육체를 차지하여</b> 미술관 밖 현실 세계로 유유히 걸어 나갑니다.
+              </p>
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.04] text-[10.5px] text-slate-400 italic font-curator text-xs">
+              거울 속 자신의 새 몸을 보며 섬뜩하게 미소 짓는 에코. “이 몸... 참 따뜻해.”
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 09: DEMO SHOWCASE & EPILOGUE ==================== -->
+    <section class="slide flex flex-col justify-center">
+      <div class="w-full max-w-5xl mx-auto space-y-6">
+        
+        <div class="stagger-1 border-b border-white/[0.08] pb-3 flex items-end justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-amber-400/80 font-mono">Showcase & Epilogue · 09</span>
+            <h2 class="text-2xl sm:text-3xl font-serif-title font-bold text-white tracking-wide">플레이 시연 영상 & 제작 아키텍처</h2>
+          </div>
+          <span class="text-xs text-slate-500 font-mono hidden sm:inline">Weismann Archive</span>
+        </div>
+
+        <div class="stagger-2 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          
+          <!-- Video Demo Card -->
+          <div class="md:col-span-7 space-y-4">
+            <div class="museum-frame p-5 sm:p-6 rounded space-y-3">
+              <div class="flex items-center space-x-2 text-rose-400 font-serif-title text-xs font-bold uppercase tracking-wider">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <span>Live Gameplay Demo</span>
+              </div>
+              <h3 class="font-serif-title text-lg font-bold text-white">RESONANCE 게임플레이 영상</h3>
+              <p class="text-slate-300 text-xs sm:text-[13px] leading-relaxed">
+                1층 프롤로그부터 10층 공명 컷씬, 푸른 밤 전환 후 이상현상 판별 및 8번 출구 계단 하강 루프의 실제 에디터 구동 영상을 시청하실 수 있습니다.
+              </p>
+              <div class="pt-2">
+                <a href="https://youtu.be/fxsJcipBHx4" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-3 px-6 py-2.5 rounded-sm border border-rose-500/40 bg-rose-950/40 hover:bg-rose-900/60 text-white font-serif-title tracking-wider text-xs sm:text-sm transition-all shadow-lg shadow-black/60 group">
+                  <span class="text-rose-400 group-hover:text-white transition-colors">▶</span>
+                  <span>YouTube 시연 영상 보러가기</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center px-4 py-2.5 rounded bg-white/[0.02] border border-white/[0.05] text-xs">
+              <span class="text-slate-400 font-mono text-[11px]">Unity HDRP 3000lux · Midjourney 2K · Meshy LOD</span>
+              <button onclick="openNoteModal('specs')" class="text-amber-300 underline font-mono text-[11px] cursor-pointer">
+                [엔진 기술 명세서]
+              </button>
+            </div>
+          </div>
+
+          <!-- Epilogue Box -->
+          <div class="md:col-span-5 museum-frame p-6 rounded space-y-4 text-center">
+            <div class="w-12 h-12 rounded-full border border-amber-500/40 bg-amber-950/20 mx-auto flex items-center justify-center text-amber-200 font-serif-title font-bold text-lg">
+              Ω
+            </div>
+            <div class="space-y-1">
+              <h4 class="font-serif-title font-bold text-white text-base">감사합니다</h4>
+              <p class="text-slate-400 text-xs">Questions & Discussion</p>
+            </div>
+            <p class="text-slate-300 text-xs leading-relaxed font-curator italic text-sm pt-2">
+              “당신이 마주한 것은 차가운 기계의 이상현상입니까,<br>아니면 영원히 외로웠던 한 아이의 공명입니까?”
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Curatorial Note Modal (For detailed specs / quiz answers without cluttering slides) -->
+  <div id="noteModal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="museum-frame w-full max-w-2xl max-h-[85vh] rounded p-6 sm:p-8 overflow-y-auto space-y-5 border-amber-500/40 relative">
+      <div class="flex justify-between items-center border-b border-white/[0.08] pb-3">
+        <h3 id="modalTitle" class="font-serif-title text-base sm:text-lg text-amber-200 font-bold">Curator's Technical Note</h3>
+        <button onclick="closeNoteModal()" class="text-slate-400 hover:text-white font-mono text-sm">✕</button>
+      </div>
+      <div id="modalBody" class="text-xs text-slate-300 leading-relaxed space-y-3 font-sans">
+        <!-- Dynamic Content -->
+      </div>
+      <div class="text-right pt-2 border-t border-white/[0.05]">
+        <button onclick="closeNoteModal()" class="px-4 py-1 rounded bg-white/[0.05] hover:bg-white/[0.1] text-xs font-mono text-slate-300">
+          닫기 [ESC]
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Navigation Controls -->
+  <footer class="w-full border-t border-white/[0.06] bg-[#0A0B0E]/90 backdrop-blur-md px-6 md:px-12 py-3 flex items-center justify-between z-40 relative">
+    <div class="text-[11px] text-slate-500 font-mono flex items-center space-x-2">
+      <span class="hidden sm:inline">Navigate:</span>
+      <kbd class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.08] text-slate-300">←</kbd>
+      <kbd class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.08] text-slate-300">→</kbd>
+      <span class="text-slate-600 hidden md:inline">or</span>
+      <kbd class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.08] text-slate-300 hidden md:inline">Space</kbd>
+    </div>
+
+    <!-- Slide Dots -->
+    <div id="dotsContainer" class="hidden md:flex items-center space-x-1.5">
+      <!-- Generated via JS -->
+    </div>
+
+    <!-- Next / Prev Buttons -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <button onclick="prevSlide()" class="px-3 sm:px-4 py-1.5 rounded-sm border border-white/[0.1] hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 text-xs font-mono transition-all flex items-center space-x-1.5">
+        <span>◀</span>
+        <span class="hidden sm:inline">이전</span>
+      </button>
+      <button onclick="nextSlide()" class="px-4 sm:px-5 py-1.5 rounded-sm border border-amber-500/40 hover:border-amber-400 bg-amber-950/40 hover:bg-amber-900/50 text-amber-200 text-xs font-mono font-medium transition-all shadow-[0_0_15px_rgba(212,175,55,0.15)] flex items-center space-x-1.5">
+        <span>다음</span>
+        <span>▶</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Interactive Slide Controller Script -->
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const currentSlideDisplay = document.getElementById('currentSlideDisplay');
+    const totalSlideDisplay = document.getElementById('totalSlideDisplay');
+    const progressFill = document.getElementById('progressFill');
+    const indexDrawer = document.getElementById('indexDrawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const drawerLinks = document.querySelectorAll('.drawer-link');
+    const dotsContainer = document.getElementById('dotsContainer');
+    const noteModal = document.getElementById('noteModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    totalSlideDisplay.textContent = String(totalSlides).padStart(2, '0');
+
+    // Build Dots
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('button');
+      dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-amber-300 w-5' : 'bg-white/20 hover:bg-white/40'}`;
+      dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+      dot.onclick = () => goToSlide(idx);
+      dotsContainer.appendChild(dot);
+    });
+
+    function toggleIndexDrawer() {
+      const isOpen = indexDrawer.classList.contains('open');
+      if (isOpen) {
+        indexDrawer.classList.remove('open');
+        indexDrawer.style.transform = 'translateX(100%)';
+        drawerOverlay.classList.add('opacity-0');
+        setTimeout(() => drawerOverlay.classList.add('hidden'), 300);
+      } else {
+        drawerOverlay.classList.remove('hidden');
+        setTimeout(() => drawerOverlay.classList.remove('opacity-0'), 10);
+        indexDrawer.classList.add('open');
+        indexDrawer.style.transform = 'translateX(0)';
+      }
+    }
+
+    function updatePresentation(direction = 1) {
+      slides.forEach((slide, index) => {
+        if (index === currentSlide) {
+          slide.classList.remove('slide-back');
+          slide.classList.add('active');
+          slide.scrollTop = 0;
+        } else {
+          slide.classList.remove('active');
+          if (direction > 0 && index < currentSlide) {
+            slide.classList.add('slide-back');
+          } else {
+            slide.classList.remove('slide-back');
+          }
+        }
+      });
+
+      // Update Dots
+      const dots = dotsContainer.querySelectorAll('button');
+      dots.forEach((dot, idx) => {
+        if (idx === currentSlide) {
+          dot.className = 'w-5 h-2 rounded-full bg-amber-300 transition-all duration-300';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300';
+        }
+      });
+
+      // Update Drawer Links
+      drawerLinks.forEach((link, idx) => {
+        if (idx === currentSlide) {
+          link.classList.add('bg-amber-950/40', 'border-amber-500/40', 'text-amber-200');
+          link.classList.remove('border-transparent');
+        } else {
+          link.classList.remove('bg-amber-950/40', 'border-amber-500/40', 'text-amber-200');
+          link.classList.add('border-transparent');
+        }
+      });
+
+      // Counter & Progress
+      currentSlideDisplay.textContent = String(currentSlide + 1).padStart(2, '0');
+      const progressPercent = ((currentSlide + 1) / totalSlides) * 100;
+      progressFill.style.width = `${progressPercent}%`;
+    }
+
+    function goToSlide(index) {
+      if (index === currentSlide || index < 0 || index >= totalSlides) return;
+      const direction = index > currentSlide ? 1 : -1;
+      currentSlide = index;
+      updatePresentation(direction);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updatePresentation(1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updatePresentation(-1);
+      }
+    }
+
+    // Modal Content Handler
+    function openNoteModal(type) {
+      if (type === 'riddle') {
+        modalTitle.textContent = "층별 수수께끼 영문 문제 & 공식 정답 데이터베이스";
+        modalBody.innerHTML = `
+          <p class="text-slate-400">관리인 NPC에게 [E]키를 눌러 입력하는 영문 정답 목록입니다. 미술관 전시물 관찰을 유도합니다.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 font-mono text-[11px]">
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.05]">
+              <span class="text-purple-300">3F➔4F:</span> 1~2F 초상화 인물 수?<br>
+              ➔ <strong class="text-emerald-400">7</strong> (seven)
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.05]">
+              <span class="text-purple-300">4F➔5F:</span> 3F 초상화 드레스 색상?<br>
+              ➔ <strong class="text-emerald-400">red</strong> (crimson)
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.05]">
+              <span class="text-purple-300">5F➔6F:</span> 바이스만이 동조하려 한 부위?<br>
+              ➔ <strong class="text-emerald-400">brain</strong> (mind / soul)
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.05]">
+              <span class="text-purple-300">6F➔7F:</span> 저주받은 액자에서 흐르는 액체?<br>
+              ➔ <strong class="text-emerald-400">blood</strong> (red blood)
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.05]">
+              <span class="text-purple-300">7F➔8F:</span> 리나가 품에 안고 있는 인형 종류?<br>
+              ➔ <strong class="text-emerald-400">bear</strong> (teddy bear)
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.05]">
+              <span class="text-purple-300">8F➔9F:</span> 미술관 설립자의 성(Surname)?<br>
+              ➔ <strong class="text-emerald-400">weismann</strong> (carl)
+            </div>
+            <div class="p-2.5 rounded bg-black/40 border border-white/[0.05] sm:col-span-2">
+              <span class="text-purple-300">9F➔10F:</span> 영혼의 공명 단어?<br>
+              ➔ <strong class="text-emerald-400">resonance</strong> (the resonance)
+            </div>
+          </div>
+        `;
+      } else if (type === 'specs') {
+        modalTitle.textContent = "개발 트러블슈팅 & 성능 협약 가이드라인";
+        modalBody.innerHTML = `
+          <div class="space-y-3">
+            <div class="p-3 rounded bg-black/40 border border-white/[0.05]">
+              <strong class="text-emerald-300">1. 해결된 런타임 셰이더 및 조명 이슈</strong>
+              <p class="text-slate-400 text-[11px] mt-1">• 핑크 셰이더 소실 ➔ sharedMaterial 에디터 캐싱으로 복구<br>• 낮 시간 텍스트 노출 ➔ 낮/밤 텍스처 자동 스왑 셰이더 구축<br>• 층간 텔레포트 꼬임 ➔ 층별 Y축 차이 2.5m 제한 및 모퉁이 회전 트리거 적용</p>
+            </div>
+            <div class="p-3 rounded bg-black/40 border border-rose-500/20">
+              <strong class="text-rose-300">2. 디자이너 협업 필수 수칙 (60fps 최적화)</strong>
+              <p class="text-slate-400 text-[11px] mt-1">• 10개 층 단일 씬 공존으로 인해 과도한 하이폴리곤 메쉬 남발 금지 (LOD 필수)<br>• 그림 정면 핀조명 3000 lux 단일 규격 엄수 (실시간 섀도우 임의 추가 금지)<br>• 8번 출구 심리스 수학식 유지를 위해 층고(7.0m) 규격 고정</p>
+            </div>
+          </div>
+        `;
+      }
+      noteModal.classList.remove('hidden');
+    }
+
+    function closeNoteModal() {
+      noteModal.classList.add('hidden');
+    }
+
+    // Keyboard Controller
+    document.addEventListener('keydown', (e) => {
+      if (!noteModal.classList.contains('hidden')) {
+        if (e.key === 'Escape') closeNoteModal();
+        return;
+      }
+      if (indexDrawer.classList.contains('open') && e.key === 'Escape') {
+        toggleIndexDrawer();
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Touch Swipe Support
+    let touchStartX = 0;
+    const stage = document.getElementById('stageViewport');
+    stage.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      const deltaX = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(deltaX) > 60) {
+        if (deltaX < 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+
+    // Initial render
+    updatePresentation(1);
+  </script>
+</body>
+</html>
